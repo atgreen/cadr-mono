@@ -94,6 +94,11 @@
   ;; nothing redrawn; JetBrains reshapes f and y, Adwaita only f.  So a
   ;; genuinely drawn italic is as rare as the research said, and this
   ;; one reshapes more than any of them.
+  (crowd       1.0d0) ; extra thinning for the glyphs that pack several
+                      ; strokes into one cell.  A bold can afford more of
+                      ; it than a regular: at regular weight m's stem is
+                      ; already near a whole pixel at 13px and cannot be
+                      ; thinned further, where a bold stem has room.
   (weight      400)   ; OS/2 weight class
   (slant         0)   ; degrees of slope; negative leans right
   (italic      nil)   ; whether to use the italic letterforms
@@ -131,6 +136,7 @@ advance width has to be a whole number of units."
     (:line-asc (d-line-ascent *design*)) (:line-desc (d-line-descent *design*))
     (:over (d-overshoot *design*))     (:stem (d-stem *design*))
     (:sidebearing (d-sidebearing *design*)) (:weight (d-weight *design*))
+    (:crowd (d-crowd *design*))
     (:thin (d-thin *design*))          (:stress (d-stress-angle *design*))
     (:aperture (d-aperture *design*))
     (:ease (d-shoulder-ease *design*)) (:tail (d-tail *design*))
@@ -169,6 +175,7 @@ modulation would close them."
         (d-dot-radius d)  (round (* (d-dot-radius d) 1.18))
         (d-rule-weight d) (round (* (d-rule-weight d) 1.36))
         (d-serif d)       (round (* (d-serif d) 0.94))
+        (d-crowd d)       0.83d0
         (d-weight d)      700
         (d-style d)       (if (d-italic d) "Bold Italic" "Bold"))
   d)

@@ -237,7 +237,7 @@ leg that drops to TO."
     ;; to 137 units is 0.87px and renders grey where a full one renders
     ;; solid.  The even-colour rule is about narrow glyphs FLOATING in
     ;; their cells, not about crowded ones.
-    (with-pen-scale (0.92d0)
+    (with-pen-scale ((crowded 0.92d0))
       (list (stroke-open (list (line-seg (- (centre-x) rx) 0
                                          (- (centre-x) rx) (p :x))))
             (stroke-open (shoulder-path (- (centre-x) half) half))
@@ -310,7 +310,7 @@ it opens a gap."
       ;; Two rounded troughs, to match the italic v.  Leaving w angular
       ;; beside a rounded v makes the pair look like a mistake rather
       ;; than a choice.
-      (with-pen-scale (0.95d0)
+      (with-pen-scale ((crowded 0.95d0))
         (let* ((rx (* (bowl-rx) 0.52)) (cx (centre-x))
                (ry (* (p :x) 0.38)) (cy (+ ry (/ (p :thin) 2))))
           (list (stroke-open
@@ -323,7 +323,7 @@ it opens a gap."
                          (arc-path (+ cx (* rx 0.96)) cy rx ry 180 360)
                          (list (line-seg (+ cx (* rx 1.92)) cy
                                          (+ cx (* rx 1.92)) (p :x))))))))
-      (with-pen-scale (0.95d0)
+      (with-pen-scale ((crowded 0.95d0))
         (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :x) 0.70)))
           (list (diag (- cx rx) (p :x) (- cx (* rx 0.46)) 0)
                 (diag (- cx (* rx 0.46)) 0 cx mid :trim :start)
@@ -626,7 +626,7 @@ bars land on the cap line and the baseline instead of straddling them."
     (list (diag (- cx rx) (p :cap) cx 0) (diag (+ cx rx) (p :cap) cx 0))))
 
 (defglyph "W" 87
-  (with-pen-scale (0.95d0)
+  (with-pen-scale ((crowded 0.95d0))
     (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :cap) 0.70)))
       (list (diag (- cx rx) (p :cap) (- cx (* rx 0.46)) 0)
             (diag (- cx (* rx 0.46)) 0 cx mid :trim :start)
@@ -656,7 +656,7 @@ bars land on the cap line and the baseline instead of straddling them."
           (diag (- cx rx) knee (+ cx rx) 0 :trim :end))))
 
 (defglyph "M" 77
-  (with-pen-scale (0.92d0)
+  (with-pen-scale ((crowded 0.92d0))
     (let* ((rx (bowl-rx)) (cx (centre-x)) (vee (* (p :cap) 0.26)))
       (list (vstem (- cx rx) 0 (p :cap))
             (vstem (+ cx rx) 0 (p :cap))
@@ -664,7 +664,7 @@ bars land on the cap line and the baseline instead of straddling them."
             (diag (+ cx rx) (p :cap) cx vee :trim :start)))))
 
 (defglyph "N" 78
-  (with-pen-scale (0.95d0)
+  (with-pen-scale ((crowded 0.95d0))
     (let ((rx (bowl-rx)) (cx (centre-x)))
       (list (vstem (- cx rx) 0 (p :cap))
             (vstem (+ cx rx) 0 (p :cap))
@@ -924,7 +924,9 @@ bars land on the cap line and the baseline instead of straddling them."
   ;; An outer ring left OPEN at the lower right, around an inner bowl
   ;; big enough to keep a counter.  A full-circle outer and a bowl
   ;; narrower than the stroke made this a filled blob.
-  (with-pen-scale (0.80d0)
+  ;; The at-sign packs a ring round a bowl round a counter, so it takes
+  ;; the crowding allowance too.
+  (with-pen-scale ((crowded 0.80d0))
    (let* ((cx (centre-x)) (rx (bowl-rx)) (ry (* (p :cap) 0.44))
           (cy (* (p :cap) 0.46))
           (irx (* rx 0.46)) (iry (* ry 0.50)))

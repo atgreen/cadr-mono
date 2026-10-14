@@ -117,6 +117,11 @@ consistency for the hinting, which is the accepted trade.")
 (defmacro with-pen-scale ((factor) &body body)
   `(let ((*pen-scale* ,factor)) ,@body))
 
+(defun crowded (factor)
+  "A pen scale for a glyph that packs several strokes into one cell,
+carrying the weight's own allowance for crowding."
+  (* factor (p :crowd)))
+
 (defun pen-axes ()
   "Solve for the pen's major and minor axes such that a VERTICAL stem
 measures exactly (p :stem) and a HORIZONTAL bar exactly (p :thin).

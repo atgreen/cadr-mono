@@ -125,13 +125,18 @@ where a stem and its shoulder are supposed to merge."
           (pt :offcurve (- cx irx) (+ baseline (* dir iky)))
           (pt :curve (- cx irx) baseline)))))
 
-(defun contour-sign (c)
-  "Sign of a contour's signed area: +1 counterclockwise, -1 clockwise."
+(defun contour-area (c)
+  "Signed area by the shoelace formula.  Positive is counterclockwise.
+Control points are included, which is close enough for judging winding
+and relative size."
   (let ((sum 0))
     (loop for (a b) on (append c (list (first c)))
           while b
           do (incf sum (- (* (px a) (py b)) (* (px b) (py a)))))
-    (if (minusp sum) -1 1)))
+    (/ sum 2)))
+
+(defun contour-sign (c)
+  (if (minusp (contour-area c)) -1 1))
 
 (defun ensure-ccw (c)
   "Force counterclockwise winding.
@@ -143,6 +148,11 @@ whatever it overlaps instead of merging with it.  That is a hole where
 a join should be, and it is invisible until two strokes happen to
 cross."
   (if (minusp (contour-sign c)) (reverse-contour c) c))
+
+(defun ensure-cw (c)
+  "Force clockwise winding -- what a counter needs in order to cut a
+hole in the shape around it."
+  (if (plusp (contour-sign c)) (reverse-contour c) c))
 
 (defun bounds (contours)
   "Ink bounding box of CONTOURS as (values x0 y0 x1 y1)."

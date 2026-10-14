@@ -243,13 +243,26 @@ hinted: the rasteriser has nothing to snap to the pixel grid."
        (seg-x1 s) (seg-y1 s) (seg-x0 s) (seg-y0 s)))
 
 (defun stroke-closed (segs &key (refine 4))
-  "Stroke a closed skeleton, returning outer and inner contours."
+  "Stroke a closed skeleton, returning outer and inner contours.
+
+Which side of the skeleton is the OUTSIDE depends on the direction the
+skeleton runs, so it is decided by area rather than assumed: the larger
+contour is the outside and is wound counterclockwise, the smaller is
+the counter and is wound clockwise against it.
+
+Getting this backwards does not look obviously wrong on its own -- the
+bowl still fills and its counter still cuts -- but it leaves the ring
+with winding -1 while every stroke carries +1, so a stem crossing a
+bowl SUBTRACTS.  That is the letter appearing xor'd with its own stem."
   (let* ((segs (refine segs refine))
          (w (side-widths segs))
-         (outer (loop for s in segs for i from 0
-                      collect (offset-seg s (nth i w) (nth (1+ i) w))))
-         (inner (loop for s in segs for i from 0
-                      collect (offset-seg s (- (nth i w)) (- (nth (1+ i) w))))))
-    ;; outer counterclockwise, counter clockwise against it
-    (let ((o (ensure-ccw (rest (segs->points (with-extrema outer))))))
-      (list o (reverse-contour (ensure-ccw (rest (segs->points (with-extrema inner)))))))))
+         (a (rest (segs->points
+                   (with-extrema (loop for s in segs for i from 0
+                                       collect (offset-seg s (nth i w) (nth (1+ i) w)))))))
+         (b (rest (segs->points
+                   (with-extrema (loop for s in segs for i from 0
+                                       collect (offset-seg s (- (nth i w))
+                                                           (- (nth (1+ i) w)))))))))
+    (if (> (abs (contour-area a)) (abs (contour-area b)))
+        (list (ensure-ccw a) (ensure-cw b))
+        (list (ensure-ccw b) (ensure-cw a)))))

@@ -31,22 +31,29 @@
                     (hbar 0 (- ex r) (+ ex r) :align :on))))))
 
 (defglyph "ae" 230
-  ;; The left half is an A, not an O.  Built from a closed ring it was
-  ;; identical to oe -- two different letters sharing one outline -- and
-  ;; adding a stem at the junction changed nothing, because the ring's
-  ;; own right edge was already there.
+  ;; The left half is built the way our own A is built -- lower bowl,
+  ;; top arc, right stem -- just narrower, with the stem at the junction
+  ;; the e shares.
   ;;
-  ;; A single-storey a is a bowl with a FLAT right side, so the bowl is
-  ;; a half-ellipse swept 90 to 270 whose two ends land on the stem the
-  ;; e then shares.
+  ;; A plain half-ellipse with a flat right side made it distinct from
+  ;; oe but read as c or D: this font's a is double-storey, so a
+  ;; single-storey bowl is not an a HERE whatever it is elsewhere.  A
+  ;; letter has to be recognisable against its own alphabet.
   (with-pen-scale (0.80d0)
-    (let* ((cx (centre-x)) (ra (u 256)) (re (u 128))
-           (ry (bowl-ry)) (cy (bowl-cy))
+    (let* ((cx (centre-x)) (ra (u 128)) (re (u 128))
+           (lx (- cx ra))
+           (ry-b (* (p :x) 0.30))
+           (cy-b (- (+ ry-b (/ (p :thin) 2)) (p :over)))
+           (ry-t (* (p :x) 0.21))
+           (cy-t (- (p :x) ry-t (/ (p :thin) 2)))
            (half (/ (p :aperture) 2)))
-      (list (stroke-open (arc-path cx cy ra ry 90 270))
-            (vstem cx 0 (p :x))
-            (stroke-open (arc-path (+ cx re) cy re ry half (- 360 half)))
-            (stroke-open (list (line-seg cx cy (+ cx (* re 1.7)) cy)))))))
+      (append (list (vstem cx 0 cy-t))
+              (stroke-closed (arc-path lx cy-b ra ry-b 0 360))
+              (list (stroke-open (arc-path lx cy-t ra ry-t 0 168))
+                    (stroke-open (arc-path (+ cx re) (bowl-cy) re (bowl-ry)
+                                           half (- 360 half)))
+                    (stroke-open (list (line-seg cx (bowl-cy)
+                                                 (+ cx (* re 1.7)) (bowl-cy)))))))))
 
 (defglyph "AE" 198
   (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :cap) 0.30)))

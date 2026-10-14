@@ -193,8 +193,13 @@
          (ry (* (p :cap) 0.30))
          (cy (- (+ ry (/ (p :thin) 2)) (p :over)))
          (sweep (- (+ (p :cap) (p :over)) cy (/ (p :thin) 2))))
+    ;; The sweep must END ABOVE the bowl, leaving the upper right open.
+    ;; Carried down to 20 degrees it came back alongside the bowl's own
+    ;; right side and closed a second compartment -- which is a theta,
+    ;; not a partial.  It also swings a little wider than the bowl so
+    ;; the terminal clears it outright.
     (append (stroke-closed (arc-path cx cy rx ry 0 360))
-            (list (stroke-open (arc-path cx cy rx sweep 180 20))))))
+            (list (stroke-open (arc-path cx cy (* rx 1.1) sweep 180 34))))))
 
 ;;; --- typographic ---------------------------------------------------------------------
 

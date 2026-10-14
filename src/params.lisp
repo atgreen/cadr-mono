@@ -33,10 +33,14 @@
   ;; headroom: ink then touches, or overflows, the row above.  Measured
   ;; against the field, the norm is 8-24% of the line box clear above
   ;; the tallest ink, most commonly around 11%; we had MINUS 3%.
-  ;; These also set the advance-to-line-box ratio, 600/1190 = 0.504,
+  ;; These also set the advance-to-line-box ratio, 600/1210 = 0.496,
   ;; which puts us with Hack (0.517) and Adwaita (0.508) rather than at
   ;; the Courier-ish extreme of 0.606 we sat at before.
-  (line-ascent   900)
+  ;;
+  ;; The ascent has to contain an accented CAPITAL, not just an
+  ;; ascender.  Hack and Liberation both set theirs to exactly their
+  ;; tallest accented cap; ours clears it by a little.
+  (line-ascent   920)
   (line-descent -290)
   (overshoot    12)   ; round letters exceed flat ones by this
 

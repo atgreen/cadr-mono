@@ -72,6 +72,40 @@ points, so anything measured from control points overstates it."
                 (mapcar (lambda (pnt) (pt (kind pnt) (+ (px pnt) dx) (py pnt))) c))
               contours)))
 
+(defun move-contours (contours dx dy)
+  (if (and (zerop dx) (zerop dy))
+      contours
+      (mapcar (lambda (c)
+                (mapcar (lambda (pnt)
+                          (pt (kind pnt) (+ (px pnt) dx) (+ (py pnt) dy)))
+                        c))
+              contours)))
+
+(defun scale-contours (contours factor &key (about-x 0) (about-y 0))
+  "Scale about a point.  Used for the handful of glyphs that are a
+smaller copy of another -- the ringed letters and the ordinals."
+  (mapcar (lambda (c)
+            (mapcar (lambda (pnt)
+                      (pt (kind pnt)
+                          (+ about-x (* factor (- (px pnt) about-x)))
+                          (+ about-y (* factor (- (py pnt) about-y)))))
+                    c))
+          contours))
+
+(defun ink-top (contours)
+  (let ((pts (contour-points contours)))
+    (when pts (reduce #'max pts :key #'cdr))))
+
+(defun ink-bottom (contours)
+  (let ((pts (contour-points contours)))
+    (when pts (reduce #'min pts :key #'cdr))))
+
+(defun ink-mid-x (contours)
+  (let ((pts (contour-points contours)))
+    (when pts (/ (+ (reduce #'min pts :key #'car)
+                    (reduce #'max pts :key #'car))
+                 2))))
+
 (defun centre-ink (contours)
   "Shift CONTOURS so their ink sits centred in the cell.
 

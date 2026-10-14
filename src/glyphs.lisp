@@ -714,12 +714,15 @@ bars land on the cap line and the baseline instead of straddling them."
         (dot-at (centre-x) (p :dot))))
 
 (defglyph "quotedbl" 34
+  ;; Taller than they were: at 0.66 of the cap these measured 238 per
+  ;; mille where the field runs 271-330, and short quotes read as specks
+  ;; in a line of strings.
   (let ((d (u 95)))
-    (list (vstem (- (centre-x) d) (* (p :cap) 0.66) (p :cap))
-          (vstem (+ (centre-x) d) (* (p :cap) 0.66) (p :cap)))))
+    (list (vstem (- (centre-x) d) (* (p :cap) 0.57) (p :cap))
+          (vstem (+ (centre-x) d) (* (p :cap) 0.57) (p :cap)))))
 
 (defglyph "quotesingle" 39
-  (list (vstem (centre-x) (* (p :cap) 0.66) (p :cap))))
+  (list (vstem (centre-x) (* (p :cap) 0.57) (p :cap))))
 
 (defglyph "numbersign" 35
   (let* ((cx (centre-x)) (rx (* (bowl-rx) 0.92)) (lean (u 48)))

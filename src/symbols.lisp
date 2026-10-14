@@ -129,13 +129,31 @@
 ;;; --- maths ------------------------------------------------------------------------
 
 (defglyph "infinity" 8734
-  ;; Wide and flat.  Every font in the comparison draws infinity about
-  ;; one and a half times wider than tall; ours was square, which is why
-  ;; it read as undersized next to the inequalities.
+  ;; A crossed figure of eight, drawn as ONE path: round the left lobe,
+  ;; across the middle, round the right lobe, and back across.  The two
+  ;; crossing segments run between the lobes' computed open ends, so
+  ;; they intersect at the centre.
+  ;;
+  ;; Two closed rings set side by side -- which is what this was --
+  ;; reads as "oo", not as infinity.  Nothing crosses.
   (with-pen-scale (0.70d0)
-    (let ((rx (u 110)) (ry (u 138)) (d (u 105)) (cy (u 330)))
-      (append (stroke-closed (arc-path (- (centre-x) d) cy rx ry 0 360))
-              (stroke-closed (arc-path (+ (centre-x) d) cy rx ry 0 360))))))
+    ;; The centres must sit FURTHER APART than the lobe radius.  At
+    ;; d < rx the lobes overlap, the open ends fall inside each other,
+    ;; and the crossing segments are buried -- which is how a lemniscate
+    ;; still came out looking like two touching rings.
+    (let* ((rx (u 100)) (ry (u 118)) (d (u 140)) (cy (u 330))
+           (lx (- (centre-x) d)) (rxc (+ (centre-x) d)))
+      (flet ((pt-at (cx a) (list (+ cx (* rx (cos (deg a))))
+                                 (+ cy (* ry (sin (deg a)))))))
+        (let ((l-hi (pt-at lx 40))   (l-lo (pt-at lx 320))
+              (r-lo (pt-at rxc 220)) (r-hi (pt-at rxc 140)))
+          (list (stroke-open
+                 (append (arc-path lx cy rx ry 40 320)
+                         (list (line-seg (first l-lo) (second l-lo)
+                                         (first r-hi) (second r-hi)))
+                         (arc-path rxc cy rx ry 140 -140)
+                         (list (line-seg (first r-lo) (second r-lo)
+                                         (first l-hi) (second l-hi)))))))))))
 
 (defglyph "radical" 8730
   ;; Taller and wider: the field runs 523-586 by 730-976 where ours was
@@ -167,11 +185,16 @@
                    (arc-path (- cx r) (+ (p :desc) r) r r 0 -100))))))
 
 (defglyph "partialdiff" 8706
-  (append (stroke-closed (arc-path (centre-x) (* (p :cap) 0.30) (* (bowl-rx) 0.86)
-                                   (* (p :cap) 0.30) 0 360))
-          (list (stroke-open
-                 (arc-path (centre-x) (* (p :cap) 0.74) (* (bowl-rx) 0.8)
-                           (* (p :cap) 0.28) 200 20)))))
+  ;; The upper sweep shares the bowl's CENTRE, so its 180-degree point
+  ;; lands exactly on the bowl's own; only its vertical radius is
+  ;; larger.  Drawn as a separate ellipse higher up, the arch floated
+  ;; clear of the bowl and the mark read as a six.
+  (let* ((cx (centre-x)) (rx (* (bowl-rx) 0.86))
+         (ry (* (p :cap) 0.30))
+         (cy (- (+ ry (/ (p :thin) 2)) (p :over)))
+         (sweep (- (+ (p :cap) (p :over)) cy (/ (p :thin) 2))))
+    (append (stroke-closed (arc-path cx cy rx ry 0 360))
+            (list (stroke-open (arc-path cx cy rx sweep 180 20))))))
 
 ;;; --- typographic ---------------------------------------------------------------------
 

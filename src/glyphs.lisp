@@ -851,10 +851,14 @@ bars land on the cap line and the baseline instead of straddling them."
                                      (- (centre-x) (u 70)) (u -150))))))
 
 (defglyph "question" 63
-  (let* ((cx (centre-x)) (rx (* (bowl-rx) 0.78)) (ry (* (p :cap) 0.22)))
-    (list (stroke-open (append (arc-path cx (- (p :cap) ry) rx ry 180 -30)
-                               (list (line-seg (+ cx (* rx 0.1)) (* (p :cap) 0.52)
-                                               cx (* (p :cap) 0.32)))))
+  ;; The stem starts at the arc's COMPUTED terminal.  It used to start
+  ;; at a guessed point well away from it, leaving the hook and the stem
+  ;; as two pieces crossing near each other.
+  (let* ((cx (centre-x)) (rx (* (bowl-rx) 0.78)) (ry (* (p :cap) 0.22))
+         (cy (- (p :cap) ry)) (a -38)
+         (ex (+ cx (* rx (cos (deg a))))) (ey (+ cy (* ry (sin (deg a))))))
+    (list (stroke-open (append (arc-path cx cy rx ry 180 a)
+                               (list (line-seg ex ey cx (* (p :cap) 0.34)))))
           (dot-at cx (p :dot)))))
 
 (defglyph "at" 64

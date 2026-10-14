@@ -177,9 +177,18 @@
           (vstem (centre-x) (p :desc) (p :x)))))
 
 (defglyph "omega" 969
-  (let* ((rx (* (gx) 0.55)) (ry (* (p :x) 0.46)) (cy (+ ry (/ (p :thin) 2))))
-    (list (stroke-open (arc-path (- (centre-x) (* rx 0.86)) cy rx ry 150 -20))
-          (stroke-open (arc-path (+ (centre-x) (* rx 0.86)) cy rx ry 200 30)))))
+  ;; Two bowls opening UPWARD whose inner ends meet at a peak in the
+  ;; middle.  The previous pair swept the tops of their circles instead
+  ;; of the bottoms, so it came out as two arches over a stem.
+  ;;
+  ;; Each arc runs 140 to 400 degrees, through 270 at the foot, so its
+  ;; ends rise and turn inward.  The centres sit cos(140)*rx apart,
+  ;; which is exactly where those ends coincide.
+  (let* ((rx (u 130)) (ry (* (p :x) 0.55))
+         (cy (- (+ ry (/ (p :thin) 2)) (p :over)))
+         (d (* rx (abs (cos (deg 140))))))
+    (list (stroke-open (arc-path (- (centre-x) d) cy rx ry 140 400))
+          (stroke-open (arc-path (+ (centre-x) d) cy rx ry 140 400)))))
 
 ;;; --- uppercase ---------------------------------------------------------------
 ;;;

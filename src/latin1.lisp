@@ -31,12 +31,22 @@
                     (hbar 0 (- ex r) (+ ex r) :align :on))))))
 
 (defglyph "ae" 230
-  (let* ((rx (* (bowl-rx) 0.52)) (cy (bowl-cy)) (ry (bowl-ry))
-         (lx (- (centre-x) (* rx 0.98))) (ex (+ (centre-x) (* rx 0.98)))
-         (half (/ (p :aperture) 2)))
-    (append (stroke-closed (arc-path lx cy rx ry 0 360))
-            (list (stroke-open (arc-path ex cy rx ry 0 (- 360 half)))
-                  (stroke-open (list (line-seg (- ex rx) cy (+ ex rx) cy)))))))
+  ;; The left half is an A, not an O.  Built from a closed ring it was
+  ;; identical to oe -- two different letters sharing one outline -- and
+  ;; adding a stem at the junction changed nothing, because the ring's
+  ;; own right edge was already there.
+  ;;
+  ;; A single-storey a is a bowl with a FLAT right side, so the bowl is
+  ;; a half-ellipse swept 90 to 270 whose two ends land on the stem the
+  ;; e then shares.
+  (with-pen-scale (0.80d0)
+    (let* ((cx (centre-x)) (ra (u 256)) (re (u 128))
+           (ry (bowl-ry)) (cy (bowl-cy))
+           (half (/ (p :aperture) 2)))
+      (list (stroke-open (arc-path cx cy ra ry 90 270))
+            (vstem cx 0 (p :x))
+            (stroke-open (arc-path (+ cx re) cy re ry half (- 360 half)))
+            (stroke-open (list (line-seg cx cy (+ cx (* re 1.7)) cy)))))))
 
 (defglyph "AE" 198
   (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :cap) 0.30)))
@@ -156,17 +166,17 @@
           (diag (- (centre-x) d) (+ cy r) (- (centre-x) (u 10)) cy :trim nil)
           (diag (- (centre-x) (u 10)) cy (- (centre-x) d) (- cy r) :trim nil))))
 
-(defglyph "exclamdown" 161
-  (list (stroke-open (list (line-seg (centre-x) (u -120)
-                                     (centre-x) (* (p :cap) 0.52))))
-        (dot-at (centre-x) (- (p :cap) (p :dot) (u 40)))))
+(defun turned (base)
+  "BASE rotated half a turn about the middle of the cap band.
 
-(defglyph "questiondown" 191
-  (let* ((cx (centre-x)) (rx (* (bowl-rx) 0.78)) (ry (* (p :cap) 0.22)))
-    (list (stroke-open (append (arc-path cx (+ (u -120) ry) rx ry 0 210)
-                               (list (line-seg (- cx (* rx 0.1)) (* (p :cap) 0.22)
-                                               cx (* (p :cap) 0.42)))))
-          (dot-at cx (- (p :cap) (p :dot) (u 40))))))
+The Spanish opening marks ARE the closing marks turned, so deriving
+them keeps the two in step -- and the hand-built inverted question mark
+had its hook and stem as separate pieces that merely crossed."
+  (mapcar (lambda (c) (rotate-about c (centre-x) (/ (p :cap) 2) 180))
+          (glyph-contours (find-glyph base))))
+
+(defglyph "exclamdown" 161 (turned "exclam"))
+(defglyph "questiondown" 191 (turned "question"))
 
 (defglyph "section" 167
   (let* ((rx (* (bowl-rx) 0.62))

@@ -1,0 +1,163 @@
+;;;; pen.lisp -- skeleton-and-pen stroking.
+;;;;
+;;;; A letter is a set of centrelines.  Each is stroked with an
+;;;; elliptical pen whose width follows the local tangent:
+;;;;
+;;;;     w(phi) = hypot(stem * sin phi, thin * cos phi)
+;;;;
+;;;; where phi is the tangent angle measured against the stress axis.
+;;;; A vertical tangent gives the full stem; a tangent lying along the
+;;;; stress axis gives the thin.  Modulation is therefore continuous
+;;;; around a curve, the thin spots land on the stress axis by
+;;;; construction, and terminals are cut relative to the stroke rather
+;;;; than to the coordinate system.
+;;;;
+;;;; Offsetting a cubic does not yield a cubic, so each segment is
+;;;; subdivided and its control points pushed along the local normals --
+;;;; accurate enough at type stroke widths, and it keeps the outline to
+;;;; a handful of points per stroke so the result stays hintable.
+
+(in-package #:muskako)
+
+(defstruct (seg (:constructor seg (x0 y0 x1 y1 x2 y2 x3 y3)))
+  x0 y0 x1 y1 x2 y2 x3 y3)
+
+(defun line-seg (x0 y0 x1 y1)
+  "A straight skeleton segment, expressed as a cubic."
+  (seg x0 y0
+       (+ x0 (/ (- x1 x0) 3)) (+ y0 (/ (- y1 y0) 3))
+       (+ x0 (* 2 (/ (- x1 x0) 3))) (+ y0 (* 2 (/ (- y1 y0) 3)))
+       x1 y1))
+
+(defun arc-seg (cx cy rx ry a0 a1)
+  "A skeleton arc from A0 to A1 degrees.  Spans of up to a quarter turn
+stay accurate; callers split anything larger."
+  (let* ((s (deg a0)) (e (deg a1))
+         (alpha (* 4/3 (tan (/ (- e s) 4)))))
+    (seg (+ cx (* rx (cos s))) (+ cy (* ry (sin s)))
+         (+ cx (* rx (cos s)) (* alpha (- (* rx (sin s)))))
+         (+ cy (* ry (sin s)) (* alpha (* ry (cos s))))
+         (- (+ cx (* rx (cos e))) (* alpha (- (* rx (sin e)))))
+         (- (+ cy (* ry (sin e))) (* alpha (* ry (cos e))))
+         (+ cx (* rx (cos e))) (+ cy (* ry (sin e))))))
+
+(defun arc-path (cx cy rx ry a0 a1)
+  "A skeleton arc of any span, split into quarter turns or less."
+  (let* ((n (max 1 (ceiling (abs (- a1 a0)) 90)))
+         (step (/ (- a1 a0) n)))
+    (loop for i from 0 below n
+          collect (arc-seg cx cy rx ry (+ a0 (* i step)) (+ a0 (* (1+ i) step))))))
+
+;;; --- evaluating a segment --------------------------------------------
+
+(defun seg-point (s u)
+  (let ((v (- 1 u)))
+    (values (+ (* v v v (seg-x0 s)) (* 3 v v u (seg-x1 s))
+               (* 3 v u u (seg-x2 s)) (* u u u (seg-x3 s)))
+            (+ (* v v v (seg-y0 s)) (* 3 v v u (seg-y1 s))
+               (* 3 v u u (seg-y2 s)) (* u u u (seg-y3 s))))))
+
+(defun seg-tangent (s u)
+  (let* ((v (- 1 u))
+         (dx (+ (* 3 v v (- (seg-x1 s) (seg-x0 s)))
+                (* 6 v u (- (seg-x2 s) (seg-x1 s)))
+                (* 3 u u (- (seg-x3 s) (seg-x2 s)))))
+         (dy (+ (* 3 v v (- (seg-y1 s) (seg-y0 s)))
+                (* 6 v u (- (seg-y2 s) (seg-y1 s)))
+                (* 3 u u (- (seg-y3 s) (seg-y2 s))))))
+    ;; A degenerate tangent at an endpoint falls back to the chord.
+    (if (and (< (abs dx) 1d-9) (< (abs dy) 1d-9))
+        (values (- (seg-x3 s) (seg-x0 s)) (- (seg-y3 s) (seg-y0 s)))
+        (values dx dy))))
+
+(defun split-seg (s u)
+  "de Casteljau subdivision at U."
+  (flet ((mid (a b) (+ a (* u (- b a)))))
+    (let* ((x01 (mid (seg-x0 s) (seg-x1 s))) (y01 (mid (seg-y0 s) (seg-y1 s)))
+           (x12 (mid (seg-x1 s) (seg-x2 s))) (y12 (mid (seg-y1 s) (seg-y2 s)))
+           (x23 (mid (seg-x2 s) (seg-x3 s))) (y23 (mid (seg-y2 s) (seg-y3 s)))
+           (xa (mid x01 x12)) (ya (mid y01 y12))
+           (xb (mid x12 x23)) (yb (mid y12 y23))
+           (xc (mid xa xb))   (yc (mid ya yb)))
+      (values (seg (seg-x0 s) (seg-y0 s) x01 y01 xa ya xc yc)
+              (seg xc yc xb yb x23 y23 (seg-x3 s) (seg-y3 s))))))
+
+(defun refine (segs n)
+  "Subdivide each segment into N pieces, so offsetting by control-point
+displacement stays accurate through the turn."
+  (if (<= n 1)
+      segs
+      (loop for s in segs
+            append (let ((acc '()) (rest s))
+                     (loop for k from n downto 2
+                           do (multiple-value-bind (a b) (split-seg rest (/ 1d0 k))
+                                (push a acc) (setf rest b)))
+                     (nreverse (cons rest acc))))))
+
+;;; --- the pen ----------------------------------------------------------
+
+(defun pen-width (dx dy)
+  "Stroke width for a tangent (DX, DY) under the current design's
+elliptical pen."
+  (let* ((phi (- (atan dy dx) (deg (p :stress))))
+         (a (p :stem)) (b (p :thin)))
+    (sqrt (+ (* (* a (sin phi)) (* a (sin phi)))
+             (* (* b (cos phi)) (* b (cos phi)))))))
+
+(defun offset-seg (s d0 d3)
+  "Push S sideways by D0 at its start and D3 at its end, along the
+local normals.  Positive is to the left of travel."
+  (multiple-value-bind (tx0 ty0) (seg-tangent s 0d0)
+    (multiple-value-bind (tx3 ty3) (seg-tangent s 1d0)
+      (let* ((l0 (max 1d-9 (sqrt (+ (* tx0 tx0) (* ty0 ty0)))))
+             (l3 (max 1d-9 (sqrt (+ (* tx3 tx3) (* ty3 ty3)))))
+             (nx0 (* (/ (- ty0) l0) d0)) (ny0 (* (/ tx0 l0) d0))
+             (nx3 (* (/ (- ty3) l3) d3)) (ny3 (* (/ tx3 l3) d3)))
+        (seg (+ (seg-x0 s) nx0) (+ (seg-y0 s) ny0)
+             (+ (seg-x1 s) nx0) (+ (seg-y1 s) ny0)
+             (+ (seg-x2 s) nx3) (+ (seg-y2 s) ny3)
+             (+ (seg-x3 s) nx3) (+ (seg-y3 s) ny3))))))
+
+(defun side-widths (segs)
+  "Half-width at each node of the refined skeleton."
+  (append (loop for s in segs
+                collect (multiple-value-bind (dx dy) (seg-tangent s 0d0)
+                          (/ (pen-width dx dy) 2)))
+          (list (multiple-value-bind (dx dy) (seg-tangent (car (last segs)) 1d0)
+                  (/ (pen-width dx dy) 2)))))
+
+(defun segs->points (segs &key (start t))
+  "Convert offset segments to contour points."
+  (append (when start (list (pt :curve (seg-x0 (first segs)) (seg-y0 (first segs)))))
+          (loop for s in segs
+                append (list (pt :offcurve (seg-x1 s) (seg-y1 s))
+                             (pt :offcurve (seg-x2 s) (seg-y2 s))
+                             (pt :curve (seg-x3 s) (seg-y3 s))))))
+
+(defun stroke-open (segs &key (refine 4))
+  "Stroke an open skeleton, returning one closed contour."
+  (let* ((segs (refine segs refine))
+         (w (side-widths segs))
+         (left  (loop for s in segs for i from 0
+                      collect (offset-seg s (nth i w) (nth (1+ i) w))))
+         (right (loop for s in segs for i from 0
+                      collect (offset-seg s (- (nth i w)) (- (nth (1+ i) w))))))
+    (normalize-start
+     (append (segs->points left)
+             (list (pt :line (seg-x3 (car (last right))) (seg-y3 (car (last right)))))
+             (rest (segs->points (mapcar #'flip-seg (reverse right)) :start t))))))
+
+(defun flip-seg (s)
+  (seg (seg-x3 s) (seg-y3 s) (seg-x2 s) (seg-y2 s)
+       (seg-x1 s) (seg-y1 s) (seg-x0 s) (seg-y0 s)))
+
+(defun stroke-closed (segs &key (refine 4))
+  "Stroke a closed skeleton, returning outer and inner contours."
+  (let* ((segs (refine segs refine))
+         (w (side-widths segs))
+         (outer (loop for s in segs for i from 0
+                      collect (offset-seg s (nth i w) (nth (1+ i) w))))
+         (inner (loop for s in segs for i from 0
+                      collect (offset-seg s (- (nth i w)) (- (nth (1+ i) w))))))
+    (list (rest (segs->points outer))
+          (reverse-contour (rest (segs->points inner))))))

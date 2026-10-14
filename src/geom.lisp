@@ -77,10 +77,23 @@ too pointed at the top and bottom to read as a typographic bowl."
   "An axis-aligned rectangle, wound counterclockwise."
   (list (pt :line x0 y0) (pt :line x1 y0) (pt :line x1 y1) (pt :line x0 y1)))
 
-(defun arch (cx baseline rx ry thick thin-v)
+(defun stroke-between (x0 y0 x1 y1 w)
+  "A straight stroke of width W between two points, ends cut square to
+the stroke.  The diagonals of k v w x y z."
+  (let* ((dx (- x1 x0)) (dy (- y1 y0))
+         (len (max 1d-6 (sqrt (+ (* dx dx) (* dy dy)))))
+         (nx (* (/ dy len) (/ w 2)))
+         (ny (* (/ (- dx) len) (/ w 2))))
+    (list (pt :line (+ x0 nx) (+ y0 ny))
+          (pt :line (+ x1 nx) (+ y1 ny))
+          (pt :line (- x1 nx) (- y1 ny))
+          (pt :line (- x0 nx) (- y0 ny)))))
+
+(defun arch (cx baseline rx ry thick thin-v &key (dir 1))
   "A half-annulus opening downward: the shoulder of n m h u r.
 RX and RY are CENTRELINE radii, so the legs land exactly on stems drawn
-at cx+/-rx rather than straddling them and bulging the join.
+at cx+/-rx rather than straddling them and bulging the join.  DIR -1
+flips it into a trough, which is the bowl of u and the underside of j.
 
 Wound counterclockwise to match RECT: under the nonzero fill rule two
 overlapping contours of opposite winding cancel, which punches a hole
@@ -89,20 +102,20 @@ where a stem and its shoulder are supposed to merge."
          (irx (- rx (/ thick 2)))  (iry (- ry (/ thin-v 2)))
          (kx (* +kappa+ orx))  (ky (* +kappa+ ory))
          (ikx (* +kappa+ irx)) (iky (* +kappa+ iry)))
-    (reverse-contour
+    (funcall (if (plusp dir) #'reverse-contour #'identity)
      (list (pt :line (- cx orx) baseline)
-          (pt :offcurve (- cx orx) (+ baseline ky))
-          (pt :offcurve (- cx kx) (+ baseline ory))
-          (pt :curve cx (+ baseline ory))
-          (pt :offcurve (+ cx kx) (+ baseline ory))
-          (pt :offcurve (+ cx orx) (+ baseline ky))
+          (pt :offcurve (- cx orx) (+ baseline (* dir ky)))
+          (pt :offcurve (- cx kx) (+ baseline (* dir ory)))
+          (pt :curve cx (+ baseline (* dir ory)))
+          (pt :offcurve (+ cx kx) (+ baseline (* dir ory)))
+          (pt :offcurve (+ cx orx) (+ baseline (* dir ky)))
           (pt :curve (+ cx orx) baseline)
           (pt :line (+ cx irx) baseline)
-          (pt :offcurve (+ cx irx) (+ baseline iky))
-          (pt :offcurve (+ cx ikx) (+ baseline iry))
-          (pt :curve cx (+ baseline iry))
-          (pt :offcurve (- cx ikx) (+ baseline iry))
-          (pt :offcurve (- cx irx) (+ baseline iky))
+          (pt :offcurve (+ cx irx) (+ baseline (* dir iky)))
+          (pt :offcurve (+ cx ikx) (+ baseline (* dir iry)))
+          (pt :curve cx (+ baseline (* dir iry)))
+          (pt :offcurve (- cx ikx) (+ baseline (* dir iry)))
+          (pt :offcurve (- cx irx) (+ baseline (* dir iky)))
           (pt :curve (- cx irx) baseline)))))
 
 (defun bounds (contours)

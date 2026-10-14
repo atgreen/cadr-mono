@@ -11,6 +11,7 @@
                 :components ((:file "package")
                              (:file "params")
                              (:file "geom")
+                             (:file "pen")
                              (:file "primitives")
                              (:file "glyphs")
                              (:file "braille")

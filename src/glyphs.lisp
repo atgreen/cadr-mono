@@ -237,7 +237,7 @@ leg that drops to TO."
     ;; to 137 units is 0.87px and renders grey where a full one renders
     ;; solid.  The even-colour rule is about narrow glyphs FLOATING in
     ;; their cells, not about crowded ones.
-    (with-pen-scale ((crowded 0.92d0))
+    (with-pen-scale ((crowded 0.95d0))
       (list (stroke-open (list (line-seg (- (centre-x) rx) 0
                                          (- (centre-x) rx) (p :x))))
             (stroke-open (shoulder-path (- (centre-x) half) half))
@@ -330,11 +330,19 @@ it opens a gap."
                          (arc-path rf cy fx fy 180 360)
                          (list (line-seg (+ rf fx) cy (+ cx rx) (p :x))))))))
       (with-pen-scale ((crowded 0.95d0))
-        (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :x) 0.70)))
-          (list (diag (- cx rx) (p :x) (- cx (* rx 0.46)) 0)
-                (diag (- cx (* rx 0.46)) 0 cx mid :trim :start)
-                (diag cx mid (+ cx (* rx 0.46)) 0 :trim :end)
-                (diag (+ cx (* rx 0.46)) 0 (+ cx rx) (p :x)))))))
+        ;; All four strokes run at the SAME angle.  Placed by eye the
+        ;; outer pair ran at 0.54*rx/x and the inner pair at 0.657,
+        ;; so no two strokes in the letter were parallel and w read as
+        ;; a cramped zigzag rather than two v's.  Matching the outer
+        ;; run to the inner one fixes the vertex position exactly:
+        ;;   (rx - v)/x = v/apex   =>   v = apex*rx / (x + apex)
+        (let* ((rx (bowl-rx)) (cx (centre-x))
+               (apex (* (p :x) 0.75))
+               (v (/ (* apex rx) (+ (p :x) apex))))
+          (list (diag (- cx rx) (p :x) (- cx v) 0)
+                (diag (- cx v) 0 cx apex :trim :start)
+                (diag cx apex (+ cx v) 0 :trim :end)
+                (diag (+ cx v) 0 (+ cx rx) (p :x)))))))
 
 (defglyph "x" 120
   (let ((rx (bowl-rx)) (cx (centre-x)))

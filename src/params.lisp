@@ -49,8 +49,14 @@
                       ; tighter: the advance cannot grow, so the only
                       ; room a heavier stroke can take is the margin.
   (stem         88)   ; vertical stroke weight.  The grade moves this.
-  (thin         62)   ; horizontal stroke weight (88 * 0.70)
-  (stress-angle -16)  ; degrees.  Humanist: the thin spots tilt off vertical.
+  (thin         72)   ; horizontal stroke weight (88 * 0.82)
+  (stress-angle  -5)  ; degrees.  Humanist: the thin spots tilt off vertical.
+                      ; At -16 with thin/stem 0.70 the tilt was legible as
+                      ; wobble: every round letter's counter leaned and no
+                      ; two terminals pointed the same way.  Measured, the
+                      ; field runs 0.70 (Liberation) to 0.89 (JetBrains);
+                      ; the outlier here was never the modulation on its
+                      ; own, it was the modulation AND the tilt together.
   (tension    0.60d0) ; bowl flatness.  0.5523 is a true ellipse; higher
                       ; squares the shoulders the way drawn bowls do.
 

@@ -99,7 +99,7 @@ with a sweeping tail. `k`'s arm curves into the stem instead of striking it.
 ![Hinted against unhinted](proof/hinting.png)
 
 At 2048 units per em a whole pixel is 158 units at 13px. The horizontal stroke
-is 127. Every horizontal in this font is sub-pixel at the sizes it exists for,
+is 147. Every horizontal in this font is sub-pixel at the sizes it exists for,
 and unhinted they wash out to grey.
 
 Hinting roughly doubles the share of fully-covered pixels at 11–13px, measured
@@ -115,7 +115,9 @@ is what makes the humanist modulation affordable at all.
 | advance / line box | 0.496 | Hack 0.517, Adwaita 0.508, JetBrains 0.455 |
 | clearance above tallest glyph | +1.7% | Hack −3.1%, Noto −4.7%, Liberation −5.6% |
 | bold stem ratio | 1.44× | 1.32×–1.58× |
-| `m` ink vs `n` | 1.27× | 1.28×–1.35× |
+| `m` ink vs `n` | 1.29× | 1.28×–1.35× |
+| `w` ink vs `n` | 1.15× | 1.15×–1.35× |
+| thin / stem | 0.82 | 0.70–0.89 |
 | accent height over a capital | 32% of cap | 26%–39% |
 
 ---
@@ -164,6 +166,8 @@ ascender         1556        letters
 descender        -230        letters
 line box         1884 / -594 the cell a terminal reserves
 stem             180         regular · 164 dark grade · 260 bold
+thin             147         0.82 of the stem
+stress            -5 degrees the tilt of the thin points
 ```
 
 Letter extents and line extents are separate parameters. Collapsing them is what

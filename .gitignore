@@ -10,3 +10,4 @@ ocicl/
 .beads-credential-key
 .beads/proxieddb/
 build/venv/
+build/ttf-hinted/

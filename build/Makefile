@@ -2,7 +2,7 @@
 VENV := build/venv/bin
 ROOT := $(shell pwd)
 
-all: proof ttf
+all: proof hint
 
 sources:
 	sbcl --script build/build.lisp
@@ -15,12 +15,18 @@ ttf: sources
 	$(VENV)/fontmake -u build/MuskakoDark-Regular.ufo -o ttf \
 	  --output-dir build/ttf --overlaps-backend pathops
 
-install: ttf
+hint: ttf
+	$(VENV)/python build/hint.py
+	$(VENV)/python build/rasterproof.py
+
+# The HINTED cuts are what gets installed.  Unhinted, every horizontal
+# in this font is sub-pixel at 13px.
+install: hint
 	mkdir -p $(HOME)/.local/share/fonts
-	cp build/ttf/*.ttf $(HOME)/.local/share/fonts/
+	cp build/ttf-hinted/*.ttf $(HOME)/.local/share/fonts/
 	fc-cache -f $(HOME)/.local/share/fonts
 
 clean:
-	rm -rf build/ttf build/*.ufo proof/*.png
+	rm -rf build/ttf build/ttf-hinted build/*.ufo proof/*.png
 
-.PHONY: all sources proof ttf install clean
+.PHONY: all sources proof ttf hint install clean

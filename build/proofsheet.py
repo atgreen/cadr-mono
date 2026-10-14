@@ -242,6 +242,50 @@ def sheet_terminal(sizes=(11, 12, 13, 14, 16)):
     img.save(OUT / "terminal.png")
 
 
+EXTENDED = [
+    ("Latin-1 lower", "àáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿ"),
+    ("Latin-1 upper", "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞß"),
+    ("ligatures",     "œŒ æÆ ıîïÎÏ  coeur -> cœur, oeuvre -> œuvre"),
+    ("French",        "Où êtes-vous allé ? Ça coûte 9 € à Noël."),
+    ("Greek lower",   "αβγδεζηθικλμνξοπρςστυφχψω"),
+    ("Greek upper",   "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ"),
+    ("currency",      "¢ £ ¤ ¥ € ƒ $ ‰ ª º § ¶ © ®"),
+    ("operators",     "+ − ± × ÷ = ≠ ≡ ≤ ≥ ≈ ¬ · ° µ"),
+    ("maths",         "∞ √ ∑ ∏ ∫ ∂ ∆ ∅ ∀ ∃ ∈ ∧ ∨ ∪ ∩"),
+    ("arrows",        "→ ← ↑ ↓ ↔ ⇒"),
+    ("punctuation",   "« » ‹ › ¡ ¿ – — ' ' \u201c \u201d … • † ‡"),
+]
+
+
+def sheet_extended(sizes=(14, 20, 38)):
+    """The non-ASCII repertoire, at the sizes it gets judged at.
+
+    Permanent, because these blocks were reviewed once from a throwaway
+    render and the defects it found -- disconnected Greek, a dark oe, an
+    undersized infinity -- are exactly what a standing sheet catches."""
+    rows = []
+    for px in sizes:
+        for name, txt in EXTENDED:
+            f = face(REF, px)
+            adv = advance_of(f)
+            cov = Image.new("L", (adv * len(txt) + 16, int(f.size.height / 64) + 8), 0)
+            draw_run(cov, f, txt, 8, int(4 + f.size.ascender / 64))
+            rows.append((f"{name} {px}px", finish(cov, dark=True)))
+    gut = 160
+    W = max(r.width for _, r in rows) + gut + 16
+    H = sum(r.height + 7 for _, r in rows) + 10
+    sheet = Image.new("L", (W, H), 0)
+    marks, y = [], 6
+    for lab, r in rows:
+        sheet.paste(r, (gut, y))
+        marks.append((6, y + r.height // 2 - 6, lab))
+        y += r.height + 7
+    d = ImageDraw.Draw(sheet)
+    for x, yy, lab in marks:
+        d.text((x, yy), lab, font=LBL, fill=165)
+    sheet.save(OUT / "extended.png")
+
+
 def sheet_range(name, first, last, px, cols, title):
     fc = face(REF, px)
     adv = advance_of(fc)
@@ -265,6 +309,7 @@ if __name__ == "__main__":
     sheet_grade()
     sheet_boxes()
     sheet_terminal()
+    sheet_extended()
     sheet_range("box-grid.png", 0x2500, 0x257F, 52, 16, "U+2500 box drawing")
     sheet_range("braille.png", 0x2800, 0x28FF, 56, 32, "U+2800 braille")
     print("proof sheets rendered from the compiled font")

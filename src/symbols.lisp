@@ -129,23 +129,28 @@
 ;;; --- maths ------------------------------------------------------------------------
 
 (defglyph "infinity" 8734
-  (let* ((r (* (bowl-rx) 0.52)) (ry (* (p :x) 0.40)) (cy (* (p :cap) 0.42)))
-    (append (stroke-closed (arc-path (- (centre-x) (* r 0.92)) cy
-                                     (- r (/ (p :stem) 2)) (- ry (/ (p :thin) 2)) 0 360))
-            (stroke-closed (arc-path (+ (centre-x) (* r 0.92)) cy
-                                     (- r (/ (p :stem) 2)) (- ry (/ (p :thin) 2)) 0 360)))))
+  ;; Wide and flat.  Every font in the comparison draws infinity about
+  ;; one and a half times wider than tall; ours was square, which is why
+  ;; it read as undersized next to the inequalities.
+  (with-pen-scale (0.70d0)
+    (let ((rx (u 110)) (ry (u 138)) (d (u 105)) (cy (u 330)))
+      (append (stroke-closed (arc-path (- (centre-x) d) cy rx ry 0 360))
+              (stroke-closed (arc-path (+ (centre-x) d) cy rx ry 0 360))))))
 
 (defglyph "radical" 8730
-  (let ((cx (centre-x)) (rx (bowl-rx)))
-    (list (diag (- cx rx) (* (p :cap) 0.42) (- cx (* rx 0.5)) (* (p :cap) 0.16) :trim nil)
-          (diag (- cx (* rx 0.5)) (* (p :cap) 0.16) (- cx (* rx 0.1)) (p :cap) :trim nil)
-          (hbar (p :cap) (- cx (* rx 0.1)) (+ cx rx) :align :under))))
+  ;; Taller and wider: the field runs 523-586 by 730-976 where ours was
+  ;; 430 by 612.
+  (let* ((cx (centre-x)) (rx (- (/ (p :advance) 2) (u 50)))
+         (top (u 780)) (dip (u 40)))
+    (list (diag (- cx rx) (u 330) (- cx (* rx 0.52)) dip :trim nil)
+          (diag (- cx (* rx 0.52)) dip (- cx (* rx 0.14)) top :trim nil)
+          (hbar top (- cx (* rx 0.14)) (+ cx rx) :align :under))))
 
 (defglyph "summation" 8721
   (let ((rx (* (bowl-rx) 0.86)) (cx (centre-x)))
     (list (hbar (p :cap) (- cx rx) (+ cx rx) :align :under)
-          (diag (+ cx rx) (p :cap) (- cx (* rx 0.3)) (* (p :cap) 0.5) :trim :start)
-          (diag (- cx (* rx 0.3)) (* (p :cap) 0.5) (+ cx rx) 0 :trim :end)
+          (diag (- cx rx) (p :cap) (+ cx (* rx 0.48)) (* (p :cap) 0.5) :trim :start)
+          (diag (+ cx (* rx 0.48)) (* (p :cap) 0.5) (- cx rx) 0 :trim :end)
           (hbar 0 (- cx rx) (+ cx rx) :align :on))))
 
 (defglyph "product" 8719
@@ -228,3 +233,16 @@
             (stroke-closed (arc-path (+ cx (* rx 0.72)) r
                                      (* r 0.9) (- r (/ (p :thin) 2)) 0 360))
             (list (diag (+ cx rx) (p :cap) (- cx rx) 0)))))
+
+;;; --- aliases -------------------------------------------------------------
+;;;
+;;; Distinct codepoints that share a shape.  Unicode keeps them apart;
+;;; a font that only encodes one leaves the other as tofu, which is how
+;;; U+2206 went missing while Greek capital delta was present.
+
+(defglyph "increment" 8710 (glyph-contours (find-glyph "Delta")))
+(defglyph "Ohm" 8486 (glyph-contours (find-glyph "Omega")))
+(defglyph "minus" 8722
+  (list (hbar (u 322) (- (centre-x) (u 215)) (+ (centre-x) (u 215)))))
+(defglyph "asciitilde.op" 8764
+  (glyph-contours (find-glyph "asciitilde")))

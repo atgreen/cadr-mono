@@ -6,22 +6,29 @@
 ;;; --- ligatures and odd letters ---------------------------------------------
 
 (defglyph "oe" 339
-  ;; Needed for French: coeur, oeuvre, soeur.
-  (let* ((rx (* (bowl-rx) 0.52)) (cy (bowl-cy)) (ry (bowl-ry))
-         (lx (- (centre-x) (* rx 0.98))) (ex (+ (centre-x) (* rx 0.98)))
-         (half (/ (p :aperture) 2)))
-    (append (stroke-closed (arc-path lx cy rx ry 0 360))
-            (list (stroke-open (arc-path ex cy rx ry 0 (- 360 half)))
-                  (stroke-open (list (line-seg (- ex rx) cy (+ ex rx) cy)))))))
+  ;; Needed for French: coeur, oeuvre, soeur.  The two bowls SHARE their
+  ;; adjacent edge rather than merely overlapping, and the pen is
+  ;; thinned, because at full weight two bowls in one cell leave
+  ;; counters barely wider than the strokes around them -- which is why
+  ;; it read as a dark blot in running text.
+  (with-pen-scale (0.80d0)
+    (let* ((r (u 112)) (cx (centre-x)) (half (/ (p :aperture) 2))
+           (lx (- cx r)) (ex (+ cx r))
+           (ry (bowl-ry)) (cy (bowl-cy)))
+      (append (stroke-closed (arc-path lx cy r ry 0 360))
+              (list (stroke-open (arc-path ex cy r ry half (- 360 half)))
+                    (stroke-open (list (line-seg (- ex r) cy (+ ex (* r 0.72)) cy))))))))
 
 (defglyph "OE" 338
-  (let* ((rx (* (bowl-rx) 0.52)) (cy (cap-cy)) (ry (cap-ry))
-         (lx (- (centre-x) (* rx 0.98))) (ex (+ (centre-x) (* rx 0.98))))
-    (append (stroke-closed (arc-path lx cy rx ry 0 360))
-            (list (vstem (- ex rx) 0 (p :cap))
-                  (hbar (p :cap) (- ex rx) (+ ex rx) :align :under)
-                  (hbar (* (p :cap) 0.52) (- ex rx) (+ ex (* rx 0.6)))
-                  (hbar 0 (- ex rx) (+ ex rx) :align :on)))))
+  (with-pen-scale (0.80d0)
+    (let* ((r (u 112)) (cx (centre-x))
+           (lx (- cx r)) (ex (+ cx r))
+           (ry (cap-ry)) (cy (cap-cy)))
+      (append (stroke-closed (arc-path lx cy r ry 0 360))
+              (list (vstem (- ex r) 0 (p :cap))
+                    (hbar (p :cap) (- ex r) (+ ex r) :align :under)
+                    (hbar (cap-cy) (- ex r) (+ ex (* r 0.6)))
+                    (hbar 0 (- ex r) (+ ex r) :align :on))))))
 
 (defglyph "ae" 230
   (let* ((rx (* (bowl-rx) 0.52)) (cy (bowl-cy)) (ry (bowl-ry))
@@ -100,10 +107,14 @@
                              (- r (/ (p :stem) 2)) (- r (/ (p :stem) 2)) 0 360))))
 
 (defglyph "plusminus" 177
-  (let ((cy (* (p :cap) 0.52)) (r (u 215)) (g (u 160)))
-    (list (hbar (+ cy g) (- (centre-x) r) (+ (centre-x) r))
-          (vstem (centre-x) (- (+ cy g) r) (+ (+ cy g) r))
-          (hbar (- cy g (u 60)) (- (centre-x) r) (+ (centre-x) r)))))
+  ;; The bar sits near the baseline with the cross above it, so the mark
+  ;; centres where the other operators do.  It used to centre at 426 per
+  ;; mille against 285-298 across the field -- it floated above the line
+  ;; of maths it belonged to.
+  (let ((cy (u 390)) (r (u 215)) (bar (u 58)))
+    (list (hbar cy (- (centre-x) r) (+ (centre-x) r))
+          (vstem (centre-x) (- cy r) (+ cy r))
+          (hbar bar (- (centre-x) r) (+ (centre-x) r)))))
 
 (defglyph "multiply" 215
   (let ((cy (* (p :cap) 0.46)) (r (u 180)))

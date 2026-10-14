@@ -18,10 +18,17 @@
                                            (+ (centre-x) (gx)) 0))))))))
 
 (defglyph "beta" 946
-  (let* ((x0 (- (centre-x) (gx))) (ry (* (p :x) 0.30)))
-    (list (vstem x0 (p :desc) (* (p :x) 0.72))
-          (stroke-open (arc-path x0 (* (p :x) 0.72) (gx) (* (p :x) 0.34) -80 90))
-          (stroke-open (arc-path x0 (* (p :x) 0.30) (gx) ry -90 85)))))
+  ;; Two D-shaped bowls hung off one stem.  Each arc is centred ON the
+  ;; stem and swept from 90 to -90, so both ends land on it by
+  ;; construction -- the previous pair were placed by eye and floated
+  ;; clear of the stem entirely.
+  (let* ((x0 (- (centre-x) (gx)))
+         (top (* (p :x) 1.34))
+         (mid (* (p :x) 0.56))
+         (rx (* (gx) 1.5)))
+    (list (vstem x0 (p :desc) top)
+          (stroke-open (arc-path x0 (/ (+ top mid) 2) rx (/ (- top mid) 2) 90 -90))
+          (stroke-open (arc-path x0 (/ mid 2) rx (/ mid 2) 90 -90)))))
 
 (defglyph "gamma" 947
   (let ((rx (gx)) (cx (centre-x)))
@@ -37,20 +44,26 @@
                                            (+ cx (* rx 0.75)) (p :x)))))))))
 
 (defglyph "epsilon" 949
-  (let ((rx (* (gx) 0.84)) (cx (centre-x)) (r (* (p :x) 0.27)))
-    (list (stroke-open (arc-path cx (- (p :x) r) rx r 10 200))
-          (stroke-open (arc-path cx r rx r 160 -20))
-          (stroke-open (list (line-seg (- cx (* rx 0.5)) (* (p :x) 0.5)
-                                       (+ cx (* rx 0.2)) (* (p :x) 0.5)))))))
+  ;; The 3 construction mirrored: two arcs tangent at mid-height, each
+  ;; running a little past the touch so their union forms the waist.
+  (let* ((rx (* (gx) 0.86))
+         (ry (/ (+ (p :x) (* 2 (p :over)) (- (p :thin))) 4))
+         (cy-u (/ (+ (p :x) (* 2 ry)) 2))
+         (cy-l (/ (- (p :x) (* 2 ry)) 2)))
+    (list (stroke-open (arc-path (centre-x) cy-u rx ry 12 276))
+          (stroke-open (arc-path (centre-x) cy-l rx ry 84 348)))))
 
 (defglyph "zeta" 950
-  (let ((rx (* (gx) 0.82)) (cx (centre-x)))
-    (list (hbar (p :x) (- cx rx) (+ cx rx) :align :under)
-          (diag (+ cx rx) (p :x) (- cx (* rx 0.5)) (* (p :x) 0.22))
-          (stroke-open (arc-path (- cx (* rx 0.1)) (* (p :x) 0.22)
-                                 (* rx 0.7) (* (p :x) 0.22) 180 -60))
-          (stroke-open (arc-path (+ cx (* rx 0.3)) (+ (p :desc) (u 100))
-                                 (* rx 0.5) (u 100) 90 220)))))
+  ;; Bar, diagonal, descending hook -- each starting where the last
+  ;; ends, computed rather than guessed.
+  (let* ((rx (* (gx) 0.84)) (cx (centre-x))
+         (kx (- cx (* rx 0.30))) (ky (* (p :x) 0.30))
+         (r (* (p :tail) 0.9))
+         (cy (+ (p :desc) r (/ (p :thin) 2))))
+    (list (hbar (p :x) (- cx (* rx 0.62)) (+ cx rx) :align :under)
+          (diag (+ cx rx) (- (p :x) (/ (p :thin) 2)) kx ky :trim nil)
+          (stroke-open (append (list (line-seg kx ky (+ cx (* rx 0.2)) (+ cy r)))
+                               (arc-path (+ cx (* rx 0.2) (- r)) (+ cy r) r r 0 -120))))))
 
 (defglyph "eta" 951
   (list (stroke-open (list (line-seg (- (centre-x) (gx)) 0 (- (centre-x) (gx)) (p :x))))
@@ -91,20 +104,28 @@
           (diag (+ cx rx) (p :x) cx 0))))
 
 (defglyph "sigma1" 962
-  ;; Final sigma, which Greek text needs at the end of a word.
-  (let ((half (/ (p :aperture) 2)))
+  ;; Final sigma: a c whose lower terminal CONTINUES into the
+  ;; descender, rather than a separate stroke left near it.
+  (let* ((a 320)
+         (ex (+ (centre-x) (* (gx) (cos (deg a)))))
+         (ey (+ (gcy) (* (gry) (sin (deg a))))))
     (list (stroke-open
-           (append (arc-path (centre-x) (gcy) (gx) (gry) (- 90 half) 320)
-                   (list (line-seg (+ (centre-x) (* (gx) 0.62)) (* (p :x) 0.18)
-                                   (+ (centre-x) (* (gx) 0.3)) (p :desc))))))))
+           (append (arc-path (centre-x) (gcy) (gx) (gry) (- 90 (/ (p :aperture) 2)) a)
+                   (list (line-seg ex ey (- (centre-x) (* (gx) 0.3))
+                                   (+ (p :desc) (u 20)))))))))
+
 
 (defglyph "xi" 958
-  (let ((rx (* (gx) 0.8)) (cx (centre-x)))
-    (list (hbar (p :x) (- cx rx) (+ cx rx) :align :under)
-          (stroke-open (arc-path cx (* (p :x) 0.70) (* rx 0.8) (* (p :x) 0.14) 40 300))
-          (stroke-open (arc-path cx (* (p :x) 0.34) (* rx 0.8) (* (p :x) 0.18) 90 -150))
-          (stroke-open (arc-path (+ cx (* rx 0.3)) (+ (p :desc) (u 100))
-                                 (* rx 0.5) (u 100) 90 220)))))
+  ;; Zeta with a middle bar.
+  (let* ((rx (* (gx) 0.84)) (cx (centre-x))
+         (kx (- cx (* rx 0.30))) (ky (* (p :x) 0.26))
+         (r (* (p :tail) 0.9))
+         (cy (+ (p :desc) r (/ (p :thin) 2))))
+    (list (hbar (p :x) (- cx (* rx 0.62)) (+ cx rx) :align :under)
+          (stroke-open (arc-path cx (* (p :x) 0.60) (* rx 0.8) (* (p :x) 0.16) 30 330))
+          (diag (+ cx (* rx 0.74)) (* (p :x) 0.52) kx ky :trim nil)
+          (stroke-open (append (list (line-seg kx ky (+ cx (* rx 0.2)) (+ cy r)))
+                               (arc-path (+ cx (* rx 0.2) (- r)) (+ cy r) r r 0 -120))))))
 
 (defglyph "omicron" 959 (glyph-contours (find-glyph "o")))
 
@@ -205,8 +226,12 @@
 (defglyph "Sigma" 931
   (let ((rx (bowl-rx)) (cx (centre-x)))
     (list (hbar (p :cap) (- cx rx) (+ cx rx) :align :under)
-          (diag (+ cx rx) (p :cap) (- cx (* rx 0.25)) (* (p :cap) 0.5) :trim :start)
-          (diag (- cx (* rx 0.25)) (* (p :cap) 0.5) (+ cx rx) 0 :trim :end)
+          ;; The diagonals run from the bars' LEFT ends to a vertex at
+          ;; mid-right.  I had them the other way round, and a mirrored
+          ;; sigma is the shape of the letter ezh -- which is exactly
+          ;; what it kept rendering as.
+          (diag (- cx rx) (p :cap) (+ cx (* rx 0.46)) (* (p :cap) 0.5) :trim :start)
+          (diag (+ cx (* rx 0.46)) (* (p :cap) 0.5) (- cx rx) 0 :trim :end)
           (hbar 0 (- cx rx) (+ cx rx) :align :on))))
 
 (defglyph "Phi" 934
@@ -222,8 +247,19 @@
           (vstem (centre-x) 0 (p :cap)))))
 
 (defglyph "Omega" 937
-  (let* ((rx (bowl-rx)) (cx (centre-x)) (ry (* (p :cap) 0.42))
-         (cy (+ ry (* (p :cap) 0.22))))
-    (list (stroke-open (arc-path cx cy rx ry -50 230))
-          (hbar 0 (- cx rx) (- cx (* rx 0.3)) :align :on)
-          (hbar 0 (+ cx (* rx 0.3)) (+ cx rx) :align :on))))
+  ;; The arc's ends carry DOWN to the baseline before the feet turn out.
+  ;; Previously the feet sat on the baseline while the arc stopped at
+  ;; 0.32 of the cap, so they were three detached pieces.
+  (let* ((rx (* (bowl-rx) 0.92)) (cx (centre-x))
+         (ry (* (p :cap) 0.40)) (cy (+ ry (* (p :cap) 0.20)))
+         ;; The bowl opens at the BOTTOM, so it sweeps nearly the whole
+         ;; circle.  At 110 degrees it was a cap, not a bowl.
+         (a -55)
+         (ex (+ cx (* rx (cos (deg a)))))
+         (ey (+ cy (* ry (sin (deg a))))))
+    (list (stroke-open (arc-path cx cy rx ry a 235))
+          (stroke-open (list (line-seg ex ey ex (/ (p :thin) 2))))
+          (stroke-open (list (line-seg (- cx (- ex cx)) ey
+                                       (- cx (- ex cx)) (/ (p :thin) 2))))
+          (hbar 0 (- cx (bowl-rx)) (- cx (* (bowl-rx) 0.28)) :align :on)
+          (hbar 0 (+ cx (* (bowl-rx) 0.28)) (+ cx (bowl-rx)) :align :on))))

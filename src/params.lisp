@@ -45,6 +45,9 @@
   (overshoot    12)   ; round letters exceed flat ones by this
 
   ;; --- stroke --------------------------------------------------------
+  (sidebearing  58)   ; space outside the round letters.  Bold needs it
+                      ; tighter: the advance cannot grow, so the only
+                      ; room a heavier stroke can take is the margin.
   (stem         88)   ; vertical stroke weight.  The grade moves this.
   (thin         62)   ; horizontal stroke weight (88 * 0.70)
   (stress-angle -16)  ; degrees.  Humanist: the thin spots tilt off vertical.
@@ -91,6 +94,7 @@
   ;; nothing redrawn; JetBrains reshapes f and y, Adwaita only f.  So a
   ;; genuinely drawn italic is as rare as the research said, and this
   ;; one reshapes more than any of them.
+  (weight      400)   ; OS/2 weight class
   (slant         0)   ; degrees of slope; negative leans right
   (italic      nil)   ; whether to use the italic letterforms
 
@@ -106,7 +110,7 @@
   `(let ((*design* ,design)) ,@body))
 
 (defparameter +metric-slots+
-  '(:advance :cap :x :asc :desc :line-asc :line-desc :over :stem :thin :tail :dot :serif
+  '(:advance :cap :x :asc :desc :line-asc :line-desc :over :stem :thin :tail :dot :serif :sidebearing
     :br-dot :br-inset :br-top :br-pitch :rule :grade)
   "Slots carrying a length.  These are written per mille and scaled to
 the current upm; angles, ratios and flags are not.")
@@ -126,6 +130,7 @@ advance width has to be a whole number of units."
     (:asc (d-ascender *design*))       (:desc (d-descender *design*))
     (:line-asc (d-line-ascent *design*)) (:line-desc (d-line-descent *design*))
     (:over (d-overshoot *design*))     (:stem (d-stem *design*))
+    (:sidebearing (d-sidebearing *design*)) (:weight (d-weight *design*))
     (:thin (d-thin *design*))          (:stress (d-stress-angle *design*))
     (:aperture (d-aperture *design*))
     (:ease (d-shoulder-ease *design*)) (:tail (d-tail *design*))
@@ -150,10 +155,29 @@ of the current em; everything else comes back as written."
   "The reference cut, drawn for dark-on-light."
   (apply #'make-design :family "Muskako" :style "Regular" :grade 0 overrides))
 
+(defun embolden (d)
+  "Make a cut bold.
+
+Measured across the field, a bold stem runs 1.32 to 1.58 times the
+regular -- JetBrains 1.40, Hack 1.32, Adwaita 1.44, Liberation 1.58 --
+so this takes the middle at 1.44.  Contrast drops a little, as it does
+in any bold: thick strokes crowd a counter, and holding the regular's
+modulation would close them."
+  (setf (d-stem d)        (round (* (d-stem d) 1.44))
+        (d-thin d)        (round (* (d-stem d) 0.76))
+        (d-sidebearing d) 42
+        (d-dot-radius d)  (round (* (d-dot-radius d) 1.18))
+        (d-rule-weight d) (round (* (d-rule-weight d) 1.36))
+        (d-serif d)       (round (* (d-serif d) 0.94))
+        (d-weight d)      700
+        (d-style d)       (if (d-italic d) "Bold Italic" "Bold"))
+  d)
+
 (defun italicise (d &key (slant -10))
   "Turn a cut into its italic.  The slope is applied to outlines; the
 flag switches the letters that are genuinely redrawn."
-  (setf (d-slant d) slant (d-italic d) t (d-style d) "Italic")
+  (setf (d-slant d) slant (d-italic d) t
+        (d-style d) (if (= (d-weight d) 700) "Bold Italic" "Italic"))
   d)
 
 (defun dark-cut (&key (grade 4) &allow-other-keys)

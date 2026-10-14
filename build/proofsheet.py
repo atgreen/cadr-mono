@@ -19,6 +19,8 @@ OUT.mkdir(exist_ok=True)
 REF = HINTED / "Muskako-Regular.ttf"
 DARK = HINTED / "MuskakoDark-Regular.ttf"
 ITAL = HINTED / "Muskako-Italic.ttf"
+BOLD = HINTED / "Muskako-Bold.ttf"
+BOLDITAL = HINTED / "Muskako-BoldItalic.ttf"
 DARKITAL = HINTED / "MuskakoDark-Italic.ttf"
 
 _LABEL_PATHS = ["/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf",
@@ -324,6 +326,38 @@ def sheet_italic(sizes=(13, 16, 22, 44)):
     sheet.save(OUT / "italic.png")
 
 
+def sheet_weights(sizes=(13, 16, 22, 40)):
+    """All four cuts of the light family, at the sizes they get set at.
+
+    The question a bold has to answer in a terminal is whether it reads
+    as bold at 13px without closing its counters."""
+    text = "aeomnsg 0O8 ┌─┬─┐ ░▒▓ the quick brown fox 42"
+    cuts = [("Regular", REF), ("Bold", BOLD),
+            ("Italic", ITAL), ("Bold Italic", BOLDITAL)]
+    rows = []
+    for px in sizes:
+        for lab, path in cuts:
+            f = face(path, px)
+            adv = advance_of(f)
+            cov = Image.new("L", (adv * len(text) + 16,
+                                  int(f.size.height / 64) + 8), 0)
+            draw_run(cov, f, text, 8, int(4 + f.size.ascender / 64))
+            rows.append((f"{lab} {px}px", finish(cov, dark=True)))
+    gut = 130
+    W = max(r.width for _, r in rows) + gut + 16
+    H = sum(r.height + 5 for _, r in rows) + 10
+    sheet = Image.new("L", (W, H), 0)
+    marks, y = [], 6
+    for lab, r in rows:
+        sheet.paste(r, (gut, y))
+        marks.append((6, y + r.height // 2 - 6, lab))
+        y += r.height + 5
+    d = ImageDraw.Draw(sheet)
+    for x, yy, lab in marks:
+        d.text((x, yy), lab, font=LBL, fill=165)
+    sheet.save(OUT / "weights.png")
+
+
 def sheet_range(name, first, last, px, cols, title):
     fc = face(REF, px)
     adv = advance_of(fc)
@@ -349,6 +383,7 @@ if __name__ == "__main__":
     sheet_terminal()
     sheet_extended()
     sheet_italic()
+    sheet_weights()
     sheet_range("box-grid.png", 0x2500, 0x257F, 52, 16, "U+2500 box drawing")
     sheet_range("braille.png", 0x2800, 0x28FF, 56, 32, "U+2800 braille")
     print("proof sheets rendered from the compiled font")

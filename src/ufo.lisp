@@ -78,6 +78,7 @@
       (kv-str s "familyName" (p :family))
       (kv-str s "styleName" (p :style))
       (kv-int s "italicAngle" (p :slant))
+      (kv-int s "openTypeOS2WeightClass" (p :weight))
       (kv-int s "unitsPerEm" (p :upm))
       (kv-int s "ascender" (p :line-asc))
       (kv-int s "descender" (p :line-desc))

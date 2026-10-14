@@ -14,9 +14,13 @@
 
 (defun build-all ()
   (emit (light-cut) "Muskako-Regular")
-  (emit (italicise (light-cut) :slant -10) "Muskako-Italic")
+  (emit (italicise (light-cut)) "Muskako-Italic")
+  (emit (embolden (light-cut)) "Muskako-Bold")
+  (emit (embolden (italicise (light-cut))) "Muskako-BoldItalic")
   (emit (dark-cut) "MuskakoDark-Regular")
-  (emit (italicise (dark-cut) :slant -10) "MuskakoDark-Italic")
+  (emit (italicise (dark-cut)) "MuskakoDark-Italic")
+  (emit (embolden (dark-cut)) "MuskakoDark-Bold")
+  (emit (embolden (italicise (dark-cut))) "MuskakoDark-BoldItalic")
   (format t "done~%"))
 
 (handler-case (build-all) (error (e) (format t "~&ERROR: ~a~%" e)))

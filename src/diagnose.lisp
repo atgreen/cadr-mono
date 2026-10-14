@@ -43,6 +43,13 @@
             (format t "~12a ~6d ~6d ~6d ~6d ~6d ~6d ~a~%"
                     (glyph-name g) lsb rsb (round y0) (round y1)
                     (round (- x1 x0)) skew
-                    (cond ((> (abs skew) 40) "<-- OFF CENTRE")
-                          ((> (abs skew) 12) "<-- drifting")
-                          (t "")))))))))
+                    ;; punctuation is meant to be small; only judge
+                    ;; glyphs tall enough to be letters or figures
+                    (let ((fill (if (> (- y1 y0) (* 0.4 (p :x)))
+                                    (/ (- x1 x0) (float (p :advance)))
+                                    1.0)))
+                      (cond ((> (abs skew) 40) "<-- OFF CENTRE")
+                            ((< fill 0.55) "<-- LONELY (floats in its cell)")
+                            ((> (abs skew) 12) "<-- drifting")
+                            ((< fill 0.62) "<-- narrow")
+                            (t ""))))))))))

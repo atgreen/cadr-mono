@@ -45,12 +45,22 @@ compiler's overlap removal produces."
              (incf pen (* scale (p :advance))))
     pen))
 
+(defvar *code-index* nil)
+
+(defun code-index ()
+  "Map codepoint to glyph name, so the specimen can use any glyph that
+exists rather than a hand-maintained case form that silently drops the
+ones I forget to add."
+  (or *code-index*
+      (setf *code-index*
+            (let ((h (make-hash-table)))
+              (maphash (lambda (name e)
+                         (when (first e) (setf (gethash (first e) h) name)))
+                       *glyph-builders*)
+              h))))
+
 (defun char-glyph-name (ch)
-  (case ch
-    (#\Space "space") (#\o "o") (#\c "c") (#\e "e") (#\n "n")
-    (#\i "i") (#\l "l") (#\0 "zero") (#\1 "one")
-    (#\. "period") (#\- "hyphen")
-    (t nil)))
+  (gethash (char-code ch) (code-index)))
 
 (defmacro with-sheet ((path w h &key (dark nil)) &body body)
   `(vecto:with-canvas (:width ,w :height ,h)
@@ -61,10 +71,10 @@ compiler's overlap removal produces."
      (vecto:save-png ,path)))
 
 (defparameter *specimen-lines*
-  '("once coil lion cone"
-    "nice line noel oil"
-    "0o 1l il 1i 0.1"
-    "oooo nnnn cccc eeee")
+  '("humble pond require"
+    "chimp bud our melon"
+    "0o 1l il 1i rn m cl d"
+    "nnnn oooo mmmm uuuu")
   "Built from the glyphs that exist so far, but chosen to stress what a
 specimen is for: words for rhythm, the confusable pairs this font is
 supposed to disambiguate, and runs of one letter to expose uneven
@@ -85,23 +95,30 @@ guessing."
                       (list (p :cap) nil) (list (p :asc) nil)))
     (guide (+ baseline (* scale (first spec))) w :heavy (second spec))))
 
-(defun proof-letters (path &key (size 190))
-  "Every letter at display size against the metric guides."
+(defun proof-letters (path &key (size 150) (cols 12))
+  "Every letter at display size against the metric guides.
+
+Laid out as a grid rather than one row: a single row of 90 glyphs gets
+scaled down to fit a screen, which hides the very detail the display
+proof exists to show."
   (let* ((glyphs (remove-if-not (lambda (g) (and (glyph-contours g)
                                                  (< (or (glyph-code g) 0) #x2800)))
                                 (all-glyphs)))
          (scale (/ size (p :upm)))
          (cell (* scale (p :advance)))
-         (w (ceiling (+ 40 (* cell (length glyphs)))))
-         (h (ceiling (* size 1.3))))
+         (row-h (* size 1.45))
+         (rows (ceiling (length glyphs) cols))
+         (w (ceiling (+ 30 (* cell cols))))
+         (h (ceiling (+ 20 (* row-h rows)))))
     (with-sheet (path w h)
-      (let ((baseline (* size 0.28)))
-        (draw-guides w scale baseline)
-        (loop for g in glyphs
-              for i from 0
-              do (dolist (c (glyph-contours g))
-                   (draw-contour c scale (+ 20 (* i cell)) baseline))
-                 (vecto:fill-path))))))
+      (loop for row from 0 below rows
+            for baseline = (+ 20 (* (- rows row 1) row-h) (* size 0.30))
+            do (draw-guides w scale baseline)
+               (loop for i from (* row cols) below (min (length glyphs) (* (1+ row) cols))
+                     for g = (nth i glyphs)
+                     do (dolist (c (glyph-contours g))
+                          (draw-contour c scale (+ 15 (* (- i (* row cols)) cell)) baseline))
+                        (vecto:fill-path))))))
 
 (defun proof-sizes (path &key dark (sizes '(11 12 13 14 16 20 28)))
   "Every specimen line at the sizes people actually set a terminal to."
@@ -159,6 +176,7 @@ point of the project, and something these proofs have never shown."
             (vecto:fill-path)))))))
 
 (defun write-proof (dir)
+  (setf *code-index* nil)
   (let ((dir (pathname (concatenate 'string (string-right-trim "/" (namestring dir)) "/"))))
     (ensure-directories-exist dir)
     (proof-letters (merge-pathnames "letters.png" dir))

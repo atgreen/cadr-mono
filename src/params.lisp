@@ -33,6 +33,10 @@
   (shoulder-ease 0.54); arch radius of n m h u r, as a fraction of x-height
   (tail         110)  ; centreline radius of the tail on l and t
   (dot-radius    54)  ; i j, punctuation, and the mark inside zero
+  (serif        190)  ; half-length of the serif arms on i j l.  A bare
+                      ; stem leaves four times the sidebearing of a round
+                      ; letter and floats in its cell; narrow glyphs have
+                      ; to earn their width in a monospace.
 
   ;; --- disambiguation choices ----------------------------------------
   (zero-mark    :dot) ; :dot :slash or :none
@@ -72,6 +76,7 @@
     (:ease (d-shoulder-ease *design*)) (:tail (d-tail *design*))
     (:tension (d-tension *design*))
     (:dot (d-dot-radius *design*))     (:zero (d-zero-mark *design*))
+    (:serif (d-serif *design*))
     (:one-serif (d-one-serif *design*)) (:l-tail (d-l-tail *design*))
     (:br-dot (d-braille-dot *design*)) (:br-inset (d-braille-inset *design*))
     (:br-top (d-braille-top *design*)) (:br-pitch (d-braille-pitch *design*))

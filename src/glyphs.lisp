@@ -72,23 +72,31 @@ grid or they stop tiling."
 ;;; --- stems and shoulders -------------------------------------------------
 
 (defglyph "n" 110
-  (let* ((rx (bowl-rx))
-         (ry (* (p :x) (p :ease)))
-         (cy (- (p :x) ry (/ (p :thin) 2))))
-    (list (stroke-open (list (line-seg (- (centre-x) rx) 0 (- (centre-x) rx) (p :x))))
-          ;; shoulder and right leg are a single continuous path
-          (stroke-open (append (arc-path (centre-x) cy rx ry 180 0)
-                               (list (line-seg (+ (centre-x) rx) cy
-                                               (+ (centre-x) rx) 0)))))))
+  (list (stroke-open (list (line-seg (- (centre-x) (bowl-rx)) 0
+                                     (- (centre-x) (bowl-rx)) (p :x))))
+        (stroke-open (shoulder-path (centre-x) (bowl-rx)))))
+
+(defun foot-serif (cx &optional (span (p :serif)))
+  "A flat serif sitting ON the baseline."
+  (let ((y (/ (p :thin) 2)))
+    (stroke-open (list (line-seg (- cx span) y (+ cx span) y)))))
+
+(defun entry-serif (cx y &optional (span (* (p :serif) 0.74)))
+  "The short arm off the top left of a stem."
+  (let ((yy (- y (/ (p :thin) 2))))
+    (stroke-open (list (line-seg (- cx span) yy cx yy)))))
 
 (defglyph "i" 105
   (list (stroke-open (list (line-seg (centre-x) 0 (centre-x) (p :x))))
+        (entry-serif (centre-x) (p :x))
+        (foot-serif (centre-x))
         (dot-at (centre-x) (- (p :cap) 14 (p :dot)))))
 
 (defglyph "l" 108
-  (let* ((r (p :tail))
+  (let* ((r (* (p :tail) 1.30))
          (cy (+ r (/ (p :thin) 2))))
-    (list (stroke-open
+    (list (entry-serif (centre-x) (p :asc) (p :serif))
+          (stroke-open
            (if (p :l-tail)
                ;; stem and tail: one path, so the turn is a bend in a
                ;; stroke rather than a quarter-circle glued to a stick
@@ -129,3 +137,183 @@ grid or they stop tiling."
 (defglyph "hyphen" 45
   (list (stroke-open (list (line-seg (- (centre-x) 150) (* 0.42 (p :x))
                                      (+ (centre-x) 150) (* 0.42 (p :x)))))))
+
+;;; --- bowl family: a stem plus a closed bowl ---------------------------
+;;;
+;;; The bowl's centreline left or right edge coincides with the stem, so
+;;; they are the same stroke where they meet and the union is seamless.
+
+(defun bowl-ring ()
+  (arc-path (centre-x) (bowl-cy) (bowl-rx) (bowl-ry) 0 360))
+
+(defun stem-side (side)
+  "X of the stem that shares an edge with the bowl."
+  (+ (centre-x) (* side (bowl-rx))))
+
+(defglyph "b" 98
+  (append (list (stroke-open (list (line-seg (stem-side -1) (p :asc)
+                                             (stem-side -1) 0))))
+          (stroke-closed (bowl-ring))))
+
+(defglyph "d" 100
+  (append (list (stroke-open (list (line-seg (stem-side 1) (p :asc)
+                                             (stem-side 1) 0))))
+          (stroke-closed (bowl-ring))))
+
+(defglyph "p" 112
+  (append (list (stroke-open (list (line-seg (stem-side -1) (p :x)
+                                             (stem-side -1) (p :desc)))))
+          (stroke-closed (bowl-ring))))
+
+(defglyph "q" 113
+  (append (list (stroke-open (list (line-seg (stem-side 1) (p :x)
+                                             (stem-side 1) (p :desc)))))
+          (stroke-closed (bowl-ring))))
+
+;;; --- shoulder family ---------------------------------------------------
+;;;
+;;; Shoulder and leg are always one path, so the branch is a bend in a
+;;; stroke rather than an arch parked on top of a post.
+
+(defun shoulder-ry (&optional (rx (bowl-rx)))
+  "Arch height for an arch of centreline half-width RX.  It has to scale
+with the width: m's arches are half as wide as n's, and giving them n's
+height makes them tall narrow tunnels instead of shoulders."
+  (* (p :x) (p :ease) (/ rx (bowl-rx))))
+
+(defun shoulder-cy (&optional (rx (bowl-rx)))
+  (- (p :x) (shoulder-ry rx) (/ (p :thin) 2)))
+
+(defun shoulder-path (cx rx &key (leg t) (to 0))
+  "An arch over CX of centreline radius RX, optionally continuing into a
+leg that drops to TO."
+  (let ((cy (shoulder-cy rx)))
+    (append (arc-path cx cy rx (shoulder-ry rx) 180 0)
+            (when leg (list (line-seg (+ cx rx) cy (+ cx rx) to))))))
+
+(defglyph "h" 104
+  (list (stroke-open (list (line-seg (- (centre-x) (bowl-rx)) 0
+                                     (- (centre-x) (bowl-rx)) (p :asc))))
+        (stroke-open (shoulder-path (centre-x) (bowl-rx)))))
+
+(defglyph "m" 109
+  (let* ((rx (bowl-rx)) (half (/ rx 2)))
+    (list (stroke-open (list (line-seg (- (centre-x) rx) 0
+                                       (- (centre-x) rx) (p :x))))
+          (stroke-open (shoulder-path (- (centre-x) half) half))
+          (stroke-open (shoulder-path (+ (centre-x) half) half)))))
+
+(defglyph "r" 114
+  (let ((rx (bowl-rx)))
+    (list (stroke-open (list (line-seg (- (centre-x) rx) 0
+                                       (- (centre-x) rx) (p :x))))
+          ;; r's shoulder stops partway round and is cut by the pen
+          (stroke-open (arc-path (centre-x) (shoulder-cy rx) rx (shoulder-ry rx)
+                                 180 55)))))
+
+(defglyph "u" 117
+  (let* ((rx (bowl-rx))
+         ;; shallower than n's arch: u needs straight sides to read as a
+         ;; letter rather than a bucket
+         (ry (* (shoulder-ry) 0.78))
+         (cy (+ ry (/ (p :thin) 2))))
+    (list (stroke-open
+           ;; down the left, round the trough, up the right: one path
+           (append (list (line-seg (- (centre-x) rx) (p :x) (- (centre-x) rx) cy))
+                   (arc-path (centre-x) cy rx ry 180 360)
+                   (list (line-seg (+ (centre-x) rx) cy (+ (centre-x) rx) (p :x))))))))
+
+;;; --- diagonal family ----------------------------------------------------
+;;;
+;;; Each arm is its own stroke rather than one path through the vertex.
+;;; Offsetting a path round a sharp corner needs a mitre my stroker does
+;;; not build; overlapping strokes union into a blunt vertex instead,
+;;; which is honest about what it is until mitring exists.
+
+(defun diag (x0 y0 x1 y1 &key (trim :both))
+  "A straight stroke, with its ends cut flat to the lines they sit on.
+
+A butt cap is perpendicular to its stroke, so on a diagonal it
+overshoots by half the stroke width times the cosine of the angle --
+which is why every diagonal letter was breaking the baseline and the
+x-height before this.  TRIM is :both, :start, :end or NIL; an end that
+lands inside another stroke (k's knee, w's apex) must not be trimmed or
+it opens a gap."
+  (let* ((dx (- x1 x0)) (dy (- y1 y0))
+         (len (max 1d-6 (sqrt (+ (* dx dx) (* dy dy)))))
+         (over (* (/ (pen-width dx dy) 2) (/ (abs dx) len)))
+         ;; On a horizontal stroke neither end is "the top", so the
+         ;; rule below would tilt the bar.  Callers place those
+         ;; explicitly instead.
+         (over (if (< (abs dy) 1d-6) 0 over))
+         (top-is-0 (> y0 y1))
+         (d0 (if (member trim '(:both :start)) (if top-is-0 (- over) over) 0))
+         (d1 (if (member trim '(:both :end))   (if top-is-0 over (- over)) 0)))
+    (stroke-open (list (line-seg x0 (+ y0 d0) x1 (+ y1 d1))))))
+
+(defglyph "v" 118
+  (let ((rx (bowl-rx)) (cx (centre-x)))
+    (list (diag (- cx rx) (p :x) cx 0)
+          (diag (+ cx rx) (p :x) cx 0))))
+
+(defglyph "w" 119
+  (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :x) 0.52)))
+    (list (diag (- cx rx) (p :x) (- cx (* rx 0.46)) 0)
+          ;; the inner arms are trimmed only where they touch the
+          ;; baseline; the middle apex is interior and must stay long
+          (diag (- cx (* rx 0.46)) 0 cx mid :trim :start)
+          (diag cx mid (+ cx (* rx 0.46)) 0 :trim :end)
+          (diag (+ cx (* rx 0.46)) 0 (+ cx rx) (p :x)))))
+
+(defglyph "x" 120
+  (let ((rx (bowl-rx)) (cx (centre-x)))
+    (list (diag (- cx rx) (p :x) (+ cx rx) 0)
+          (diag (+ cx rx) (p :x) (- cx rx) 0))))
+
+(defglyph "y" 121
+  (let ((rx (bowl-rx)) (cx (centre-x)))
+    (list (diag (- cx rx) (p :x) (+ cx (* rx 0.18)) 0)
+          (diag (+ cx rx) (p :x) (- cx (* rx 0.55)) (p :desc)))))
+
+(defglyph "z" 122
+  (let ((rx (bowl-rx)) (cx (centre-x)) (h (/ (p :thin) 2)))
+    (list ;; bars placed so their ink lands on the lines, not centred on them
+          (stroke-open (list (line-seg (- cx rx) (- (p :x) h) (+ cx rx) (- (p :x) h))))
+          (diag (+ cx rx) (p :x) (- cx rx) 0)
+          (stroke-open (list (line-seg (- cx rx) h (+ cx rx) h))))))
+
+(defglyph "k" 107
+  (let* ((rx (bowl-rx)) (cx (centre-x)) (knee (* (p :x) 0.42)))
+    (list (stroke-open (list (line-seg (- cx rx) 0 (- cx rx) (p :asc))))
+          (diag (+ cx rx) (p :x) (- cx rx) knee :trim :start)
+          (diag (- cx rx) knee (+ cx rx) 0 :trim :end))))
+
+;;; --- stem family: a stem that turns ---------------------------------------
+
+(defglyph "t" 116
+  (let* ((cx (- (centre-x) 54))
+         (r (* (p :tail) 0.78))
+         (cy (+ r (/ (p :thin) 2))))
+    (list (stroke-open
+           (cons (line-seg cx (* (p :x) 1.42) cx cy)
+                 (arc-path (+ cx r) cy r r 180 270)))
+          (stroke-open (list (line-seg (- cx 150) (p :x) (+ cx 178) (p :x)))))))
+
+(defglyph "f" 102
+  (let* ((cx (- (centre-x) 36))
+         (r (* (p :tail) 0.86))
+         (cy (- (p :asc) r (/ (p :thin) 2))))
+    (list (stroke-open
+           (append (list (line-seg cx 0 cx cy))
+                   (arc-path (+ cx r) cy r r 180 90)))
+          (stroke-open (list (line-seg (- cx 158) (p :x) (+ cx 182) (p :x)))))))
+
+(defglyph "j" 106
+  (let* ((cx (+ (centre-x) 38))
+         (r (* (p :tail) 1.28))
+         (cy (+ (p :desc) r (/ (p :thin) 2))))
+    (list (stroke-open
+           (append (list (line-seg cx (p :x) cx cy))
+                   (arc-path (- cx r) cy r r 0 -90)))
+          (entry-serif cx (p :x) (p :serif))
+          (dot-at cx (- (p :cap) 14 (p :dot))))))

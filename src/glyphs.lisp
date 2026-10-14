@@ -618,14 +618,19 @@ bars land on the cap line and the baseline instead of straddling them."
   ;; endpoint -- it used to start at a guessed point short of it, which
   ;; left a step in the middle where the two were meant to join.
   (let* ((rx (fig-rx)) (cx (centre-x))
-         (ry (* (p :cap) 0.27))
-         (cy (- (p :cap) ry))
+         ;; A figure's arch is FLATTER than it is wide.  At 0.27 of the
+         ;; cap this was 393 x 387 -- a circle -- which read as a bulb,
+         ;; and it sat 46 units above every other figure because the
+         ;; centre was placed without allowing for the overshoot or the
+         ;; stroke.
+         (ry (* (p :cap) 0.21))
+         (cy (- (+ (p :cap) (p :over)) ry (/ (p :thin) 2)))
          (a-end -42)
          (ex (+ cx (* rx (cos (deg a-end)))))
          (ey (+ cy (* ry (sin (deg a-end)))))
          (by (/ (p :thin) 2)))
     (list (stroke-open
-           (append (arc-path cx cy rx ry 196 a-end)
+           (append (arc-path cx cy rx ry 190 a-end)
                    (list (line-seg ex ey (- cx rx) (+ by (u 12))))))
           (hbar 0 (- cx rx) (+ cx rx) :align :on))))
 
@@ -662,33 +667,37 @@ bars land on the cap line and the baseline instead of straddling them."
 (defglyph "five" 53
   (let* ((rx (fig-rx)) (cx (centre-x)) (x0 (- cx rx))
          (ry (* (p :cap) 0.29))
-         (waist (* 2 ry)))
+         (cy (+ ry (/ (p :thin) 2) (- (p :over))))
+         (waist (+ cy ry)))
     (list (hbar (p :cap) x0 (+ cx (* rx 0.86)) :align :under)
           (vstem x0 waist (p :cap))
           (stroke-open (cons (line-seg x0 waist cx waist)
-                             (arc-path cx ry rx ry 90 -160))))))
+                             (arc-path cx cy rx ry 90 -160))))))
 
 (defglyph "six" 54
   (let* ((rx (fig-rx)) (cx (centre-x)) (ry (* (p :cap) 0.30)))
-    (append (stroke-closed (arc-path cx ry rx (- ry (/ (p :thin) 2)) 0 360))
-            (list (stroke-open (arc-path cx ry rx (* (p :cap) 0.70) 180 75))))))
+    (append (stroke-closed (arc-path cx (- ry (p :over)) rx
+                                     (- ry (/ (p :thin) 2)) 0 360))
+            (list (stroke-open (arc-path cx ry rx (* (p :cap) 0.671) 180 75))))))
 
 (defglyph "seven" 55
   (let* ((rx (fig-rx)) (cx (centre-x)))
     (list (hbar (p :cap) (- cx rx) (+ cx rx) :align :under)
-          (diag (+ cx rx) (p :cap) (- cx (* rx 0.30)) 0 :trim :start))))
+          (diag (+ cx rx) (p :cap) (- cx (* rx 0.30)) 0))))
 
 (defglyph "eight" 56
   (let* ((rx (fig-rx)) (cx (centre-x))
          (ryl (* (p :cap) 0.29)) (ryu (* (p :cap) 0.24)))
-    (append (stroke-closed (arc-path cx ryl rx (- ryl (/ (p :thin) 2)) 0 360))
-            (stroke-closed (arc-path cx (- (p :cap) ryu) (* rx 0.86)
-                                     (- ryu (/ (p :thin) 2)) 0 360)))))
+    (append (stroke-closed (arc-path cx (- ryl (p :over)) rx
+                                     (- ryl (/ (p :thin) 2)) 0 360))
+            (stroke-closed (arc-path cx (- (+ (p :cap) (p :over)) ryu)
+                                     (* rx 0.86) (- ryu (/ (p :thin) 2)) 0 360)))))
 
 (defglyph "nine" 57
   (let* ((rx (fig-rx)) (cx (centre-x)) (ry (* (p :cap) 0.30)))
-    (append (stroke-closed (arc-path cx (- (p :cap) ry) rx (- ry (/ (p :thin) 2)) 0 360))
-            (list (stroke-open (arc-path cx (- (p :cap) ry) rx (* (p :cap) 0.70) 0 -105))))))
+    (append (stroke-closed (arc-path cx (- (+ (p :cap) (p :over)) ry) rx
+                                     (- ry (/ (p :thin) 2)) 0 360))
+            (list (stroke-open (arc-path cx (- (p :cap) ry) rx (* (p :cap) 0.671) 0 -105))))))
 
 ;;; ==========================================================================
 ;;; PUNCTUATION AND SYMBOLS

@@ -13,18 +13,26 @@
 (defvar *glyph-builders* (make-hash-table :test #'equal))
 
 (defmacro defglyph (name code &body body)
-  "Define a glyph.  :NO-CENTRE as the first body form opts out of
-optical centring -- braille and box drawing must stay on their absolute
-grid or they stop tiling."
-  (let ((centre t))
-    (when (eq (first body) :no-centre)
-      (setf centre nil body (rest body)))
+  "Define a glyph.
+
+:NO-CENTRE opts out of centring -- braille and box drawing must stay on
+their absolute grid or they stop tiling.  :SHIFT n moves the glyph n
+per mille after centring, for the handful of letters that want an
+optical offset the box cannot give them."
+  (let ((centre t) (shift 0))
+    (loop while (keywordp (first body))
+          do (case (first body)
+               (:no-centre (setf centre nil body (rest body)))
+               (:shift (setf shift (second body) body (cddr body)))
+               (t (return))))
     `(setf (gethash ,name *glyph-builders*)
-           (list ,code ,centre (lambda () (progn ,@body))))))
+           (list ,code ,centre (lambda () (progn ,@body)) ,shift))))
 
 (defun build-contours (entry)
   (let ((contours (funcall (third entry))))
-    (if (second entry) (centre-ink contours) contours)))
+    (when (second entry) (setf contours (centre-ink contours)))
+    (let ((shift (or (fourth entry) 0)))
+      (if (zerop shift) contours (shift-contours contours (u shift))))))
 
 (defun all-glyphs ()
   (let (out)
@@ -223,6 +231,7 @@ leg that drops to TO."
             (stroke-open (shoulder-path (+ (centre-x) half) half))))))
 
 (defglyph "r" 114
+  :shift 22
   (let ((rx (bowl-rx)))
     (list (stroke-open (list (line-seg (- (centre-x) rx) 0
                                        (- (centre-x) rx) (p :x))))
@@ -314,6 +323,7 @@ it opens a gap."
 ;;; --- stem family: a stem that turns ---------------------------------------
 
 (defglyph "t" 116
+  :shift -17
   (let* ((cx (- (centre-x) (u 54)))
          (r (* (p :tail) 0.78))
          (cy (+ r (/ (p :thin) 2))))
@@ -334,6 +344,7 @@ it opens a gap."
           (stroke-open (list (line-seg (- cx (u 204)) (p :x) (+ cx (u 228)) (p :x)))))))
 
 (defglyph "j" 106
+  :shift -45
   (let* ((cx (+ (centre-x) (u 38)))
          (r (* (p :tail) 1.72))
          (cy (+ (p :desc) r (/ (p :thin) 2))))

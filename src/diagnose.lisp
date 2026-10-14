@@ -90,10 +90,16 @@ glyph floating in its cell."
         (when x0
           (let* ((lsb (round x0))
                  (rsb (round (- (p :advance) x1)))
-                 (skew (- lsb rsb)))
+                 ;; A glyph carrying a declared optical offset is
+                 ;; SUPPOSED to sit off centre; judge it against its
+                 ;; own intent, not against zero.
+                 (want (* 2 (u (or (fourth (gethash (glyph-name g)
+                                                    *glyph-builders*))
+                                   0))))
+                 (skew (- (- lsb rsb) want)))
             (format t "~12a ~6d ~6d ~6d ~6d ~6d ~6d ~a~%"
                     (glyph-name g) lsb rsb (round y0) (round y1)
-                    (round (- x1 x0)) skew
+                    (round (- x1 x0)) (- lsb rsb)
                     ;; Only letters and figures are judged on fill.
                     ;; Punctuation is SUPPOSED to be narrow -- flagging a
                     ;; colon for floating in its cell is the instrument

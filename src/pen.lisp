@@ -29,11 +29,20 @@
        (+ x0 (* 2 (/ (- x1 x0) 3))) (+ y0 (* 2 (/ (- y1 y0) 3)))
        x1 y1))
 
-(defun arc-seg (cx cy rx ry a0 a1)
+(defun arc-seg (cx cy rx ry a0 a1 &key (circular nil))
   "A skeleton arc from A0 to A1 degrees.  Spans of up to a quarter turn
-stay accurate; callers split anything larger."
+stay accurate; callers split anything larger.
+
+The control arm is scaled by the design's TENSION.  A true ellipse --
+which is what the exact 4/3*tan(t/4) gives -- carries its maximum
+curvature at the ends of each axis, so a bowl built from one is
+pointed at top and bottom.  Drawn bowls are flatter there and squarer
+at the shoulders, which is what the extra arm buys.  CIRCULAR keeps the
+exact arc, for anything that must stay a true circle."
   (let* ((s (deg a0)) (e (deg a1))
-         (alpha (* 4/3 (tan (/ (- e s) 4)))))
+         (slack (if circular 1d0 (/ (or (ignore-errors (p :tension)) +kappa+)
+                                    +kappa+)))
+         (alpha (* slack 4/3 (tan (/ (- e s) 4)))))
     (seg (+ cx (* rx (cos s))) (+ cy (* ry (sin s)))
          (+ cx (* rx (cos s)) (* alpha (- (* rx (sin s)))))
          (+ cy (* ry (sin s)) (* alpha (* ry (cos s))))
@@ -41,12 +50,13 @@ stay accurate; callers split anything larger."
          (- (+ cy (* ry (sin e))) (* alpha (* ry (cos e))))
          (+ cx (* rx (cos e))) (+ cy (* ry (sin e))))))
 
-(defun arc-path (cx cy rx ry a0 a1)
+(defun arc-path (cx cy rx ry a0 a1 &key (circular nil))
   "A skeleton arc of any span, split into quarter turns or less."
   (let* ((n (max 1 (ceiling (abs (- a1 a0)) 90)))
          (step (/ (- a1 a0) n)))
     (loop for i from 0 below n
-          collect (arc-seg cx cy rx ry (+ a0 (* i step)) (+ a0 (* (1+ i) step))))))
+          collect (arc-seg cx cy rx ry (+ a0 (* i step)) (+ a0 (* (1+ i) step))
+                           :circular circular))))
 
 ;;; --- evaluating a segment --------------------------------------------
 

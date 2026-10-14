@@ -67,23 +67,22 @@ def sheet_letters(px=120, cols=10):
     rowh = int((f.bbox.yMax - f.bbox.yMin) * k) + 14
     rows = (len(chars) + cols - 1) // cols
     img = Image.new("L", (adv * cols + 20, rowh * rows + 20), 0)
-    d = ImageDraw.Draw(img)
     asc = f.size.ascender / 64
+    bases = []
     for r in range(rows):
         base = int(10 + r * rowh + asc)
-        for name, y, bright in (
-            ("line-asc", f.size.ascender / 64, 215),
-            ("asc", 760 * k, 200),
-            ("cap", 700 * k, 200),
-            ("x", 500 * k, 165),
-            ("base", 0, 165),
-            ("desc", -230 * k, 200),
-            ("line-desc", f.size.descender / 64, 215),
-        ):
-            d.line([(0, base - y), (img.width, base - y)], fill=bright)
+        bases.append(base)
         draw_run(img, f, "".join(chars[r * cols:(r + 1) * cols]), 10, base, hinted=False)
-    # Outlines are conventionally proofed dark on light.
-    Image.eval(img, lambda v: 255 - v).save(OUT / "letters.png")
+    # Invert first, then lay the guides on, or they inverted too and
+    # came out as heavy black rules across every row.
+    img = Image.eval(img, lambda v: 255 - v)
+    d = ImageDraw.Draw(img)
+    for base in bases:
+        for y, grey in ((f.size.ascender / 64, 212), (760 * k, 196),
+                        (700 * k, 196), (500 * k, 150), (0, 150),
+                        (-230 * k, 196), (f.size.descender / 64, 212)):
+            d.line([(0, base - y), (img.width, base - y)], fill=grey)
+    img.save(OUT / "letters.png")
 
 
 def sheet_sizes(dark_bg, sizes=(11, 12, 13, 14, 16, 20, 28)):

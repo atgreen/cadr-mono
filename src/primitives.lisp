@@ -78,11 +78,18 @@ points, so anything measured from control points overstates it."
 A glyph drawn symmetrically about the cell centre is not necessarily
 centred: c loses material on the right where its aperture opens, l
 gains it on the right from its tail.  Centring the skeleton is not
-centring the letter."
+centring the letter.
+
+Measured against the field, box centring is what fonts actually do for
+n o l f -- all sit within a few units of centre.  Only r j t carry a
+deliberate optical offset, and those are applied per glyph rather than
+derived, because no formula reproduces them: a centre-of-area blend
+that got r roughly right threw n out by 78 units, and every font in the
+comparison keeps n centred."
   (let ((pts (contour-points contours)))
     (if (null pts)
         contours
         (let* ((x0 (reduce #'min pts :key #'car))
-               (x1 (reduce #'max pts :key #'car)))
-          (shift-contours contours
-                          (round (- (/ (- (p :advance) (- x1 x0)) 2) x0)))))))
+               (x1 (reduce #'max pts :key #'car))
+               (box (/ (+ x0 x1) 2)))
+          (shift-contours contours (round (- (/ (p :advance) 2) box)))))))

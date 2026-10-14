@@ -9,7 +9,6 @@
 (defun build-all ()
   (with-design ((light-cut))
     (format t "~&light cut: ~a glyphs~%" (length (all-glyphs)))
-    (write-proof "/home/green/git/muskako/proof/")
     (write-ufo "/home/green/git/muskako/build/Muskako-Regular.ufo"))
   (with-design ((dark-cut :grade 4))
     (format t "dark cut:  ~a glyphs, stem ~a~%" (length (all-glyphs)) (p :stem))

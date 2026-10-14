@@ -36,6 +36,18 @@ grid or they stop tiling."
              *glyph-builders*)
     (sort out #'< :key (lambda (g) (or (glyph-code g) 0)))))
 
+(defvar *code-index* nil)
+
+(defun code-index ()
+  "Codepoint to glyph name."
+  (or *code-index*
+      (setf *code-index*
+            (let ((h (make-hash-table)))
+              (maphash (lambda (name e)
+                         (when (first e) (setf (gethash (first e) h) name)))
+                       *glyph-builders*)
+              h))))
+
 (defun find-glyph (name)
   (let ((e (gethash name *glyph-builders*)))
     (when e

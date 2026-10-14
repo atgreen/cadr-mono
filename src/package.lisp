@@ -6,4 +6,4 @@
            #:with-design #:p
            #:glyph #:glyph-name #:glyph-code #:glyph-advance #:glyph-contours
            #:all-glyphs #:find-glyph
-           #:write-ufo #:write-proof))
+           #:write-ufo))

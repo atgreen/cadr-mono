@@ -330,3 +330,48 @@ it opens a gap."
                    (arc-path (- cx r) cy r r 0 -90)))
           (entry-serif cx (p :x) (p :serif))
           (dot-at cx (- (p :cap) (u 14) (p :dot))))))
+
+;;; --- the three that fit no family -----------------------------------------
+
+(defglyph "a" 97
+  ;; Double-storey: a lower bowl sharing its right edge with the stem,
+  ;; and a top arc springing from the stem's head and curving away left.
+  (let* ((rx (bowl-rx))
+         (ry-b (* (p :x) 0.30))
+         (cy-b (+ ry-b (/ (p :thin) 2) (- (p :over))))
+         (ry-t (* (p :x) 0.21))
+         (cy-t (- (p :x) ry-t (/ (p :thin) 2))))
+    (append (list (stroke-open (list (line-seg (+ (centre-x) rx) 0
+                                               (+ (centre-x) rx) cy-t))))
+            (stroke-closed (arc-path (centre-x) cy-b rx ry-b 0 360))
+            (list (stroke-open (arc-path (centre-x) cy-t rx ry-t 0 168))))))
+
+(defglyph "g" 103
+  ;; Single-storey: o's bowl, then the stem carries on below the line
+  ;; and hooks left, the same turn j makes.
+  (let* ((rx (bowl-rx))
+         (r (* (p :tail) 1.42))
+         (cy (+ (p :desc) r (/ (p :thin) 2))))
+    (append (stroke-closed (arc-path (centre-x) (bowl-cy) rx (bowl-ry) 0 360))
+            (list (stroke-open
+                   (append (list (line-seg (+ (centre-x) rx) (p :x)
+                                           (+ (centre-x) rx) cy))
+                           (arc-path (- (+ (centre-x) rx) r) cy r r 0 -90)))))))
+
+(defglyph "s" 115
+  ;; Two arcs that meet at mid-height by construction: the upper one
+  ;; ends at the bottom of its circle and the lower one starts at the
+  ;; top of its own, and the two centres are placed so those are the
+  ;; same point.  The spine is then continuous without a join to fudge.
+  ;; Three constraints fix the geometry exactly, so none of it is tuned:
+  ;;   the arcs meet          cy_u - ry = cy_l + ry
+  ;;   the top lands on       cy_u + ry + thin/2 =  x + overshoot
+  ;;   the bottom lands on    cy_l - ry - thin/2 = -overshoot
+  ;; which solve to ry = (x + 2*overshoot - thin)/4 and cy = (x +/- 2ry)/2.
+  (let* ((rx (* (bowl-rx) 0.95))
+         (ry (/ (+ (p :x) (* 2 (p :over)) (- (p :thin))) 4))
+         (cy-u (/ (+ (p :x) (* 2 ry)) 2))
+         (cy-l (/ (- (p :x) (* 2 ry)) 2)))
+    (list (stroke-open
+           (append (arc-path (centre-x) cy-u rx ry 10 270)
+                   (arc-path (centre-x) cy-l rx ry 90 -170))))))

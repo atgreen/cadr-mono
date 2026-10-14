@@ -9,3 +9,4 @@ ocicl/
 *.db
 .beads-credential-key
 .beads/proxieddb/
+build/venv/

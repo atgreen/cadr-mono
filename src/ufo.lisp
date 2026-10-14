@@ -20,6 +20,12 @@
   (format s "  <key>~a</key>~%  <~a>~a</~a>~%" key type value type))
 
 (defun kv-int (s key value) (kv s key "integer" value))
+
+(defun kv-ints (s key values)
+  "An array of integers.  PANOSE is ten of them, not a string."
+  (format s "  <key>~a</key>~%  <array>~%" key)
+  (dolist (v values) (format s "    <integer>~a</integer>~%" v))
+  (format s "  </array>~%"))
 (defun kv-str (s key value) (kv s key "string" value))
 
 (defun write-glif (glyph path)
@@ -80,7 +86,8 @@
       (kv-int s "openTypeOS2TypoDescender" (p :desc))
       (kv-int s "openTypeOS2WinAscent" (+ (p :asc) 40))
       (kv-int s "openTypeOS2WinDescent" (+ (abs (p :desc)) 40))
-      (kv-str s "openTypeOS2Panose" "2 11 5 9 0 0 0 0 0 0")
+      ;; 2 = Latin text, 11 = normal sans, 9 = monospaced proportion
+      (kv-ints s "openTypeOS2Panose" '(2 11 5 9 0 0 0 0 0 0))
       (kv-str s "copyright" "Copyright 2026 Anthony Green. SIL Open Font License 1.1.")
       (kv-str s "openTypeNameLicenseURL" "https://openfontlicense.org")
       (plist-close s))

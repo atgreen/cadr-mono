@@ -309,19 +309,32 @@ half the crossing rule's weight, so corners close square."
 (put-box #x2594 (lambda () (list (block-rect 0 7/8 1 1))))       ; upper eighth
 (put-box #x2595 (lambda () (list (block-rect 7/8 0 1 1))))       ; right eighth
 
-(defun shade (fraction)
-  "A dither at FRACTION coverage.  Terminals draw gradients with these,
-so what matters is that the three steps read as distinct greys."
-  (let ((n 8) (out '()))
-    (dotimes (row n)
-      (dotimes (col n)
-        (when (< (mod (+ (* row 5) (* col 3)) 8) (* fraction 8))
-          (push (block-rect (/ col n) (/ row n) (/ (1+ col) n) (/ (1+ row) n)) out))))
+(defparameter +bayer2+ #2A((0 2) (3 1))
+  "The 2x2 ordered dither.  Thresholding it gives one cell in four, a
+checkerboard, then three in four -- exactly the three shade steps, and
+with no structure of its own.")
+
+(defun shade (level)
+  "A dither at LEVEL quarters of coverage, for the shade blocks.
+
+Terminals draw gradients with these, so they must read as flat greys.
+An ad-hoc modulo pattern does not: (row*5 + col*3) mod 8 tiles into
+visible diagonal banding, which showed up as hatching rather than grey
+the moment the proofs composited correctly."
+  (let* ((cols 8)
+         (cw (/ (- (cell-right) (cell-left)) cols))
+         (rows (max 1 (round (- (cell-top) (cell-bottom)) cw)))
+         (out '()))
+    (dotimes (r rows)
+      (dotimes (c cols)
+        (when (< (aref +bayer2+ (mod r 2) (mod c 2)) level)
+          (push (block-rect (/ c cols) (/ r rows) (/ (1+ c) cols) (/ (1+ r) rows))
+                out))))
     out))
 
-(put-box #x2591 (lambda () (shade 0.25)))
-(put-box #x2592 (lambda () (shade 0.50)))
-(put-box #x2593 (lambda () (shade 0.75)))
+(put-box #x2591 (lambda () (shade 1)))
+(put-box #x2592 (lambda () (shade 2)))
+(put-box #x2593 (lambda () (shade 3)))
 
 ;;; quadrants U+2596-259F, each a combination of the four corners
 (defparameter +quadrants+

@@ -33,10 +33,13 @@ def render(size, hinted):
         bm = face.glyph.bitmap
         if bm.width == 0:
             continue
-        g = Image.frombytes("L", (bm.width, bm.rows), bytes(bm.buffer))
+        mask = Image.frombytes("L", (bm.width, bm.rows), bytes(bm.buffer))
         x = 2 + i * adv + face.glyph.bitmap_left
         y = 2 + asc - face.glyph.bitmap_top
-        img.paste(g, (x, y))
+        # Solid ink through the coverage mask.  A plain paste writes the
+        # glyph's whole rectangle, blacking out a neighbour's ink where
+        # the boxes overlap.
+        img.paste(255, (x, y), mask)
         for v in bm.buffer:
             if v > 8:
                 total += 1

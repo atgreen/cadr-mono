@@ -96,13 +96,39 @@ displacement stays accurate through the turn."
 
 ;;; --- the pen ----------------------------------------------------------
 
+(defun pen-axes ()
+  "Solve for the pen's major and minor axes such that a VERTICAL stem
+measures exactly (p :stem) and a HORIZONTAL bar exactly (p :thin).
+
+Naming the pen's own axes stem and thin was wrong: because the pen is
+rotated by the stress angle, its widest point falls at 90+stress, not
+at the vertical, so a stem came out narrower than the parameter said
+and a bar came out wider.  Given
+
+    stem^2 = a^2 cos^2 A + b^2 sin^2 A
+    thin^2 = a^2 sin^2 A + b^2 cos^2 A
+
+adding and subtracting gives a^2 + b^2 = stem^2 + thin^2 and
+a^2 - b^2 = (stem^2 - thin^2) / cos 2A.  So the parameters keep the
+meaning a designer expects and the pen is derived from them."
+  (let* ((alpha (deg (p :stress)))
+         (c2 (cos (* 2 alpha)))
+         (ss (* (p :stem) (p :stem)))
+         (tt (* (p :thin) (p :thin)))
+         (sum (+ ss tt))
+         ;; Near 45 degrees of stress the system is ill-conditioned;
+         ;; fall back to a circular pen rather than return nonsense.
+         (dif (if (< (abs c2) 0.2d0) 0d0 (/ (- ss tt) c2)))
+         (a2 (/ (+ sum dif) 2))
+         (b2 (/ (- sum dif) 2)))
+    (values (sqrt (max 1d0 a2)) (sqrt (max 1d0 b2)))))
+
 (defun pen-width (dx dy)
-  "Stroke width for a tangent (DX, DY) under the current design's
-elliptical pen."
-  (let* ((phi (- (atan dy dx) (deg (p :stress))))
-         (a (p :stem)) (b (p :thin)))
-    (sqrt (+ (* (* a (sin phi)) (* a (sin phi)))
-             (* (* b (cos phi)) (* b (cos phi)))))))
+  "Stroke width for a tangent (DX, DY) under the current design's pen."
+  (multiple-value-bind (a b) (pen-axes)
+    (let ((phi (- (atan dy dx) (deg (p :stress)))))
+      (sqrt (+ (* (* a (sin phi)) (* a (sin phi)))
+               (* (* b (cos phi)) (* b (cos phi))))))))
 
 (defun offset-seg (s d0 d3)
   "Push S sideways by D0 at its start and D3 at its end, along the

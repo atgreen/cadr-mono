@@ -60,11 +60,33 @@ compiler's overlap removal produces."
      ,@body
      (vecto:save-png ,path)))
 
-(defparameter *specimen* "once coil 01-."
-  "A specimen made only of glyphs that exist so far.")
+(defparameter *specimen-lines*
+  '("once coil lion cone"
+    "nice line noel oil"
+    "0o 1l il 1i 0.1"
+    "oooo nnnn cccc eeee")
+  "Built from the glyphs that exist so far, but chosen to stress what a
+specimen is for: words for rhythm, the confusable pairs this font is
+supposed to disambiguate, and runs of one letter to expose uneven
+spacing.")
+
+(defparameter *specimen* (first *specimen-lines*))
+
+(defun guide (y w &key (heavy nil))
+  "A horizontal reference line.  Judging overshoot without one is
+guessing."
+  (if heavy (vecto:set-rgb-stroke 0.72 0.24 0.48) (vecto:set-rgb-stroke 0.80 0.82 0.86))
+  (vecto:set-line-width (if heavy 1.0 1.0))
+  (vecto:move-to 0 y) (vecto:line-to w y) (vecto:stroke)
+  (vecto:set-rgb-fill 0 0 0))
+
+(defun draw-guides (w scale baseline)
+  (dolist (spec (list (list (p :desc) nil) (list 0 t) (list (p :x) t)
+                      (list (p :cap) nil) (list (p :asc) nil)))
+    (guide (+ baseline (* scale (first spec))) w :heavy (second spec))))
 
 (defun proof-letters (path &key (size 190))
-  "Every letter at display size, where construction errors are visible."
+  "Every letter at display size against the metric guides."
   (let* ((glyphs (remove-if-not (lambda (g) (and (glyph-contours g)
                                                  (< (or (glyph-code g) 0) #x2800)))
                                 (all-glyphs)))
@@ -74,6 +96,7 @@ compiler's overlap removal produces."
          (h (ceiling (* size 1.3))))
     (with-sheet (path w h)
       (let ((baseline (* size 0.28)))
+        (draw-guides w scale baseline)
         (loop for g in glyphs
               for i from 0
               do (dolist (c (glyph-contours g))
@@ -81,15 +104,41 @@ compiler's overlap removal produces."
                  (vecto:fill-path))))))
 
 (defun proof-sizes (path &key dark (sizes '(11 12 13 14 16 20 28)))
-  "The specimen at the sizes people actually set a terminal to."
-  (let* ((w 520)
-         (line (lambda (s) (round (* s 1.6))))
-         (h (+ 24 (reduce #'+ (mapcar line sizes)))))
+  "Every specimen line at the sizes people actually set a terminal to."
+  (let* ((w 760)
+         (line (lambda (s) (round (* s 1.55))))
+         (block-h (lambda (s) (+ 10 (* (length *specimen-lines*) (funcall line s)))))
+         (h (+ 20 (reduce #'+ (mapcar block-h sizes)))))
     (with-sheet (path w h :dark dark)
-      (let ((y (- h 12)))
+      (let ((y (- h 14)))
+        (dolist (s sizes)
+          (dolist (ln *specimen-lines*)
+            (decf y (funcall line s))
+            (draw-string ln s 14 y))
+          (decf y 10))))))
+
+(defun proof-grade (path &key (sizes '(13 16 24 56)))
+  "The reference cut beside the graded cut, both on black -- the whole
+point of the project, and something these proofs have never shown."
+  (let* ((w 820) (half (/ w 2))
+         (line (lambda (s) (round (* s 1.7))))
+         (h (+ 30 (reduce #'+ (mapcar line sizes)))))
+    (with-sheet (path w h :dark t)
+      ;; a hairline between the two cuts so the eye has an edge to judge on
+      (vecto:set-rgb-stroke 0.25 0.25 0.25) (vecto:set-line-width 1.0)
+      (vecto:move-to half 0) (vecto:line-to half h) (vecto:stroke)
+      (vecto:set-rgb-fill 1 1 1)
+      (let ((y (- h 18))
+            (ref (light-cut))
+            (grd (dark-cut :grade (d-grade (dark-cut)))))
         (dolist (s sizes)
           (decf y (funcall line s))
-          (draw-string *specimen* s 14 y))))))
+          ;; trim to what the column holds, or the two cuts collide
+          (let* ((cell (* (/ s (p :upm)) (p :advance)))
+                 (fits (max 1 (floor (- half 28) cell)))
+                 (txt (subseq *specimen* 0 (min (length *specimen*) fits))))
+            (with-design (ref) (draw-string txt s 14 y))
+            (with-design (grd) (draw-string txt s (+ half 14) y))))))))
 
 (defun proof-braille (path &key (size 44) (cols 32))
   "A block of braille patterns: the dot grid has to look even."
@@ -116,4 +165,5 @@ compiler's overlap removal produces."
     (proof-sizes   (merge-pathnames "sizes-light.png" dir))
     (proof-sizes   (merge-pathnames "sizes-dark.png" dir) :dark t)
     (proof-braille (merge-pathnames "braille.png" dir))
+    (proof-grade   (merge-pathnames "grade.png" dir))
     dir))

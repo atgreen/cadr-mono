@@ -16,4 +16,5 @@
                              (:file "glyphs")
                              (:file "braille")
                              (:file "ufo")
-                             (:file "proof")))))
+                             (:file "proof")
+                             (:file "diagnose")))))

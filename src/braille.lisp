@@ -34,7 +34,9 @@ the lower-left and lower-right of the eight-dot forms."
   (dotimes (bits 256)
     (let ((code (+ #x2800 bits))
           (b bits))
+      ;; :no-centre -- the dot grid is absolute, and centring each
+      ;; pattern on its own ink would destroy the tiling.
       (setf (gethash (format nil "uni~4,'0X" (+ #x2800 bits)) *glyph-builders*)
-            (cons code (lambda () (braille-contours b)))))))
+            (list code nil (lambda () (braille-contours b)))))))
 
 (register-braille)

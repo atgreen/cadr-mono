@@ -36,3 +36,53 @@ and is what separates a humanist o from a geometric one."
 (defun round-width ()
   "Outer half-width of the round letters, inset from the cell edge."
   (- (centre-x) 58))
+
+;;; --- ink measurement and optical centring -----------------------------
+
+(defun flatten-contour (c &optional (steps 16))
+  "Sample a contour into points.  A curve lies inside its control
+points, so anything measured from control points overstates it."
+  (let ((c (normalize-start c)) (pts '()) (pending '()) cur)
+    (setf cur (first c))
+    (push (cons (px cur) (py cur)) pts)
+    (dolist (pnt (append (rest c) (list (first c))))
+      (if (eq (kind pnt) :offcurve)
+          (push pnt pending)
+          (let ((ctrl (nreverse pending)))
+            (setf pending '())
+            (if (= (length ctrl) 2)
+                (let ((s (seg (px cur) (py cur)
+                              (px (first ctrl)) (py (first ctrl))
+                              (px (second ctrl)) (py (second ctrl))
+                              (px pnt) (py pnt))))
+                  (loop for i from 1 to steps
+                        do (multiple-value-bind (x y) (seg-point s (/ i (float steps)))
+                             (push (cons x y) pts))))
+                (push (cons (px pnt) (py pnt)) pts))
+            (setf cur pnt))))
+    pts))
+
+(defun contour-points (contours)
+  (loop for c in contours append (flatten-contour c)))
+
+(defun shift-contours (contours dx)
+  (if (zerop dx)
+      contours
+      (mapcar (lambda (c)
+                (mapcar (lambda (pnt) (pt (kind pnt) (+ (px pnt) dx) (py pnt))) c))
+              contours)))
+
+(defun centre-ink (contours)
+  "Shift CONTOURS so their ink sits centred in the cell.
+
+A glyph drawn symmetrically about the cell centre is not necessarily
+centred: c loses material on the right where its aperture opens, l
+gains it on the right from its tail.  Centring the skeleton is not
+centring the letter."
+  (let ((pts (contour-points contours)))
+    (if (null pts)
+        contours
+        (let* ((x0 (reduce #'min pts :key #'car))
+               (x1 (reduce #'max pts :key #'car)))
+          (shift-contours contours
+                          (round (- (/ (- (p :advance) (- x1 x0)) 2) x0)))))))

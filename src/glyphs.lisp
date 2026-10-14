@@ -13,15 +13,25 @@
 (defvar *glyph-builders* (make-hash-table :test #'equal))
 
 (defmacro defglyph (name code &body body)
-  `(setf (gethash ,name *glyph-builders*)
-         (cons ,code (lambda () (progn ,@body)))))
+  "Define a glyph.  :NO-CENTRE as the first body form opts out of
+optical centring -- braille and box drawing must stay on their absolute
+grid or they stop tiling."
+  (let ((centre t))
+    (when (eq (first body) :no-centre)
+      (setf centre nil body (rest body)))
+    `(setf (gethash ,name *glyph-builders*)
+           (list ,code ,centre (lambda () (progn ,@body))))))
+
+(defun build-contours (entry)
+  (let ((contours (funcall (third entry))))
+    (if (second entry) (centre-ink contours) contours)))
 
 (defun all-glyphs ()
   (let (out)
     (maphash (lambda (name entry)
-               (push (make-glyph :name name :code (car entry)
+               (push (make-glyph :name name :code (first entry)
                                  :advance (p :advance)
-                                 :contours (funcall (cdr entry)))
+                                 :contours (build-contours entry))
                      out))
              *glyph-builders*)
     (sort out #'< :key (lambda (g) (or (glyph-code g) 0)))))
@@ -29,8 +39,8 @@
 (defun find-glyph (name)
   (let ((e (gethash name *glyph-builders*)))
     (when e
-      (make-glyph :name name :code (car e) :advance (p :advance)
-                  :contours (funcall (cdr e))))))
+      (make-glyph :name name :code (first e) :advance (p :advance)
+                  :contours (build-contours e)))))
 
 ;;; --- shared geometry ---------------------------------------------------
 
@@ -73,7 +83,7 @@
 
 (defglyph "i" 105
   (list (stroke-open (list (line-seg (centre-x) 0 (centre-x) (p :x))))
-        (dot-at (centre-x) (+ (p :x) 104 (p :dot)))))
+        (dot-at (centre-x) (- (p :cap) 14 (p :dot)))))
 
 (defglyph "l" 108
   (let* ((r (p :tail))
@@ -104,9 +114,14 @@
   (let ((cx (centre-x)) (h (p :cap)))
     (append (list (stroke-open (list (line-seg cx 0 cx h))))
             ;; the flag is a stroke off the stem, cut by the pen
-            (list (stroke-open (list (line-seg cx h (- cx 168) (- h 176)))))
+            ;; start the flag below the stem's flat top, or the pen's
+            ;; cap on a diagonal pokes above the cap height
+            (list (stroke-open (list (line-seg cx (- h 26) (- cx 168) (- h 196)))))
             (when (p :one-serif)
-              (list (stroke-open (list (line-seg (- cx 150) 0 (+ cx 150) 0))))))))
+              ;; centred on thin/2 so the serif sits ON the baseline
+              ;; rather than straddling it
+              (let ((y (/ (p :thin) 2)))
+                (list (stroke-open (list (line-seg (- cx 150) y (+ cx 150) y)))))))))
 
 ;;; --- punctuation ------------------------------------------------------------
 

@@ -295,34 +295,40 @@ it opens a gap."
 (defglyph "v" 118
   (let ((rx (bowl-rx)) (cx (centre-x)))
     (if (p :italic)
-        ;; A rounded trough: an italic v is written in one movement, not
-        ;; struck as two strokes meeting at a point.
-        (let* ((ry (* (p :x) 0.42)) (cy (+ ry (/ (p :thin) 2))))
+        ;; Converging sides into a NARROW rounded foot.  Built as a wide
+        ;; trough -- which is what this was -- the italic v has the same
+        ;; silhouette as u, and "value" reads "ualue".  The rounded foot
+        ;; is the italic character; the convergence is what makes it a v.
+        ;; The foot is a rounded POINT, not a small bowl.  At a third of
+        ;; the width it still read as u: convergence has to be steep
+        ;; enough to register at 16px, not merely present.
+        (let* ((fx (* rx 0.15)) (fy (* (p :x) 0.13))
+               (cy (+ fy (/ (p :thin) 2))))
           (list (stroke-open
-                 (append (list (line-seg (- cx rx) (p :x) (- cx rx) cy))
-                         (arc-path cx cy rx ry 180 360)
-                         (list (line-seg (+ cx rx) cy (+ cx rx) (p :x)))))))
+                 (append (list (line-seg (- cx rx) (p :x) (- cx fx) cy))
+                         (arc-path cx cy fx fy 180 360)
+                         (list (line-seg (+ cx fx) cy (+ cx rx) (p :x)))))))
         (list (diag (- cx rx) (p :x) cx 0)
               (diag (+ cx rx) (p :x) cx 0)))))
 
 (defglyph "w" 119
   (if (p :italic)
-      ;; Two rounded troughs, to match the italic v.  Leaving w angular
-      ;; beside a rounded v makes the pair look like a mistake rather
-      ;; than a choice.
+      ;; Two narrow feet, same reasoning as v: wide troughs here would
+      ;; make "uvw" read "uuw".
       (with-pen-scale ((crowded 0.95d0))
-        (let* ((rx (* (bowl-rx) 0.52)) (cx (centre-x))
-               (ry (* (p :x) 0.38)) (cy (+ ry (/ (p :thin) 2))))
+        (let* ((rx (bowl-rx)) (cx (centre-x))
+               (fx (* rx 0.11)) (fy (* (p :x) 0.11))
+               (cy (+ fy (/ (p :thin) 2)))
+               (lf (- cx (* rx 0.50))) (rf (+ cx (* rx 0.50)))
+               (mid (* (p :x) 0.72)))
           (list (stroke-open
-                 (append (list (line-seg (- cx (* rx 1.92)) (p :x)
-                                         (- cx (* rx 1.92)) cy))
-                         (arc-path (- cx (* rx 0.96)) cy rx ry 180 360)
-                         (list (line-seg cx cy cx (p :x)))))
+                 (append (list (line-seg (- cx rx) (p :x) (- lf fx) cy))
+                         (arc-path lf cy fx fy 180 360)
+                         (list (line-seg (+ lf fx) cy cx mid))))
                 (stroke-open
-                 (append (list (line-seg cx (p :x) cx cy))
-                         (arc-path (+ cx (* rx 0.96)) cy rx ry 180 360)
-                         (list (line-seg (+ cx (* rx 1.92)) cy
-                                         (+ cx (* rx 1.92)) (p :x))))))))
+                 (append (list (line-seg cx mid (- rf fx) cy))
+                         (arc-path rf cy fx fy 180 360)
+                         (list (line-seg (+ rf fx) cy (+ cx rx) (p :x))))))))
       (with-pen-scale ((crowded 0.95d0))
         (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :x) 0.70)))
           (list (diag (- cx rx) (p :x) (- cx (* rx 0.46)) 0)

@@ -118,6 +118,7 @@ is what makes the humanist modulation affordable at all.
 | `m` ink vs `n` | 1.29× | 1.28×–1.35× |
 | `w` ink vs `n` | 1.15× | 1.15×–1.35× |
 | thin / stem | 0.82 | 0.70–0.89 |
+| x-height / advance | 0.885 | 0.867–0.917 |
 | accent height over a capital | 32% of cap | 26%–39% |
 
 ---
@@ -161,7 +162,7 @@ and bold switches land where they should.
 units per em     2048
 advance          1229        (0.600 em — Courier New's ratio at 2048)
 cap height       1434
-x-height         1024        (exactly half the em; x/cap 0.714)
+x-height         1088        (x/cap 0.759; x/advance 0.885)
 ascender         1556        letters
 descender        -230        letters
 line box         1884 / -594 the cell a terminal reserves
@@ -278,10 +279,9 @@ Noto Sans Mono, Liberation Mono and Nimbus Mono.
 
 ## What it is not
 
-**It reads smaller than the defaults.** At 13px its x-height is 6.5px against
-JetBrains Mono's 7.2 and Hack's 7.1 — about ten percent smaller at the same
-setting. That is the restrained x-height arriving as a consequence, and you will
-probably set it one step larger than you set those.
+**It still reads slightly smaller than the defaults.** At 13px its x-height is
+6.9px against JetBrains Mono's 7.2 and Hack's 7.1 — close, where it used to be
+about ten percent down.
 
 **It trades horizontal density for vertical.** The line box is tighter than the
 field's, so more rows fit; at matched x-height the advance is wider, so fewer

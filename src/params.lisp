@@ -23,7 +23,12 @@
   ;; x/cap lands at 0.714, deliberately below the tall-x coding faces:
   ;; ascenders need room or word silhouettes stop reading in prose.
   (cap-height  700)
-  (x-height    500)
+  (x-height    530)   ; x/advance 0.883.  At 500 it was 0.833, the lowest
+                      ; in the field (0.867-0.917) and the reason the
+                      ; font read light: the letters were short in a
+                      ; normal-width cell, not narrow.  The stem is
+                      ; unchanged, so this makes the text bigger without
+                      ; making the strokes heavier.
   ;; LETTER extents -- where ink actually tops out and bottoms out.
   (ascender    760)   ; b d f h k l
   (descender  -230)   ; g j p q y

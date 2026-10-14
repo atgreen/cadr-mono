@@ -8,7 +8,15 @@
 
 (defstruct (design (:conc-name d-))
   ;; --- the em and the cell -------------------------------------------
-  (upm        1000)   ; units per em
+  ;;
+  ;; EVERY metric below is written PER MILLE -- as if the em were 1000
+  ;; units -- and P scales it to the actual upm on the way out.  That
+  ;; keeps the design resolution-independent and makes upm a real
+  ;; parameter instead of a migration.
+  (upm        2048)   ; units per em.  2048 is the TrueType convention and
+                      ; a power of two, which the rasteriser prefers; 1000
+                      ; is the PostScript/CFF convention.  We ship hinted
+                      ; static TTFs, so the grid is TrueType's.
   (advance     600)   ; every glyph is exactly this wide.  Never varies.
 
   ;; --- vertical proportions ------------------------------------------
@@ -63,16 +71,28 @@
 (defmacro with-design ((design) &body body)
   `(let ((*design* ,design)) ,@body))
 
-(declaim (inline p))
-(defun p (slot)
-  "Read a design parameter, e.g. (p :stem)."
+(defparameter +metric-slots+
+  '(:advance :cap :x :asc :desc :over :stem :thin :tail :dot :serif
+    :br-dot :br-inset :br-top :br-pitch :rule :grade)
+  "Slots carrying a length.  These are written per mille and scaled to
+the current upm; angles, ratios and flags are not.")
+
+(defun metric-scale () (/ (d-upm *design*) 1000))
+
+(defun u (per-mille)
+  "A length written per mille, in units of the current em.  Use this for
+any literal length in a glyph so it tracks the em.  Rounded, because an
+advance width has to be a whole number of units."
+  (round (* per-mille (metric-scale))))
+
+(defun raw-p (slot)
   (ecase slot
     (:upm (d-upm *design*))            (:advance (d-advance *design*))
     (:cap (d-cap-height *design*))     (:x (d-x-height *design*))
     (:asc (d-ascender *design*))       (:desc (d-descender *design*))
     (:over (d-overshoot *design*))     (:stem (d-stem *design*))
     (:thin (d-thin *design*))          (:stress (d-stress-angle *design*))
-    (:aperture (d-aperture *design*))  (:terminal (d-terminal-cut *design*))
+    (:aperture (d-aperture *design*))
     (:ease (d-shoulder-ease *design*)) (:tail (d-tail *design*))
     (:tension (d-tension *design*))
     (:dot (d-dot-radius *design*))     (:zero (d-zero-mark *design*))
@@ -83,6 +103,12 @@
     (:rule (d-rule-weight *design*))
     (:family (d-family *design*))      (:style (d-style *design*))
     (:grade (d-grade *design*))))
+
+(defun p (slot)
+  "Read a design parameter, e.g. (p :stem).  Lengths come back in units
+of the current em; everything else comes back as written."
+  (let ((v (raw-p slot)))
+    (if (member slot +metric-slots+) (u v) v)))
 
 (defun light-cut (&rest overrides)
   "The reference cut, drawn for dark-on-light."

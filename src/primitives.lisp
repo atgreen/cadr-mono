@@ -35,7 +35,7 @@ and is what separates a humanist o from a geometric one."
 
 (defun round-width ()
   "Outer half-width of the round letters, inset from the cell edge."
-  (- (centre-x) 58))
+  (- (centre-x) (u 58)))
 
 ;;; --- ink measurement and optical centring -----------------------------
 

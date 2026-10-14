@@ -90,7 +90,7 @@ grid or they stop tiling."
   (list (stroke-open (list (line-seg (centre-x) 0 (centre-x) (p :x))))
         (entry-serif (centre-x) (p :x))
         (foot-serif (centre-x))
-        (dot-at (centre-x) (- (p :cap) 14 (p :dot)))))
+        (dot-at (centre-x) (- (p :cap) (u 14) (p :dot)))))
 
 (defglyph "l" 108
   (let* ((r (* (p :tail) 1.30))
@@ -108,7 +108,7 @@ grid or they stop tiling."
 
 (defglyph "zero" 48
   (let* ((cy (/ (p :cap) 2))
-         (rx (- (round-width) 6 (/ (p :stem) 2)))
+         (rx (- (round-width) (u 6) (/ (p :stem) 2)))
          (ry (- (+ cy (p :over)) (/ (p :thin) 2))))
     (append (stroke-closed (arc-path (centre-x) cy rx ry 0 360))
             (ecase (p :zero)
@@ -124,19 +124,19 @@ grid or they stop tiling."
             ;; the flag is a stroke off the stem, cut by the pen
             ;; start the flag below the stem's flat top, or the pen's
             ;; cap on a diagonal pokes above the cap height
-            (list (stroke-open (list (line-seg cx (- h 26) (- cx 168) (- h 196)))))
+            (list (stroke-open (list (line-seg cx (- h (u 26)) (- cx (u 168)) (- h (u 196))))))
             (when (p :one-serif)
               ;; centred on thin/2 so the serif sits ON the baseline
               ;; rather than straddling it
               (let ((y (/ (p :thin) 2)))
-                (list (stroke-open (list (line-seg (- cx 150) y (+ cx 150) y)))))))))
+                (list (stroke-open (list (line-seg (- cx (u 150)) y (+ cx (u 150)) y)))))))))
 
 ;;; --- punctuation ------------------------------------------------------------
 
 (defglyph "period" 46 (list (dot-at (centre-x) (p :dot))))
 (defglyph "hyphen" 45
-  (list (stroke-open (list (line-seg (- (centre-x) 150) (* 0.42 (p :x))
-                                     (+ (centre-x) 150) (* 0.42 (p :x)))))))
+  (list (stroke-open (list (line-seg (- (centre-x) (u 150)) (* 0.42 (p :x))
+                                     (+ (centre-x) (u 150)) (* 0.42 (p :x)))))))
 
 ;;; --- bowl family: a stem plus a closed bowl ---------------------------
 ;;;
@@ -291,29 +291,29 @@ it opens a gap."
 ;;; --- stem family: a stem that turns ---------------------------------------
 
 (defglyph "t" 116
-  (let* ((cx (- (centre-x) 54))
+  (let* ((cx (- (centre-x) (u 54)))
          (r (* (p :tail) 0.78))
          (cy (+ r (/ (p :thin) 2))))
     (list (stroke-open
            (cons (line-seg cx (* (p :x) 1.42) cx cy)
                  (arc-path (+ cx r) cy r r 180 270)))
-          (stroke-open (list (line-seg (- cx 150) (p :x) (+ cx 178) (p :x)))))))
+          (stroke-open (list (line-seg (- cx (u 150)) (p :x) (+ cx (u 178)) (p :x)))))))
 
 (defglyph "f" 102
-  (let* ((cx (- (centre-x) 36))
+  (let* ((cx (- (centre-x) (u 36)))
          (r (* (p :tail) 0.86))
          (cy (- (p :asc) r (/ (p :thin) 2))))
     (list (stroke-open
            (append (list (line-seg cx 0 cx cy))
                    (arc-path (+ cx r) cy r r 180 90)))
-          (stroke-open (list (line-seg (- cx 158) (p :x) (+ cx 182) (p :x)))))))
+          (stroke-open (list (line-seg (- cx (u 158)) (p :x) (+ cx (u 182)) (p :x)))))))
 
 (defglyph "j" 106
-  (let* ((cx (+ (centre-x) 38))
+  (let* ((cx (+ (centre-x) (u 38)))
          (r (* (p :tail) 1.28))
          (cy (+ (p :desc) r (/ (p :thin) 2))))
     (list (stroke-open
            (append (list (line-seg cx (p :x) cx cy))
                    (arc-path (- cx r) cy r r 0 -90)))
           (entry-serif cx (p :x) (p :serif))
-          (dot-at cx (- (p :cap) 14 (p :dot))))))
+          (dot-at cx (- (p :cap) (u 14) (p :dot))))))

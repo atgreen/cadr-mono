@@ -74,7 +74,8 @@ ones I forget to add."
   '("humble pond require"
     "chimp bud our melon"
     "0o 1l il 1i rn m cl d"
-    "nnnn oooo mmmm uuuu")
+    "illi nnnn mmmm oooo"
+    "mammillaria hubbub")
   "Built from the glyphs that exist so far, but chosen to stress what a
 specimen is for: words for rhythm, the confusable pairs this font is
 supposed to disambiguate, and runs of one letter to expose uneven

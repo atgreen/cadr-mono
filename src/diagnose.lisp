@@ -6,6 +6,41 @@
 
 (in-package #:muskako)
 
+(defun contour-area (c)
+  "Signed area by the shoelace formula on a flattened contour."
+  (let ((pts (flatten-contour c 24)) (sum 0d0))
+    (loop for (a b) on (append pts (list (first pts)))
+          while b
+          do (incf sum (- (* (car a) (cdr b)) (* (car b) (cdr a)))))
+    (/ sum 2)))
+
+(defun ink-area (glyph)
+  "Ink in square units.  Counters wind against their outer contour, so
+summing SIGNED areas subtracts them, which is what the eye sees."
+  (abs (reduce #'+ (mapcar #'contour-area (glyph-contours glyph))
+               :initial-value 0d0)))
+
+(defun colour-test (&rest strings)
+  "The practitioner's evenness test: a line of illi should look about
+as dark as a line of nnnn.  Making it a number means it can fail a
+build instead of waiting for someone to notice."
+  (format t "~&~%=== even colour (ink per cell, % of advance x x-height) ===~%")
+  (let ((results
+          (loop for str in strings
+                collect (cons str
+                              (/ (loop for ch across str
+                                       for g = (let ((n (gethash (char-code ch) (code-index))))
+                                                 (and n (find-glyph n)))
+                                       sum (if g (ink-area g) 0))
+                                 (* (length str) (p :advance) (p :x)))))))
+    (let ((best (reduce #'max results :key #'cdr)))
+      (dolist (r results)
+        (format t "  ~10a ~5,1f%   ~a~a~%" (car r) (* 100 (cdr r))
+                (make-string (round (* 60 (/ (cdr r) best))) :initial-element #\#)
+                (let ((dev (abs (- 1 (/ (cdr r) (/ (reduce #'+ results :key #'cdr)
+                                                   (length results)))))))
+                  (if (> dev 0.18) "  <-- UNEVEN" "")))))))
+
 (defun ink-bounds (glyph)
   (let ((pts (loop for c in (glyph-contours glyph) append (flatten-contour c))))
     (if (null pts)

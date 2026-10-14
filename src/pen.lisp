@@ -96,6 +96,17 @@ displacement stays accurate through the turn."
 
 ;;; --- the pen ----------------------------------------------------------
 
+(defvar *pen-scale* 1d0
+  "Multiplier on the pen for the glyph being drawn.
+
+Monospace practice thins the crowded letters -- m carries three stems
+where n carries two, in the same cell -- and that is a deliberate
+departure from one stem weight for the whole font.  It costs some stem
+consistency for the hinting, which is the accepted trade.")
+
+(defmacro with-pen-scale ((factor) &body body)
+  `(let ((*pen-scale* ,factor)) ,@body))
+
 (defun pen-axes ()
   "Solve for the pen's major and minor axes such that a VERTICAL stem
 measures exactly (p :stem) and a HORIZONTAL bar exactly (p :thin).
@@ -121,7 +132,8 @@ meaning a designer expects and the pen is derived from them."
          (dif (if (< (abs c2) 0.2d0) 0d0 (/ (- ss tt) c2)))
          (a2 (/ (+ sum dif) 2))
          (b2 (/ (- sum dif) 2)))
-    (values (sqrt (max 1d0 a2)) (sqrt (max 1d0 b2)))))
+    (values (* *pen-scale* (sqrt (max 1d0 a2)))
+            (* *pen-scale* (sqrt (max 1d0 b2))))))
 
 (defun pen-width (dx dy)
   "Stroke width for a tangent (DX, DY) under the current design's pen."

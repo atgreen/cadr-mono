@@ -36,12 +36,21 @@
                       ; squares the shoulders the way drawn bowls do.
 
   ;; --- humanist detailing --------------------------------------------
-  (aperture     34)   ; degrees of arc cut away on c e s.  Bigger = more open.
+  (aperture     96)   ; DEGREES OF OPENING on c e s -- the gap itself.
+                      ; Smaller is more closed, and a more closed c
+                      ; carries more ink.  (This read the other way round
+                      ; until measurement caught it: the arc spanned
+                      ; 180+2a, so raising the "aperture" closed the
+                      ; letter.)
   (terminal-cut 22)   ; degrees.  Angled stroke ends, not flat ones.
   (shoulder-ease 0.54); arch radius of n m h u r, as a fraction of x-height
   (tail         110)  ; centreline radius of the tail on l and t
   (dot-radius    54)  ; i j, punctuation, and the mark inside zero
-  (serif        190)  ; half-length of the serif arms on i j l.  A bare
+  (serif-weight 1.55d0) ; serifs on the narrow glyphs are SLABS, not
+                      ; hairlines.  Length alone adds almost no ink:
+                      ; reaching further with a thin stroke still leaves
+                      ; illi far lighter than nnnn.  Weight is the lever.
+  (serif        245)  ; half-length of the serif arms on i j l.  A bare
                       ; stem leaves four times the sidebearing of a round
                       ; letter and floats in its cell; narrow glyphs have
                       ; to earn their width in a monospace.
@@ -96,7 +105,7 @@ advance width has to be a whole number of units."
     (:ease (d-shoulder-ease *design*)) (:tail (d-tail *design*))
     (:tension (d-tension *design*))
     (:dot (d-dot-radius *design*))     (:zero (d-zero-mark *design*))
-    (:serif (d-serif *design*))
+    (:serif (d-serif *design*))      (:serif-weight (d-serif-weight *design*))
     (:one-serif (d-one-serif *design*)) (:l-tail (d-l-tail *design*))
     (:br-dot (d-braille-dot *design*)) (:br-inset (d-braille-inset *design*))
     (:br-top (d-braille-top *design*)) (:br-pitch (d-braille-pitch *design*))

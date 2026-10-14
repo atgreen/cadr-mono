@@ -56,17 +56,21 @@ grid or they stop tiling."
   (stroke-closed (arc-path (centre-x) (bowl-cy) (bowl-rx) (bowl-ry) 0 360)))
 
 (defglyph "c" 99
-  (let ((a (p :aperture)))
-    (list (stroke-open (arc-path (centre-x) (bowl-cy) (bowl-rx) (bowl-ry)
-                                 (- 90 a) (+ 270 a))))))
+  ;; A wider bowl than o: the opening removes ink that the extra width
+  ;; puts back, so c does not read as the palest letter in the font.
+  (let ((half (/ (p :aperture) 2))
+        (rx (* (bowl-rx) 1.07)))
+    (list (stroke-open (arc-path (centre-x) (bowl-cy) rx (bowl-ry)
+                                 half (- 360 half))))))
 
 (defglyph "e" 101
-  (let* ((cy (bowl-cy)) (rx (bowl-rx)) (ry (bowl-ry)) (a (p :aperture)))
+  (let* ((cy (bowl-cy)) (rx (bowl-rx)) (ry (bowl-ry))
+         (half (/ (p :aperture) 2)))
     (list
      ;; The bowl starts where the bar meets it on the right, runs over
      ;; the top, down the left, round the bottom and out at the lower
      ;; right -- the whole letter in one sweep.
-     (stroke-open (arc-path (centre-x) cy rx ry 0 (+ 270 a)))
+     (stroke-open (arc-path (centre-x) cy rx ry 0 (- 360 half)))
      (stroke-open (list (line-seg (- (centre-x) rx) cy (+ (centre-x) rx) cy))))))
 
 ;;; --- stems and shoulders -------------------------------------------------
@@ -77,14 +81,16 @@ grid or they stop tiling."
         (stroke-open (shoulder-path (centre-x) (bowl-rx)))))
 
 (defun foot-serif (cx &optional (span (p :serif)))
-  "A flat serif sitting ON the baseline."
-  (let ((y (/ (p :thin) 2)))
-    (stroke-open (list (line-seg (- cx span) y (+ cx span) y)))))
+  "A flat slab sitting ON the baseline."
+  (with-pen-scale ((p :serif-weight))
+    (let ((y (/ (* (p :thin) (p :serif-weight)) 2)))
+      (stroke-open (list (line-seg (- cx span) y (+ cx span) y))))))
 
 (defun entry-serif (cx y &optional (span (* (p :serif) 0.74)))
-  "The short arm off the top left of a stem."
-  (let ((yy (- y (/ (p :thin) 2))))
-    (stroke-open (list (line-seg (- cx span) yy cx yy)))))
+  "The slab off the top left of a stem."
+  (with-pen-scale ((p :serif-weight))
+    (let ((yy (- y (/ (* (p :thin) (p :serif-weight)) 2))))
+      (stroke-open (list (line-seg (- cx span) yy cx yy))))))
 
 (defglyph "i" 105
   (list (stroke-open (list (line-seg (centre-x) 0 (centre-x) (p :x))))
@@ -198,10 +204,11 @@ leg that drops to TO."
 
 (defglyph "m" 109
   (let* ((rx (bowl-rx)) (half (/ rx 2)))
-    (list (stroke-open (list (line-seg (- (centre-x) rx) 0
-                                       (- (centre-x) rx) (p :x))))
-          (stroke-open (shoulder-path (- (centre-x) half) half))
-          (stroke-open (shoulder-path (+ (centre-x) half) half)))))
+    (with-pen-scale (0.82d0)
+      (list (stroke-open (list (line-seg (- (centre-x) rx) 0
+                                         (- (centre-x) rx) (p :x))))
+            (stroke-open (shoulder-path (- (centre-x) half) half))
+            (stroke-open (shoulder-path (+ (centre-x) half) half))))))
 
 (defglyph "r" 114
   (let ((rx (bowl-rx)))
@@ -209,13 +216,13 @@ leg that drops to TO."
                                        (- (centre-x) rx) (p :x))))
           ;; r's shoulder stops partway round and is cut by the pen
           (stroke-open (arc-path (centre-x) (shoulder-cy rx) rx (shoulder-ry rx)
-                                 180 55)))))
+                                 180 22)))))
 
 (defglyph "u" 117
   (let* ((rx (bowl-rx))
          ;; shallower than n's arch: u needs straight sides to read as a
          ;; letter rather than a bucket
-         (ry (* (shoulder-ry) 0.78))
+         (ry (* (shoulder-ry) 0.60))
          (cy (+ ry (/ (p :thin) 2))))
     (list (stroke-open
            ;; down the left, round the trough, up the right: one path
@@ -257,13 +264,17 @@ it opens a gap."
           (diag (+ cx rx) (p :x) cx 0))))
 
 (defglyph "w" 119
-  (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :x) 0.52)))
+  (with-pen-scale (0.84d0)
+   (let* ((rx (bowl-rx)) (cx (centre-x))
+         ;; raised crossing point shortens the inner arms, the standard
+         ;; way of taking weight out of a crowded w
+         (mid (* (p :x) 0.64)))
     (list (diag (- cx rx) (p :x) (- cx (* rx 0.46)) 0)
           ;; the inner arms are trimmed only where they touch the
           ;; baseline; the middle apex is interior and must stay long
           (diag (- cx (* rx 0.46)) 0 cx mid :trim :start)
           (diag cx mid (+ cx (* rx 0.46)) 0 :trim :end)
-          (diag (+ cx (* rx 0.46)) 0 (+ cx rx) (p :x)))))
+          (diag (+ cx (* rx 0.46)) 0 (+ cx rx) (p :x))))))
 
 (defglyph "x" 120
   (let ((rx (bowl-rx)) (cx (centre-x)))
@@ -297,7 +308,9 @@ it opens a gap."
     (list (stroke-open
            (cons (line-seg cx (* (p :x) 1.42) cx cy)
                  (arc-path (+ cx r) cy r r 180 270)))
-          (stroke-open (list (line-seg (- cx (u 150)) (p :x) (+ cx (u 178)) (p :x)))))))
+          (with-pen-scale ((p :serif-weight))
+            (stroke-open (list (line-seg (- cx (u 196)) (p :x)
+                                         (+ cx (u 224)) (p :x))))))))
 
 (defglyph "f" 102
   (let* ((cx (- (centre-x) (u 36)))
@@ -306,11 +319,11 @@ it opens a gap."
     (list (stroke-open
            (append (list (line-seg cx 0 cx cy))
                    (arc-path (+ cx r) cy r r 180 90)))
-          (stroke-open (list (line-seg (- cx (u 158)) (p :x) (+ cx (u 182)) (p :x)))))))
+          (stroke-open (list (line-seg (- cx (u 204)) (p :x) (+ cx (u 228)) (p :x)))))))
 
 (defglyph "j" 106
   (let* ((cx (+ (centre-x) (u 38)))
-         (r (* (p :tail) 1.28))
+         (r (* (p :tail) 1.72))
          (cy (+ (p :desc) r (/ (p :thin) 2))))
     (list (stroke-open
            (append (list (line-seg cx (p :x) cx cy))

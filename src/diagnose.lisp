@@ -20,26 +20,39 @@ summing SIGNED areas subtracts them, which is what the eye sees."
   (abs (reduce #'+ (mapcar #'contour-area (glyph-contours glyph))
                :initial-value 0d0)))
 
+(defun string-ink (str)
+  (loop for ch across str
+        for g = (let ((n (gethash (char-code ch) (code-index)))) (and n (find-glyph n)))
+        sum (if g (ink-area g) 0) into ink
+        maximize (if g (multiple-value-bind (x0 y0 x1 y1) (ink-bounds g)
+                         (declare (ignore x0 x1))
+                         (if y0 (- y1 y0) 0))
+                     0) into tallest
+        finally (return (values (/ ink (max 1 (length str))) tallest))))
+
 (defun colour-test (&rest strings)
-  "The practitioner's evenness test: a line of illi should look about
-as dark as a line of nnnn.  Making it a number means it can fail a
-build instead of waiting for someone to notice."
-  (format t "~&~%=== even colour (ink per cell, % of advance x x-height) ===~%")
-  (let ((results
-          (loop for str in strings
-                collect (cons str
-                              (/ (loop for ch across str
-                                       for g = (let ((n (gethash (char-code ch) (code-index))))
-                                                 (and n (find-glyph n)))
-                                       sum (if g (ink-area g) 0))
-                                 (* (length str) (p :advance) (p :x)))))))
-    (let ((best (reduce #'max results :key #'cdr)))
-      (dolist (r results)
-        (format t "  ~10a ~5,1f%   ~a~a~%" (car r) (* 100 (cdr r))
-                (make-string (round (* 60 (/ (cdr r) best))) :initial-element #\#)
-                (let ((dev (abs (- 1 (/ (cdr r) (/ (reduce #'+ results :key #'cdr)
-                                                   (length results)))))))
-                  (if (> dev 0.18) "  <-- UNEVEN" "")))))))
+  "The practitioner's evenness test: a line of illi should look about as
+dark as a line of nnnn.
+
+Measured against nnnn rather than against the mean, and extender
+strings are exempt from the heavy flag: a line of h carries an ascender
+stem that a line of n does not, so it IS darker, in this and in every
+other typeface.  Lightness is the failure we are hunting -- a narrow
+glyph floating in its cell."
+  (format t "~&~%=== even colour (ink per cell, nnnn = 1.00) ===~%")
+  (let ((base (string-ink "nnnn"))
+        (cell (* (p :advance) (p :x))))
+    (dolist (str strings)
+      (multiple-value-bind (ink tallest) (string-ink str)
+        (let* ((ratio (/ ink base))
+               (extender (> tallest (* 1.12 (p :x)))))
+          (format t "  ~10a ~5,2f  ~5,1f%  ~a~a~%"
+                  str ratio (* 100 (/ ink cell))
+                  (make-string (round (* 42 (min 1.4 ratio))) :initial-element #\#)
+                  (cond ((< ratio 0.85) "  <-- LIGHT")
+                        ((and (> ratio 1.15) (not extender)) "  <-- HEAVY")
+                        (extender "  (extender)")
+                        (t ""))))))))
 
 (defun ink-bounds (glyph)
   (let ((pts (loop for c in (glyph-contours glyph) append (flatten-contour c))))

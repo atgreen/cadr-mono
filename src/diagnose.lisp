@@ -49,10 +49,20 @@ glyph floating in its cell."
           (format t "  ~10a ~5,2f  ~5,1f%  ~a~a~%"
                   str ratio (* 100 (/ ink cell))
                   (make-string (round (* 42 (min 1.4 ratio))) :initial-element #\#)
-                  (cond ((< ratio 0.85) "  <-- LIGHT")
-                        ((and (> ratio 1.15) (not extender)) "  <-- HEAVY")
-                        (extender "  (extender)")
-                        (t ""))))))))
+                  ;; Crowded glyphs are SUPPOSED to run heavy.  Measured
+                  ;; across JetBrains, Hack, Adwaita, Noto, Liberation and
+                  ;; Nimbus, m sits at 1.28-1.35 of n and w at 1.15-1.26;
+                  ;; not one of them equalises them.  Judging those against
+                  ;; 1.00 is the instrument asking for a thinner stem than
+                  ;; renders at 13px.
+                  (let ((want (cond ((find #\m str) 1.30)
+                                    ((find #\w str) 1.20)
+                                    (t 1.00))))
+                    (cond ((< ratio (* want 0.85)) "  <-- LIGHT")
+                          ((and (> ratio (* want 1.15)) (not extender)) "  <-- HEAVY")
+                          (extender "  (extender)")
+                          ((> want 1.0) (format nil "  (crowded, field ~,2f)" want))
+                          (t "")))))))))
 
 (defun ink-bounds (glyph)
   (let ((pts (loop for c in (glyph-contours glyph) append (flatten-contour c))))

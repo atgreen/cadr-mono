@@ -224,9 +224,14 @@ leg that drops to TO."
 
 (defglyph "m" 109
   (let* ((rx (bowl-rx)) (half (/ rx 2)))
-    ;; Three stems in one cell leave narrow counters, so m is thinned
-    ;; harder than n.  Re-set after the proofs composited correctly.
-    (with-pen-scale (0.76d0)
+    ;; m is thinned only slightly.  Thinning it until its ink MATCHED n
+    ;; was wrong: measured across the field, m runs 1.28-1.35 times n's
+    ;; ink in every one of JetBrains, Hack, Adwaita, Noto, Liberation
+    ;; and Nimbus.  Nobody equalises it, because at 13px a stem thinned
+    ;; to 137 units is 0.87px and renders grey where a full one renders
+    ;; solid.  The even-colour rule is about narrow glyphs FLOATING in
+    ;; their cells, not about crowded ones.
+    (with-pen-scale (0.92d0)
       (list (stroke-open (list (line-seg (- (centre-x) rx) 0
                                          (- (centre-x) rx) (p :x))))
             (stroke-open (shoulder-path (- (centre-x) half) half))
@@ -287,7 +292,7 @@ it opens a gap."
           (diag (+ cx rx) (p :x) cx 0))))
 
 (defglyph "w" 119
-  (with-pen-scale (0.78d0)
+  (with-pen-scale (0.95d0)
    (let* ((rx (bowl-rx)) (cx (centre-x))
          ;; raised crossing point shortens the inner arms, the standard
          ;; way of taking weight out of a crowded w
@@ -562,7 +567,7 @@ bars land on the cap line and the baseline instead of straddling them."
     (list (diag (- cx rx) (p :cap) cx 0) (diag (+ cx rx) (p :cap) cx 0))))
 
 (defglyph "W" 87
-  (with-pen-scale (0.78d0)
+  (with-pen-scale (0.95d0)
     (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :cap) 0.70)))
       (list (diag (- cx rx) (p :cap) (- cx (* rx 0.46)) 0)
             (diag (- cx (* rx 0.46)) 0 cx mid :trim :start)
@@ -592,7 +597,7 @@ bars land on the cap line and the baseline instead of straddling them."
           (diag (- cx rx) knee (+ cx rx) 0 :trim :end))))
 
 (defglyph "M" 77
-  (with-pen-scale (0.84d0)
+  (with-pen-scale (0.92d0)
     (let* ((rx (bowl-rx)) (cx (centre-x)) (vee (* (p :cap) 0.26)))
       (list (vstem (- cx rx) 0 (p :cap))
             (vstem (+ cx rx) 0 (p :cap))
@@ -600,7 +605,7 @@ bars land on the cap line and the baseline instead of straddling them."
             (diag (+ cx rx) (p :cap) cx vee :trim :start)))))
 
 (defglyph "N" 78
-  (with-pen-scale (0.90d0)
+  (with-pen-scale (0.95d0)
     (let ((rx (bowl-rx)) (cx (centre-x)))
       (list (vstem (- cx rx) 0 (p :cap))
             (vstem (+ cx rx) 0 (p :cap))
@@ -654,9 +659,9 @@ bars land on the cap line and the baseline instead of straddling them."
     (let* ((a 96)
            (wx (+ cx (* rx (cos (deg (- a))))))
            (wy (+ cy-u (* ry (sin (deg (- a)))))))
+      (declare (ignorable wx wy))
       (list (stroke-open (arc-path cx cy-u rx ry 168 (- a)))
-            (stroke-open (arc-path cx cy-l rx ry a -168))
-            (dot-at wx wy (/ (p :thin) 2))))))
+            (stroke-open (arc-path cx cy-l rx ry a -168))))))
 
 (defglyph "four" 52
   (let* ((rx (fig-rx)) (cx (centre-x)) (bar (* (p :cap) 0.28)))

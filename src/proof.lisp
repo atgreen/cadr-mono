@@ -91,18 +91,22 @@ guessing."
   (vecto:set-rgb-fill 0 0 0))
 
 (defun draw-guides (w scale baseline)
-  (dolist (spec (list (list (p :desc) nil) (list 0 t) (list (p :x) t)
-                      (list (p :cap) nil) (list (p :asc) nil)))
+  (dolist (spec (list (list (p :line-desc) nil) (list (p :desc) nil) (list 0 t)
+                      (list (p :x) t) (list (p :cap) nil) (list (p :asc) nil)
+                      (list (p :line-asc) nil)))
     (guide (+ baseline (* scale (first spec))) w :heavy (second spec))))
 
-(defun proof-letters (path &key (size 150) (cols 12))
+(defun proof-letters (path &key (size 140) (cols 10) (only nil))
   "Every letter at display size against the metric guides.
 
 Laid out as a grid rather than one row: a single row of 90 glyphs gets
 scaled down to fit a screen, which hides the very detail the display
 proof exists to show."
-  (let* ((glyphs (remove-if-not (lambda (g) (and (glyph-contours g)
-                                                 (< (or (glyph-code g) 0) #x2800)))
+  (let* ((glyphs (remove-if-not (lambda (g)
+                                  (and (glyph-contours g)
+                                       (if only
+                                           (member (glyph-code g) only)
+                                           (< (or (glyph-code g) 0) #x2500))))
                                 (all-glyphs)))
          (scale (/ size (p :upm)))
          (cell (* scale (p :advance)))
@@ -189,7 +193,7 @@ point of the project, and something these proofs have never shown."
 here is whether rules meet across the cell boundary -- a gap at a
 corner or a T-joint is the defect, and it only shows when characters
 sit next to each other at their true advance."
-  (let* ((line (lambda (s) (round (* s (/ (- (p :asc) (p :desc)) (float (p :upm)))))))
+  (let* ((line (lambda (s) (round (* s (/ (- (p :line-asc) (p :line-desc)) (float (p :upm)))))))
          (h (+ 30 (reduce #'+ (mapcar (lambda (s)
                                         (+ 14 (* (length *box-art*) (funcall line s))))
                                       sizes))))
@@ -207,7 +211,7 @@ sit next to each other at their true advance."
   (let* ((n (1+ (- last first)))
          (scale (/ size (p :upm)))
          (cw (* scale (p :advance)))
-         (ch (* scale (- (p :asc) (p :desc))))
+         (ch (* scale (- (p :line-asc) (p :line-desc))))
          (rows (ceiling n cols))
          (w (ceiling (+ 20 (* cw cols)))) (h (ceiling (+ 20 (* ch rows)))))
     (with-sheet (path w h :dark t)
@@ -217,7 +221,7 @@ sit next to each other at their true advance."
           (when (and g (glyph-contours g))
             (dolist (c (glyph-contours g))
               (draw-contour c scale (+ 10 (* col cw))
-                            (+ 10 (* (- rows row 1) ch) (* scale (- (p :desc))))))
+                            (+ 10 (* (- rows row 1) ch) (* scale (- (p :line-desc))))))
             (vecto:fill-path)))))))
 
 (defun write-proof (dir)

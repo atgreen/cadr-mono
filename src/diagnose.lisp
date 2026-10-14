@@ -82,7 +82,10 @@ glyph floating in its cell."
   (format t "~&~12a ~6a ~6a ~6a ~6a ~6a ~6a~%"
           "glyph" "L" "R" "bot" "top" "width" "skew")
   (dolist (g (all-glyphs))
-    (when (and (glyph-contours g) (< (or (glyph-code g) 0) #x2800))
+    ;; Box drawing and blocks are placed absolutely against the cell and
+    ;; are asymmetric by design, so centring and fill say nothing useful
+    ;; about them.
+    (when (and (glyph-contours g) (< (or (glyph-code g) 0) #x2500))
       (multiple-value-bind (x0 y0 x1 y1) (ink-bounds g)
         (when x0
           (let* ((lsb (round x0))

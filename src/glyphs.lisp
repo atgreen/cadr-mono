@@ -318,7 +318,7 @@ it opens a gap."
          (cy (- (p :asc) r (/ (p :thin) 2))))
     (list (stroke-open
            (append (list (line-seg cx 0 cx cy))
-                   (arc-path (+ cx r) cy r r 180 90)))
+                   (arc-path (+ cx r) cy r r 180 35)))
           (stroke-open (list (line-seg (- cx (u 204)) (p :x) (+ cx (u 228)) (p :x)))))))
 
 (defglyph "j" 106
@@ -409,11 +409,16 @@ bars land on the cap line and the baseline instead of straddling them."
                                  half (- 360 half))))))
 
 (defglyph "G" 71
-  (let ((half (/ (p :aperture) 2))
-        (rx (* (bowl-rx) 1.03)))
+  ;; The bar and spur have to land on the arc's TERMINALS, which sit at
+  ;; rx*cos(half-aperture) -- not at the bowl's outer radius.  Putting
+  ;; them at rx left the spur floating in the opening, touching nothing.
+  (let* ((half (/ (p :aperture) 2))
+         (rx (* (bowl-rx) 1.03))
+         (xr (* rx (cos (deg half))))
+         (y-low (+ (cap-cy) (* (cap-ry) (sin (deg (- half)))))))
     (list (stroke-open (arc-path (centre-x) (cap-cy) rx (cap-ry) half (- 360 half)))
-          (vstem (+ (centre-x) rx) (cap-cy) (* (p :cap) 0.30))
-          (hbar (cap-cy) (* (centre-x) 1.02) (+ (centre-x) rx)))))
+          (vstem (+ (centre-x) xr) y-low (cap-cy))
+          (hbar (cap-cy) (+ (centre-x) (* rx 0.14)) (+ (centre-x) xr)))))
 
 (defglyph "S" 83
   (let* ((rx (* (bowl-rx) 0.95))
@@ -672,28 +677,28 @@ bars land on the cap line and the baseline instead of straddling them."
             (list (diag (+ cx rx) (p :cap) (- cx rx) 0)))))
 
 (defglyph "ampersand" 38
-  ;; Built from parts that read rather than from a faithful et-ligature
-  ;; spine: a small closed loop above, a larger bowl below it open to
-  ;; the right, and a tail out to the lower right.  The honest version
-  ;; of a glyph I could not land by construction.
-  (let* ((cx (centre-x)) (rx (* (bowl-rx) 0.92))
-         (r1x (* rx 0.44)) (r1y (* (p :cap) 0.195))
-         (r2x (* rx 0.70)) (r2y (* (p :cap) 0.275)))
+  ;; Loop and bowl are WIDER than they are tall.  The previous attempt
+  ;; had both taller than wide, which left the loop's counter narrower
+  ;; than the stroke that made it -- so it filled in and the glyph read
+  ;; as a blob with a line through it.
+  (let* ((cx (centre-x)) (rx (bowl-rx)) (half (/ (p :stem) 2))
+         (r1x (* rx 0.50)) (r1y (* (p :cap) 0.155))
+         (cy1 (- (p :cap) r1y half))
+         (r2x (* rx 0.80)) (r2y (* (p :cap) 0.235))
+         (cy2 (+ r2y half)))
     (append
-     (stroke-closed (arc-path (- cx (* rx 0.16)) (* (p :cap) 0.765)
-                              r1x (- r1y (/ (p :thin) 2)) 0 360))
-     (list (stroke-open (arc-path (- cx (* rx 0.06)) (* (p :cap) 0.285)
-                                  r2x r2y 55 340)))
-     (list (diag (- cx (* rx 0.20)) (* (p :cap) 0.50)
-                 (+ cx (* (bowl-rx) 0.92)) (u 25) :trim :end)))))
+     (stroke-closed (arc-path (- cx (* rx 0.26)) cy1 r1x r1y 0 360))
+     (list (stroke-open (arc-path (- cx (* rx 0.10)) cy2 r2x r2y 48 330)))
+     (list (diag (- cx (* rx 0.44)) (* (p :cap) 0.60)
+                 (+ cx (* rx 0.95)) (u 35) :trim :end)))))
 
 (defglyph "parenleft" 40
   (list (stroke-open (arc-path (+ (centre-x) (u 150)) (* (p :cap) 0.40)
-                               (u 230) (* (p :cap) 0.78) 118 242))))
+                               (u 224) (* (p :cap) 0.73) 118 242))))
 
 (defglyph "parenright" 41
   (list (stroke-open (arc-path (- (centre-x) (u 150)) (* (p :cap) 0.40)
-                               (u 230) (* (p :cap) 0.78) -62 62))))
+                               (u 224) (* (p :cap) 0.73) -62 62))))
 
 (defglyph "bracketleft" 91
   (let ((x0 (- (centre-x) (u 90))) (x1 (+ (centre-x) (u 130)))
@@ -706,24 +711,30 @@ bars land on the cap line and the baseline instead of straddling them."
     (list (vstem x1 y0 y1) (hbar y1 x0 x1 :align :under) (hbar y0 x0 x1 :align :on))))
 
 (defglyph "braceleft" 123
-  (let* ((cx (centre-x)) (r (u 140)) (top (* (p :cap) 0.98)) (bot (u -90))
+  ;; One continuous path -- two quarter turns at the ends and two at the
+  ;; waist -- so the spine bends rather than showing six butt joints.
+  (let* ((cx (centre-x)) (r (u 125))
+         (top (* (p :cap) 0.98)) (bot (u -80))
          (mid (/ (+ top bot) 2)))
-    (list (stroke-open (arc-path (+ cx r) (- top r) r r 180 90))
-          (vstem cx (+ mid (u 70)) (- top r))
-          (stroke-open (arc-path (- cx r) (+ mid (u 70)) r r 0 -90))
-          (stroke-open (arc-path (- cx r) (- mid (u 70)) r r 90 0))
-          (vstem cx (+ bot r) (- mid (u 70)))
-          (stroke-open (arc-path (+ cx r) (+ bot r) r r 180 270)))))
+    (list (stroke-open
+           (append (arc-path (+ cx r) (- top r) r r 90 180)
+                   (list (line-seg cx (- top r) cx (+ mid r)))
+                   (arc-path (- cx r) (+ mid r) r r 0 -90)
+                   (arc-path (- cx r) (- mid r) r r 90 0)
+                   (list (line-seg cx (- mid r) cx (+ bot r)))
+                   (arc-path (+ cx r) (+ bot r) r r 180 270))))))
 
 (defglyph "braceright" 125
-  (let* ((cx (centre-x)) (r (u 140)) (top (* (p :cap) 0.98)) (bot (u -90))
+  (let* ((cx (centre-x)) (r (u 125))
+         (top (* (p :cap) 0.98)) (bot (u -80))
          (mid (/ (+ top bot) 2)))
-    (list (stroke-open (arc-path (- cx r) (- top r) r r 0 90))
-          (vstem cx (+ mid (u 70)) (- top r))
-          (stroke-open (arc-path (+ cx r) (+ mid (u 70)) r r 180 270))
-          (stroke-open (arc-path (+ cx r) (- mid (u 70)) r r 90 180))
-          (vstem cx (+ bot r) (- mid (u 70)))
-          (stroke-open (arc-path (- cx r) (+ bot r) r r 0 -90)))))
+    (list (stroke-open
+           (append (arc-path (- cx r) (- top r) r r 90 0)
+                   (list (line-seg cx (- top r) cx (+ mid r)))
+                   (arc-path (+ cx r) (+ mid r) r r 180 270)
+                   (arc-path (+ cx r) (- mid r) r r 90 180)
+                   (list (line-seg cx (- mid r) cx (+ bot r)))
+                   (arc-path (- cx r) (+ bot r) r r 0 -90))))))
 
 (defglyph "asterisk" 42
   (let ((cx (centre-x)) (cy (* (p :cap) 0.74)) (r (u 190)))
@@ -778,16 +789,17 @@ bars land on the cap line and the baseline instead of straddling them."
   ;; An outer ring left OPEN at the lower right, around an inner bowl
   ;; big enough to keep a counter.  A full-circle outer and a bowl
   ;; narrower than the stroke made this a filled blob.
-  (let* ((cx (centre-x)) (rx (bowl-rx)) (ry (* (p :cap) 0.44))
-         (cy (* (p :cap) 0.46))
-         (irx (* rx 0.44)) (iry (* ry 0.46)))
+  (with-pen-scale (0.80d0)
+   (let* ((cx (centre-x)) (rx (bowl-rx)) (ry (* (p :cap) 0.44))
+          (cy (* (p :cap) 0.46))
+          (irx (* rx 0.46)) (iry (* ry 0.50)))
     (append (list (stroke-open (arc-path cx cy rx ry -28 268)))
             (stroke-closed (arc-path cx cy irx iry 0 360))
             ;; the inner bowl's right wall, carried down and out
             (list (stroke-open
                    (append (list (line-seg (+ cx irx) (+ cy iry) (+ cx irx) (- cy iry)))
                            (arc-path (+ cx (* irx 0.1)) (- cy iry)
-                                     (* irx 0.9) (* iry 0.5) 0 -70)))))))
+                                     (* irx 0.9) (* iry 0.5) 0 -70))))))))
 
 (defglyph "slash" 47
   (list (diag (- (centre-x) (u 200)) (u -90) (+ (centre-x) (u 200)) (p :cap))))

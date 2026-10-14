@@ -24,8 +24,20 @@
   ;; ascenders need room or word silhouettes stop reading in prose.
   (cap-height  700)
   (x-height    500)
+  ;; LETTER extents -- where ink actually tops out and bottoms out.
   (ascender    760)   ; b d f h k l
   (descender  -230)   ; g j p q y
+
+  ;; LINE extents -- the cell the terminal reserves.  These are NOT the
+  ;; letter extents, and conflating them is what leaves a font with no
+  ;; headroom: ink then touches, or overflows, the row above.  Measured
+  ;; against the field, the norm is 8-24% of the line box clear above
+  ;; the tallest ink, most commonly around 11%; we had MINUS 3%.
+  ;; These also set the advance-to-line-box ratio, 600/1190 = 0.504,
+  ;; which puts us with Hack (0.517) and Adwaita (0.508) rather than at
+  ;; the Courier-ish extreme of 0.606 we sat at before.
+  (line-ascent   900)
+  (line-descent -290)
   (overshoot    12)   ; round letters exceed flat ones by this
 
   ;; --- stroke --------------------------------------------------------
@@ -81,7 +93,7 @@
   `(let ((*design* ,design)) ,@body))
 
 (defparameter +metric-slots+
-  '(:advance :cap :x :asc :desc :over :stem :thin :tail :dot :serif
+  '(:advance :cap :x :asc :desc :line-asc :line-desc :over :stem :thin :tail :dot :serif
     :br-dot :br-inset :br-top :br-pitch :rule :grade)
   "Slots carrying a length.  These are written per mille and scaled to
 the current upm; angles, ratios and flags are not.")
@@ -99,6 +111,7 @@ advance width has to be a whole number of units."
     (:upm (d-upm *design*))            (:advance (d-advance *design*))
     (:cap (d-cap-height *design*))     (:x (d-x-height *design*))
     (:asc (d-ascender *design*))       (:desc (d-descender *design*))
+    (:line-asc (d-line-ascent *design*)) (:line-desc (d-line-descent *design*))
     (:over (d-overshoot *design*))     (:stem (d-stem *design*))
     (:thin (d-thin *design*))          (:stress (d-stress-angle *design*))
     (:aperture (d-aperture *design*))

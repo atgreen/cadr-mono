@@ -13,10 +13,10 @@
 
 (defun cell-left   () 0)
 (defun cell-right  () (p :advance))
-(defun cell-top    () (p :asc))
-(defun cell-bottom () (p :desc))
+(defun cell-top    () (p :line-asc))
+(defun cell-bottom () (p :line-desc))
 (defun cell-mid-x  () (round (/ (p :advance) 2)))
-(defun cell-mid-y  () (round (/ (+ (p :asc) (p :desc)) 2)))
+(defun cell-mid-y  () (round (/ (+ (p :line-asc) (p :line-desc)) 2)))
 
 (defun w-of (weight)
   (case weight ((nil :n) 0) (:h (round (* (p :rule) 1.85))) (t (p :rule))))

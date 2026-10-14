@@ -44,12 +44,19 @@ contour or they fill in solid instead of cutting a hole."
          ;; After reversing, on-curve kinds must shift by one position
          ;; because a :curve point describes the segment arriving at it.
          (kinds (mapcar #'kind rev)))
+    ;; A point's type describes the segment ENDING at it, so after
+    ;; reversal the deciding neighbour is the one BEFORE it, not after.
+    ;; This went unnoticed while every reversed contour was all curve
+    ;; points -- offcurve on both sides, so either neighbour gave the
+    ;; same answer.  The terminal caps of an open stroke are the first
+    ;; line points to pass through here, and they came out declared as
+    ;; curves with two control points attached.
     (loop for p in rev
           for i from 0
-          for next = (nth (mod (1+ i) (length rev)) kinds)
+          for prev = (nth (mod (1- i) (length rev)) kinds)
           collect (if (eq (kind p) :offcurve)
                       p
-                      (pt (if (eq next :offcurve) :curve :line) (px p) (py p)))
+                      (pt (if (eq prev :offcurve) :curve :line) (px p) (py p)))
           into out
           finally (return (normalize-start out)))))
 
@@ -117,6 +124,25 @@ where a stem and its shoulder are supposed to merge."
           (pt :offcurve (- cx ikx) (+ baseline (* dir iry)))
           (pt :offcurve (- cx irx) (+ baseline (* dir iky)))
           (pt :curve (- cx irx) baseline)))))
+
+(defun contour-sign (c)
+  "Sign of a contour's signed area: +1 counterclockwise, -1 clockwise."
+  (let ((sum 0))
+    (loop for (a b) on (append c (list (first c)))
+          while b
+          do (incf sum (- (* (px a) (py b)) (* (px b) (py a)))))
+    (if (minusp sum) -1 1)))
+
+(defun ensure-ccw (c)
+  "Force counterclockwise winding.
+
+A stroked outline's winding follows its direction of travel, so a
+stroke drawn downward where its neighbours run upward comes out
+reversed -- and under the nonzero fill rule it then SUBTRACTS from
+whatever it overlaps instead of merging with it.  That is a hole where
+a join should be, and it is invisible until two strokes happen to
+cross."
+  (if (minusp (contour-sign c)) (reverse-contour c) c))
 
 (defun bounds (contours)
   "Ink bounding box of CONTOURS as (values x0 y0 x1 y1)."

@@ -231,11 +231,12 @@ hinted: the rasteriser has nothing to snap to the pixel grid."
                       collect (offset-seg s (nth i w) (nth (1+ i) w))))
          (right (loop for s in segs for i from 0
                       collect (offset-seg s (- (nth i w)) (- (nth (1+ i) w))))))
-    (normalize-start
-     (append (segs->points (with-extrema left))
+    (ensure-ccw
+     (normalize-start
+      (append (segs->points (with-extrema left))
              (list (pt :line (seg-x3 (car (last right))) (seg-y3 (car (last right)))))
-             (rest (segs->points (with-extrema (mapcar #'flip-seg (reverse right)))
-                                 :start t))))))
+              (rest (segs->points (with-extrema (mapcar #'flip-seg (reverse right)))
+                                  :start t)))))))
 
 (defun flip-seg (s)
   (seg (seg-x3 s) (seg-y3 s) (seg-x2 s) (seg-y2 s)
@@ -249,5 +250,6 @@ hinted: the rasteriser has nothing to snap to the pixel grid."
                       collect (offset-seg s (nth i w) (nth (1+ i) w))))
          (inner (loop for s in segs for i from 0
                       collect (offset-seg s (- (nth i w)) (- (nth (1+ i) w))))))
-    (list (rest (segs->points (with-extrema outer)))
-          (reverse-contour (rest (segs->points (with-extrema inner)))))))
+    ;; outer counterclockwise, counter clockwise against it
+    (let ((o (ensure-ccw (rest (segs->points (with-extrema outer))))))
+      (list o (reverse-contour (ensure-ccw (rest (segs->points (with-extrema inner)))))))))

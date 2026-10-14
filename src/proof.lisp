@@ -175,6 +175,51 @@ point of the project, and something these proofs have never shown."
                             (+ 10 (* (- rows row 1) ch) (* size 0.25))))
             (vecto:fill-path)))))))
 
+(defparameter *box-art*
+  '("┌─────┬─────┐  ╔═════╦═════╗  ╭─────╮"
+    "│ foo │ bar │  ║ foo ║ bar ║  │ box │"
+    "├─────┼─────┤  ╠═════╬═════╣  ╰─────╯"
+    "│ baz │ qux │  ║ baz ║ qux ║   ╱╲╳  "
+    "└─────┴─────┘  ╚═════╩═════╝  ┏━┳━┓"
+    "┠─┰─┨ ┞─┟ ╞═╡ ╟─╢ ┌┬┐ ╒╤╕ ╓╥╖ ┗━┻━┛"
+    "▁▂▃▄▅▆▇█ ░▒▓ ▌▐▀▄ ▖▗▘▙▚▛▜▝▞▟ ┄┈╌ ┆┊╎"))
+
+(defun proof-boxes (path &key (sizes (list 13 17 26)))
+  "Box art drawn as real adjacent cells.  The only thing that matters
+here is whether rules meet across the cell boundary -- a gap at a
+corner or a T-joint is the defect, and it only shows when characters
+sit next to each other at their true advance."
+  (let* ((line (lambda (s) (round (* s (/ (- (p :asc) (p :desc)) (float (p :upm)))))))
+         (h (+ 30 (reduce #'+ (mapcar (lambda (s)
+                                        (+ 14 (* (length *box-art*) (funcall line s))))
+                                      sizes))))
+         (w 780))
+    (with-sheet (path w h :dark t)
+      (let ((y (- h 20)))
+        (dolist (s sizes)
+          (dolist (ln *box-art*)
+            (decf y (funcall line s))
+            (draw-string ln s 12 y))
+          (decf y 14))))))
+
+(defun proof-box-grid (path &key (first #x2500) (last #x257F) (size 56) (cols 16))
+  "Every box glyph large enough to inspect its joints individually."
+  (let* ((n (1+ (- last first)))
+         (scale (/ size (p :upm)))
+         (cw (* scale (p :advance)))
+         (ch (* scale (- (p :asc) (p :desc))))
+         (rows (ceiling n cols))
+         (w (ceiling (+ 20 (* cw cols)))) (h (ceiling (+ 20 (* ch rows)))))
+    (with-sheet (path w h :dark t)
+      (dotimes (i n)
+        (let* ((g (find-glyph (format nil "uni~4,'0X" (+ first i))))
+               (col (mod i cols)) (row (floor i cols)))
+          (when (and g (glyph-contours g))
+            (dolist (c (glyph-contours g))
+              (draw-contour c scale (+ 10 (* col cw))
+                            (+ 10 (* (- rows row 1) ch) (* scale (- (p :desc))))))
+            (vecto:fill-path)))))))
+
 (defun write-proof (dir)
   (setf *code-index* nil)
   (let ((dir (pathname (concatenate 'string (string-right-trim "/" (namestring dir)) "/"))))
@@ -184,4 +229,6 @@ point of the project, and something these proofs have never shown."
     (proof-sizes   (merge-pathnames "sizes-dark.png" dir) :dark t)
     (proof-braille (merge-pathnames "braille.png" dir))
     (proof-grade   (merge-pathnames "grade.png" dir))
+    (proof-boxes   (merge-pathnames "boxes.png" dir))
+    (proof-box-grid (merge-pathnames "box-grid.png" dir))
     dir))

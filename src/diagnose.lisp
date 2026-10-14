@@ -6,8 +6,13 @@
 
 (in-package #:muskako)
 
-(defun contour-area (c)
-  "Signed area by the shoelace formula on a flattened contour."
+(defun contour-area-exact (c)
+  "Signed area by the shoelace formula on a FLATTENED contour.
+
+Distinct from GEOM:CONTOUR-AREA, which measures control points and is
+what winding decisions use.  This one samples the curve, so it is the
+accurate one for measuring ink -- but it must not share the name, or
+whichever file loads last silently decides how the font is wound."
   (let ((pts (flatten-contour c 24)) (sum 0d0))
     (loop for (a b) on (append pts (list (first pts)))
           while b
@@ -17,7 +22,7 @@
 (defun ink-area (glyph)
   "Ink in square units.  Counters wind against their outer contour, so
 summing SIGNED areas subtracts them, which is what the eye sees."
-  (abs (reduce #'+ (mapcar #'contour-area (glyph-contours glyph))
+  (abs (reduce #'+ (mapcar #'contour-area-exact (glyph-contours glyph))
                :initial-value 0d0)))
 
 (defun string-ink (str)

@@ -969,3 +969,22 @@ bars land on the cap line and the baseline instead of straddling them."
   (let* ((cx (centre-x)) (r (u 215)) (cy (* (p :cap) 0.46)) (h (u 85)))
     (list (stroke-open (append (arc-path (- cx (/ r 2)) cy (/ r 2) h 180 0)
                                (arc-path (+ cx (/ r 2)) cy (/ r 2) h 180 360))))))
+
+;;; --- .notdef ----------------------------------------------------------
+;;;
+;;; Without this, fontmake synthesises a .notdef at upm/2 -- an advance
+;;; no other glyph in the font has.  Since fixed pitch is derived from
+;;; every advance matching, that one glyph is enough to stop the font
+;;; declaring itself monospaced, which is the flag a font picker filters
+;;; on.  Drawn rather than left blank so an unmapped codepoint shows a
+;;; box instead of a hole.
+
+(defglyph ".notdef" nil
+  :no-centre
+  ;; P already scales a metric to the em; U would scale it a second time.
+  (let* ((x0 (p :sidebearing))
+         (x1 (- (p :advance) (p :sidebearing)))
+         (y1 (p :cap))
+         (w (p :thin)))
+    (list (rect x0 0 x1 y1)
+          (ensure-cw (rect (+ x0 w) w (- x1 w) (- y1 w))))))

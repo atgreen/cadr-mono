@@ -1,11 +1,37 @@
 # Muskako
 
-A monospace typeface for terminals, generated from Common Lisp.
+A monospace typeface for terminals and code, generated from Common Lisp.
+Version 0.1 · 714 glyphs · 8 static cuts · [SIL Open Font License 1.1](LICENSE)
+
+![Muskako set as a terminal font](proof/terminal.png)
 
 Every glyph is a pure function of the parameters in `src/params.lisp`. There are
 no drawn outlines and no font editor in the loop: change a number, regenerate,
 and look at the proofs. 714 glyphs across 8 cuts come out of about 3,500 lines
 of Lisp.
+
+## Install
+
+Pre-built, hinted TTFs are in [`fonts/`](fonts). Download the eight files, or
+clone the repository, then:
+
+**Linux**
+
+```sh
+mkdir -p ~/.local/share/fonts
+cp fonts/*.ttf ~/.local/share/fonts/
+fc-cache -f
+```
+
+**macOS** — select the eight `.ttf` files, open them, and click *Install Font*.
+Or `cp fonts/*.ttf ~/Library/Fonts/`.
+
+**Windows** — select the eight `.ttf` files, right-click, and choose
+*Install for all users*.
+
+Then set `Muskako` as your terminal and editor font on a light theme, or
+`Muskako Dark` on a dark one. An already-running terminal will not see a newly
+installed font; restart it.
 
 ---
 
@@ -13,27 +39,30 @@ of Lisp.
 
 ### It ships a dark-background cut
 
+![The two grades side by side](proof/grade.png)
+
 Light text on a dark field looks heavier than the same text dark-on-light. The
 effect is partly optical — bright shapes bleed outward on the retina — and
 partly the rasteriser's, and the two can pull in opposite directions depending
-on your stack. Every coding font is drawn and proofed against a white canvas,
-then used in a terminal, which is the other polarity.
+on the stack. Coding fonts are drawn and proofed against a white canvas, then
+used in a terminal, which is the other polarity.
 
 Muskako ships two **grades**: the reference cut, and a cut with ink removed for
 light-on-dark. Stem 88 against 80 per mille, 8 units off each side.
 
 Crucially they have **identical advance widths and vertical metrics**, so
-swapping one for the other never reflows a column. Set `Muskako` on a light
-theme and `Muskako Dark` on a dark one.
+swapping one for the other never reflows a column.
 
 ### Terminal glyphs are computed from the cell, not drawn
+
+![Box drawing and block elements](proof/boxes.png)
 
 Box drawing, block elements and all 256 braille patterns are generated from the
 cell's own metrics. That isn't a shortcut — it's what makes them correct:
 
 - **Rules reach the cell edges** horizontally and vertically, so they meet
-  across the boundary instead of leaving the gap you see in `lazygit` and `tmux`
-  borders when a font gets this wrong.
+  across the boundary instead of leaving the gap that shows up in `lazygit` and
+  `tmux` borders when a font gets this wrong.
 - **Arms overrun each junction** by half the crossing rule's weight, so corners
   close square rather than notching.
 - **Braille dots sit at advance/4 and 3·advance/4**, so the gap inside a cell
@@ -54,6 +83,8 @@ box.
 
 ### The italic is drawn, not sloped
 
+![The italic](proof/italic.png)
+
 Measured across the field: Hack and Liberation Mono redraw *nothing* for their
 italics; JetBrains Mono reshapes `f` and `y`; Adwaita Mono reshapes `f` alone.
 
@@ -65,6 +96,8 @@ with a sweeping tail. `k`'s arm curves into the stem instead of striking it.
 
 ### It is hinted, because it has to be
 
+![Hinted against unhinted](proof/hinting.png)
+
 At 2048 units per em a whole pixel is 158 units at 13px. The horizontal stroke
 is 127. Every horizontal in this font is sub-pixel at the sizes it exists for,
 and unhinted they wash out to grey.
@@ -75,7 +108,7 @@ is what makes the humanist modulation affordable at all.
 
 ### Every proportion was set by measurement
 
-Not by taste, and several of them against my own first instinct:
+![Compared to the field at matched x-height](proof/compare-xheight.png)
 
 | | Muskako | field |
 |---|---|---|
@@ -101,10 +134,16 @@ Not by taste, and several of them against my own first instinct:
 | Box drawing + block elements | 160 / 160 |
 | Braille patterns | 256 / 256 |
 
-French is complete, including `œ`, the guillemets and the cedilla. λ and the
-full Greek lowercase are there, with the arrow, set and logic operators.
+Latin-1 plus the accent set covers the Western European languages — French is
+complete, including `œ`, the guillemets and the cedilla. λ and the full Greek
+lowercase are there, with the arrow, set and logic operators.
+
+There are **no programming ligatures**, no stylistic sets and no `cv__`
+alternates. See [What it is not](#what-it-is-not).
 
 ## The eight cuts
+
+![The four weights](proof/weights.png)
 
 |  | Regular | Italic | Bold | Bold Italic |
 |---|---|---|---|---|
@@ -129,7 +168,7 @@ stem             180         regular · 164 dark grade · 260 bold
 
 Letter extents and line extents are separate parameters. Collapsing them is what
 leaves a font with no headroom, and it is why accented capitals overflow the cell
-in most of the field.
+in much of the field.
 
 ---
 
@@ -140,13 +179,16 @@ make -f build/Makefile install      # sources → ttf → hint → proofs → in
 ```
 
 That writes UFO sources, compiles them with `fontmake`, hints with
-`ttfautohint`, regenerates every proof sheet, and installs to
-`~/.local/share/fonts`.
+`ttfautohint`, refreshes `fonts/`, regenerates every proof sheet, and installs
+to `~/.local/share/fonts`.
 
-The generator has **no Lisp dependencies** — SBCL alone writes the UFO sources,
-and `sbcl --script build/build.lisp` does just that step. Everything else lives
-in a Python venv the Makefile creates on first run: `fontmake` to compile,
-`ttfautohint` to hint, `freetype-py` and `pillow` to render the proofs.
+Requires `sbcl` and `python3`. The generator has **no Lisp dependencies** —
+SBCL alone writes the UFO sources, and `sbcl --script build/build.lisp` does
+just that step. Everything else lives in a Python venv the Makefile creates on
+first run: `fontmake` to compile, `ttfautohint` to hint, `freetype-py` and
+`pillow` to render the proofs.
+
+Other targets: `sources`, `ttf`, `hint`, `fonts`, `proof`, `clean`.
 
 ### Making it the default monospace font
 
@@ -181,6 +223,7 @@ src/symbols.lisp     arrows, operators, typographic marks
 src/braille.lisp     all 256 patterns, generated
 src/boxes.lisp       box drawing and blocks, from the cell metrics
 src/diagnose.lisp    measurement: fit, colour, extrema, arms
+src/ufo.lisp         UFO 3 output
 ```
 
 A letter is a **centreline path run under an elliptical pen** whose width
@@ -199,9 +242,33 @@ Strokes that continue into one another are *one path* — `l`'s stem into its ta
 construction rather than two parts abutted and hoped over.
 
 Proofs render from the **compiled font** (UFO → fontmake → TTF → FreeType), not
-from the generator's own contours. An instrument that reads the same data
-structures the generator writes shares all of its assumptions, and this one
-drew two serious bugs as though they were fine before it was replaced.
+from the generator's own contour lists. An instrument that reads the same data
+structures the generator writes shares all of its assumptions.
+
+## Contributing
+
+Issues and pull requests are welcome.
+
+Because there are no drawn outlines, a change to a letterform is a change to
+code or to a parameter — not to a `.glif`. Edited UFO or TTF files cannot be
+merged; they are build output, and the next `make` overwrites them.
+
+- **A proportion is wrong across the font** — adjust `src/params.lisp` and say
+  what the new number is measured against.
+- **One letter is wrong** — change its builder in `src/glyphs.lisp` (or the
+  relevant `src/*.lisp`).
+- Run `make -f build/Makefile proof` and include the proof sheet that shows the
+  difference. Judge weight and fit from those sheets, not from the Lisp.
+
+## Credits
+
+Designed and written by Anthony Green.
+
+Built with [fontmake](https://github.com/googlefonts/fontmake),
+[ttfautohint](https://www.freetype.org/ttfautohint/),
+[FreeType](https://freetype.org/) and [SBCL](https://www.sbcl.org/).
+Proportions were measured against JetBrains Mono, Hack, Adwaita Mono,
+Noto Sans Mono, Liberation Mono and Nimbus Mono.
 
 ---
 
@@ -216,6 +283,9 @@ probably set it one step larger than you set those.
 field's, so more rows fit; at matched x-height the advance is wider, so fewer
 columns do.
 
+**There are no programming ligatures.** No `=>`, no `!==`. Nothing prevents them
+in the construction, but they are not drawn.
+
 **The bold is derived, not drawn.** It comes from the same parameters with a
 heavier pen and a crowding allowance that measurement put inside the field's
 range. A foundry would redraw the crowded letters rather than let parameters
@@ -225,10 +295,16 @@ handle them.
 appears unmaintained, and hinting is load-bearing here. Static cuts are the
 deliverable; terminals install static TTFs anyway.
 
-**`&` is the weakest glyph.** Its proper et-ligature spine would not land by
-construction, so what ships is built from parts that read rather than from the
-real letter.
+**`&` is not a true et-ligature.** Its proper spine does not land by
+construction, so what ships is assembled from parts.
 
 ## Licence
 
-SIL Open Font License 1.1.
+Muskako is licensed under the [SIL Open Font License, Version 1.1](LICENSE).
+You may use, study, modify and redistribute it, including commercially and
+including bundled with software; you may not sell it on its own, and derivatives
+must stay under the same licence.
+
+There is **no Reserved Font Name**: this font is meant to be rebuilt with
+different parameters, and reserving the name would make every adjusted build a
+renaming exercise.

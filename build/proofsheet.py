@@ -215,7 +215,7 @@ def sheet_boxes(sizes=(11, 13, 17, 26)):
 TERMINAL = [
     "$ rg --json 'defun (grade|stroke)' src/ | jq -r '.data.path.text'",
     "src/pen.lisp:  2026-10-14T13:07:41.882Z  INFO   127.0.0.1:8443 -> 10.0.2.15",
-    "  [warn] /home/green/.local/share/fonts/Muskako-Regular.ttf: no 'DSIG'",
+    "  [warn] ~/.local/share/fonts/Muskako-Regular.ttf: no 'DSIG' table",
     "  commit 8ad8b47  (HEAD -> main)  fix: bowls cancelling against stems",
     "  ├── build/   47.3 KiB   ├── src/     12 files   └── proof/  8 sheets",
     "  cpu ⣀⣄⣆⣇⣧⣷⣿⣿⣷⣧⣇⣆⣄⣀  mem ▁▂▃▅▆▇█▇▆▅▃▂▁  io ░▒▓█▓▒░",

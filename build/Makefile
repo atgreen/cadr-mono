@@ -2,7 +2,7 @@
 VENV := build/venv/bin
 ROOT := $(shell pwd)
 
-all: hint proof
+all: hint proof fonts
 
 # The generator itself has NO Lisp dependencies: SBCL alone writes the
 # UFO sources.  Everything in the venv is for turning them into fonts.
@@ -32,18 +32,25 @@ hint: ttf
 	$(VENV)/python build/hint.py
 	$(VENV)/python build/rasterproof.py
 
+# fonts/ is what a user downloads: the hinted cuts, at a path that does
+# not look like a scratch directory.  Kept in the repo because there is
+# no release pipeline to publish them from.
+fonts: hint
+	mkdir -p fonts
+	cp build/ttf-hinted/*.ttf fonts/
+
 # The HINTED cuts are what gets installed.  Unhinted, every horizontal
 # in this font is sub-pixel at 13px.
 #
 # install depends on PROOF, not just hint.  They used to be siblings off
 # hint, so installing never regenerated the sheets and the committed
 # proofs could silently lag the font they claimed to show.
-install: hint proof
+install: hint proof fonts
 	mkdir -p $(HOME)/.local/share/fonts
-	cp build/ttf-hinted/*.ttf $(HOME)/.local/share/fonts/
+	cp fonts/*.ttf $(HOME)/.local/share/fonts/
 	fc-cache -f $(HOME)/.local/share/fonts
 
 clean:
 	rm -rf build/ttf build/ttf-hinted build/*.ufo proof/*.png
 
-.PHONY: all venv sources proof ttf hint install clean
+.PHONY: all venv sources proof ttf hint fonts install clean

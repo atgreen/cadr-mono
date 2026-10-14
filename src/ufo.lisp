@@ -28,6 +28,11 @@
   (format s "  </array>~%"))
 (defun kv-str (s key value) (kv s key "string" value))
 
+(defun kv-bool (s key value)
+  "A plist boolean is a self-closing tag, not content, so KV cannot
+write it."
+  (format s "  <key>~a</key>~%  <~:[false~;true~]/>~%" key value))
+
 (defun write-glif (glyph path)
   (with-open-file (s path :direction :output :if-exists :supersede
                           :external-format :utf-8)
@@ -92,7 +97,19 @@
       (kv-int s "openTypeOS2WinDescent" (abs (p :line-desc)))
       ;; 2 = Latin text, 11 = normal sans, 9 = monospaced proportion
       (kv-ints s "openTypeOS2Panose" '(2 11 5 9 0 0 0 0 0 0))
+      ;; Every glyph in this font has the same advance, but that is not
+      ;; self-evident to a font picker filtering for monospaced faces --
+      ;; it reads the flag.
+      (kv-bool s "postscriptIsFixedPitch" t)
+      ;; Release metadata.  The OFL asks that the licence travel with the
+      ;; binary, not just with the repository, so the notice goes in the
+      ;; name table (ID 13) rather than only in LICENSE.
+      (kv-int s "versionMajor" 0)
+      (kv-int s "versionMinor" 100)
       (kv-str s "copyright" "Copyright 2026 Anthony Green. SIL Open Font License 1.1.")
+      (kv-str s "openTypeNameDesigner" "Anthony Green")
+      (kv-str s "openTypeNameLicense"
+              "This Font Software is licensed under the SIL Open Font License, Version 1.1. This license is available with a FAQ at https://openfontlicense.org")
       (kv-str s "openTypeNameLicenseURL" "https://openfontlicense.org")
       (plist-close s))
 

@@ -60,7 +60,10 @@ points, so anything measured from control points overstates it."
                              (push (cons x y) pts))))
                 (push (cons (px pnt) (py pnt)) pts))
             (setf cur pnt))))
-    pts))
+    ;; Points were pushed, so the list runs backwards.  Order is
+    ;; irrelevant to a bounding box but not to a signed area: returning
+    ;; it reversed negates every area measured from it.
+    (nreverse pts)))
 
 (defun contour-points (contours)
   (loop for c in contours append (flatten-contour c)))

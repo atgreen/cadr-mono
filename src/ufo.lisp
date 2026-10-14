@@ -72,9 +72,12 @@
     (with-open-file (s (merge-pathnames "fontinfo.plist" dir) :direction :output
                        :if-exists :supersede :external-format :utf-8)
       (plist-open s)
-      (kv-str s "familyName" (format nil "~a~@[ ~a~]" (p :family)
-                                     (unless (string= (p :style) "Regular") (p :style))))
-      (kv-str s "styleName" "Regular")
+      ;; Family carries the CUT (the grade); style carries the slope.
+      ;; So Muskako / Muskako Dark each get a Regular and an Italic, and
+      ;; a terminal's bold-and-italic switches land where they should.
+      (kv-str s "familyName" (p :family))
+      (kv-str s "styleName" (p :style))
+      (kv-int s "italicAngle" (p :slant))
       (kv-int s "unitsPerEm" (p :upm))
       (kv-int s "ascender" (p :line-asc))
       (kv-int s "descender" (p :line-desc))

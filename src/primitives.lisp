@@ -106,6 +106,20 @@ smaller copy of another -- the ringed letters and the ordinals."
                     (reduce #'max pts :key #'car))
                  2))))
 
+(defun shear-contours (contours degrees)
+  "Slope CONTOURS about the baseline.  Horizontal positions shift by
+y * tan(angle), so the baseline stays put and everything above it leans."
+  (if (zerop degrees)
+      contours
+      (let ((k (tan (deg (- degrees)))))
+        (mapcar (lambda (c)
+                  (mapcar (lambda (pnt)
+                            (pt (kind pnt)
+                                (+ (px pnt) (* k (py pnt)))
+                                (py pnt)))
+                          c))
+                contours))))
+
 (defun centre-ink (contours)
   "Shift CONTOURS so their ink sits centred in the cell.
 

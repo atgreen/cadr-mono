@@ -30,7 +30,13 @@ optical offset the box cannot give them."
 
 (defun build-contours (entry)
   (let ((contours (funcall (third entry))))
-    (when (second entry) (setf contours (centre-ink contours)))
+    ;; Glyphs that opt out of centring opt out of the slope too: box
+    ;; drawing and braille are placed against the cell, and a sloped
+    ;; rule cannot meet its neighbour across a cell boundary.  An
+    ;; italic terminal still has to draw a straight box.
+    (when (second entry)
+      (setf contours (shear-contours contours (p :slant)))
+      (setf contours (centre-ink contours)))
     (let ((shift (or (fourth entry) 0)))
       (if (zerop shift) contours (shift-contours contours (u shift))))))
 
@@ -288,21 +294,41 @@ it opens a gap."
 
 (defglyph "v" 118
   (let ((rx (bowl-rx)) (cx (centre-x)))
-    (list (diag (- cx rx) (p :x) cx 0)
-          (diag (+ cx rx) (p :x) cx 0))))
+    (if (p :italic)
+        ;; A rounded trough: an italic v is written in one movement, not
+        ;; struck as two strokes meeting at a point.
+        (let* ((ry (* (p :x) 0.42)) (cy (+ ry (/ (p :thin) 2))))
+          (list (stroke-open
+                 (append (list (line-seg (- cx rx) (p :x) (- cx rx) cy))
+                         (arc-path cx cy rx ry 180 360)
+                         (list (line-seg (+ cx rx) cy (+ cx rx) (p :x)))))))
+        (list (diag (- cx rx) (p :x) cx 0)
+              (diag (+ cx rx) (p :x) cx 0)))))
 
 (defglyph "w" 119
-  (with-pen-scale (0.95d0)
-   (let* ((rx (bowl-rx)) (cx (centre-x))
-         ;; raised crossing point shortens the inner arms, the standard
-         ;; way of taking weight out of a crowded w
-         (mid (* (p :x) 0.70)))
-    (list (diag (- cx rx) (p :x) (- cx (* rx 0.46)) 0)
-          ;; the inner arms are trimmed only where they touch the
-          ;; baseline; the middle apex is interior and must stay long
-          (diag (- cx (* rx 0.46)) 0 cx mid :trim :start)
-          (diag cx mid (+ cx (* rx 0.46)) 0 :trim :end)
-          (diag (+ cx (* rx 0.46)) 0 (+ cx rx) (p :x))))))
+  (if (p :italic)
+      ;; Two rounded troughs, to match the italic v.  Leaving w angular
+      ;; beside a rounded v makes the pair look like a mistake rather
+      ;; than a choice.
+      (with-pen-scale (0.95d0)
+        (let* ((rx (* (bowl-rx) 0.52)) (cx (centre-x))
+               (ry (* (p :x) 0.38)) (cy (+ ry (/ (p :thin) 2))))
+          (list (stroke-open
+                 (append (list (line-seg (- cx (* rx 1.92)) (p :x)
+                                         (- cx (* rx 1.92)) cy))
+                         (arc-path (- cx (* rx 0.96)) cy rx ry 180 360)
+                         (list (line-seg cx cy cx (p :x)))))
+                (stroke-open
+                 (append (list (line-seg cx (p :x) cx cy))
+                         (arc-path (+ cx (* rx 0.96)) cy rx ry 180 360)
+                         (list (line-seg (+ cx (* rx 1.92)) cy
+                                         (+ cx (* rx 1.92)) (p :x))))))))
+      (with-pen-scale (0.95d0)
+        (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :x) 0.70)))
+          (list (diag (- cx rx) (p :x) (- cx (* rx 0.46)) 0)
+                (diag (- cx (* rx 0.46)) 0 cx mid :trim :start)
+                (diag cx mid (+ cx (* rx 0.46)) 0 :trim :end)
+                (diag (+ cx (* rx 0.46)) 0 (+ cx rx) (p :x)))))))
 
 (defglyph "x" 120
   (let ((rx (bowl-rx)) (cx (centre-x)))
@@ -310,9 +336,22 @@ it opens a gap."
           (diag (+ cx rx) (p :x) (- cx rx) 0))))
 
 (defglyph "y" 121
-  (let ((rx (bowl-rx)) (cx (centre-x)))
-    (list (diag (- cx rx) (p :x) (+ cx (* rx 0.18)) 0)
-          (diag (+ cx rx) (p :x) (- cx (* rx 0.55)) (p :desc)))))
+  (if (p :italic)
+      ;; A trough with a tail that sweeps left, rather than two
+      ;; straight diagonals -- the second letter JetBrains reshapes.
+      (let* ((rx (bowl-rx)) (ry (* (p :x) 0.46))
+             (cy (+ ry (/ (p :thin) 2)))
+             (r (* (p :tail) 1.1))
+             (tail-cy (+ (p :desc) r (/ (p :thin) 2))))
+        (list (stroke-open
+               (append (list (line-seg (- (centre-x) rx) (p :x) (- (centre-x) rx) cy))
+                       (arc-path (centre-x) cy rx ry 180 360)
+                       (list (line-seg (+ (centre-x) rx) cy
+                                       (+ (centre-x) rx) tail-cy))
+                       (arc-path (- (+ (centre-x) rx) r) tail-cy r r 0 -115)))))
+      (let ((rx (bowl-rx)) (cx (centre-x)))
+        (list (diag (- cx rx) (p :x) (+ cx (* rx 0.18)) 0)
+              (diag (+ cx rx) (p :x) (- cx (* rx 0.55)) (p :desc) :trim :start)))))
 
 (defglyph "z" 122
   (let ((rx (bowl-rx)) (cx (centre-x)) (h (/ (p :thin) 2)))
@@ -323,9 +362,14 @@ it opens a gap."
 
 (defglyph "k" 107
   (let* ((rx (bowl-rx)) (cx (centre-x)) (knee (* (p :x) 0.42)))
-    (list (stroke-open (list (line-seg (- cx rx) 0 (- cx rx) (p :asc))))
-          (diag (+ cx rx) (p :x) (- cx rx) knee :trim :start)
-          (diag (- cx rx) knee (+ cx rx) 0 :trim :end))))
+    (list* (stroke-open (list (line-seg (- cx rx) 0 (- cx rx) (p :asc))))
+           (if (p :italic)
+               ;; The arm curves into the stem rather than striking it.
+               (list (stroke-open (arc-path (- cx rx) (* (p :x) 0.70)
+                                            (* rx 1.9) (* (p :x) 0.30) 80 -10))
+                     (diag (- cx rx) knee (+ cx rx) 0 :trim :end))
+               (list (diag (+ cx rx) (p :x) (- cx rx) knee :trim :start)
+                     (diag (- cx rx) knee (+ cx rx) 0 :trim :end))))))
 
 ;;; --- stem family: a stem that turns ---------------------------------------
 
@@ -342,13 +386,22 @@ it opens a gap."
                                          (+ cx (u 224)) (p :x))))))))
 
 (defglyph "f" 102
+  ;; In the italic f descends and hooks left -- the single reshaping
+  ;; that JetBrains, Adwaita and most others all make.
   (let* ((cx (- (centre-x) (u 36)))
          (r (* (p :tail) 0.86))
-         (cy (- (p :asc) r (/ (p :thin) 2))))
+         (cy (- (p :asc) r (/ (p :thin) 2)))
+         (foot (if (p :italic) (+ (p :desc) r (/ (p :thin) 2)) 0)))
     (list (stroke-open
-           (append (list (line-seg cx 0 cx cy))
-                   (arc-path (+ cx r) cy r r 180 35)))
-          (stroke-open (list (line-seg (- cx (u 204)) (p :x) (+ cx (u 228)) (p :x)))))))
+           (append (if (p :italic)
+                       (list (line-seg cx cy cx foot))
+                       (list (line-seg cx foot cx cy)))
+                   (if (p :italic)
+                       (arc-path (- cx r) foot r r 0 -110)
+                       nil)))
+          (stroke-open (arc-path (+ cx r) cy r r 180 35))
+          (stroke-open (list (line-seg (- cx (u 204)) (p :x)
+                                       (+ cx (u 228)) (p :x)))))))
 
 (defglyph "j" 106
   :shift -45
@@ -364,17 +417,23 @@ it opens a gap."
 ;;; --- the three that fit no family -----------------------------------------
 
 (defglyph "a" 97
-  ;; Double-storey: a lower bowl sharing its right edge with the stem,
-  ;; and a top arc springing from the stem's head and curving away left.
-  (let* ((rx (bowl-rx))
-         (ry-b (* (p :x) 0.30))
-         (cy-b (+ ry-b (/ (p :thin) 2) (- (p :over))))
-         (ry-t (* (p :x) 0.21))
-         (cy-t (- (p :x) ry-t (/ (p :thin) 2))))
-    (append (list (stroke-open (list (line-seg (+ (centre-x) rx) 0
-                                               (+ (centre-x) rx) cy-t))))
-            (stroke-closed (arc-path (centre-x) cy-b rx ry-b 0 360))
-            (list (stroke-open (arc-path (centre-x) cy-t rx ry-t 0 168))))))
+  ;; Double-storey upright; SINGLE-STOREY in the italic, which is the
+  ;; signature difference of a drawn italic and the first thing a reader
+  ;; registers as "this is emphasised" rather than "this is leaning".
+  (if (p :italic)
+      (append (list (stroke-open (list (line-seg (+ (centre-x) (bowl-rx)) 0
+                                                 (+ (centre-x) (bowl-rx)) (p :x)))))
+              (stroke-closed (arc-path (centre-x) (bowl-cy) (bowl-rx)
+                                       (bowl-ry) 0 360)))
+      (let* ((rx (bowl-rx))
+             (ry-b (* (p :x) 0.30))
+             (cy-b (+ ry-b (/ (p :thin) 2) (- (p :over))))
+             (ry-t (* (p :x) 0.21))
+             (cy-t (- (p :x) ry-t (/ (p :thin) 2))))
+        (append (list (stroke-open (list (line-seg (+ (centre-x) rx) 0
+                                                   (+ (centre-x) rx) cy-t))))
+                (stroke-closed (arc-path (centre-x) cy-b rx ry-b 0 360))
+                (list (stroke-open (arc-path (centre-x) cy-t rx ry-t 0 168)))))))
 
 (defglyph "g" 103
   ;; Single-storey: o's bowl, then the stem carries on below the line

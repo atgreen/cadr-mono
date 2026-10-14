@@ -6,13 +6,17 @@
   (asdf:load-system :muskako))
 (in-package :muskako)
 
+(defun emit (design name)
+  (with-design (design)
+    (format t "~&~a: ~a glyphs, stem ~a, slant ~a~%"
+            name (length (all-glyphs)) (p :stem) (p :slant))
+    (write-ufo (format nil "/home/green/git/muskako/build/~a.ufo" name))))
+
 (defun build-all ()
-  (with-design ((light-cut))
-    (format t "~&light cut: ~a glyphs~%" (length (all-glyphs)))
-    (write-ufo "/home/green/git/muskako/build/Muskako-Regular.ufo"))
-  (with-design ((dark-cut :grade 4))
-    (format t "dark cut:  ~a glyphs, stem ~a~%" (length (all-glyphs)) (p :stem))
-    (write-ufo "/home/green/git/muskako/build/MuskakoDark-Regular.ufo"))
+  (emit (light-cut) "Muskako-Regular")
+  (emit (italicise (light-cut) :slant -10) "Muskako-Italic")
+  (emit (dark-cut) "MuskakoDark-Regular")
+  (emit (italicise (dark-cut) :slant -10) "MuskakoDark-Italic")
   (format t "done~%"))
 
 (handler-case (build-all) (error (e) (format t "~&ERROR: ~a~%" e)))

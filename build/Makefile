@@ -14,10 +14,10 @@ proof: hint
 	$(VENV)/python build/compare.py
 
 ttf: sources
-	$(VENV)/fontmake -u build/Muskako-Regular.ufo -o ttf \
-	  --output-dir build/ttf --overlaps-backend pathops
-	$(VENV)/fontmake -u build/MuskakoDark-Regular.ufo -o ttf \
-	  --output-dir build/ttf --overlaps-backend pathops
+	for u in build/*.ufo; do \
+	  $(VENV)/fontmake -u $$u -o ttf --output-dir build/ttf \
+	    --overlaps-backend pathops || exit 1; \
+	done
 
 hint: ttf
 	$(VENV)/python build/hint.py

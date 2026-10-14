@@ -85,6 +85,15 @@
   (braille-pitch 190) ; vertical distance between dot rows
   (rule-weight    70) ; stroke weight of box-drawing rules
 
+  ;; --- slope ------------------------------------------------------------
+  ;; Measured across the field: JetBrains and Adwaita slope 9 degrees,
+  ;; Hack 11, Liberation 12.  Hack and Liberation are pure obliques --
+  ;; nothing redrawn; JetBrains reshapes f and y, Adwaita only f.  So a
+  ;; genuinely drawn italic is as rare as the research said, and this
+  ;; one reshapes more than any of them.
+  (slant         0)   ; degrees of slope; negative leans right
+  (italic      nil)   ; whether to use the italic letterforms
+
   ;; --- provenance ----------------------------------------------------
   (family "Muskako")
   (style  "Regular")
@@ -128,6 +137,7 @@ advance width has to be a whole number of units."
     (:br-top (d-braille-top *design*)) (:br-pitch (d-braille-pitch *design*))
     (:rule (d-rule-weight *design*))
     (:family (d-family *design*))      (:style (d-style *design*))
+    (:slant (d-slant *design*))       (:italic (d-italic *design*))
     (:grade (d-grade *design*))))
 
 (defun p (slot)
@@ -138,13 +148,19 @@ of the current em; everything else comes back as written."
 
 (defun light-cut (&rest overrides)
   "The reference cut, drawn for dark-on-light."
-  (apply #'make-design :style "Regular" :grade 0 overrides))
+  (apply #'make-design :family "Muskako" :style "Regular" :grade 0 overrides))
+
+(defun italicise (d &key (slant -10))
+  "Turn a cut into its italic.  The slope is applied to outlines; the
+flag switches the letters that are genuinely redrawn."
+  (setf (d-slant d) slant (d-italic d) t (d-style d) "Italic")
+  d)
 
 (defun dark-cut (&key (grade 4) &allow-other-keys)
   "The graded cut for light-on-dark.  GRADE units of ink come off each
 side of every stroke.  Advance widths and every vertical metric are
 untouched, so the two cuts are swappable without reflowing a column."
-  (let ((d (make-design :style "Dark" :grade grade)))
+  (let ((d (make-design :family "Muskako Dark" :style "Regular" :grade grade)))
     (setf (d-stem d)        (- (d-stem d) (* 2 grade))
           (d-thin d)        (- (d-thin d) (* 2 grade))
           (d-dot-radius d)  (- (d-dot-radius d) grade)

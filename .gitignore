@@ -11,3 +11,5 @@ ocicl/
 .beads/proxieddb/
 build/venv/
 build/ttf-hinted/
+proof/spot.png
+proof/small.png

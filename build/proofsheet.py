@@ -92,13 +92,18 @@ def sheet_letters(px=120, cols=10):
         bases.append(base)
         draw_run(cov, f, "".join(chars[r * cols:(r + 1) * cols]), 10, base,
                  hinted=False)
-    img = finish(cov, dark=False)
+    # Guides go UNDER the ink: draw them on the ground first, then
+    # composite the glyphs on top through the coverage mask.  Drawn
+    # over, they cut through every letter and fight the thing the sheet
+    # exists to show.
+    img = Image.new("L", cov.size, 255)
     d = ImageDraw.Draw(img)
     for base in bases:
-        for y, grey in ((f.size.ascender / 64, 214), (760 * k, 198),
-                        (700 * k, 198), (500 * k, 152), (0, 152),
-                        (-230 * k, 198), (f.size.descender / 64, 214)):
+        for y, grey in ((f.size.ascender / 64, 226), (760 * k, 206),
+                        (700 * k, 206), (500 * k, 176), (0, 176),
+                        (-230 * k, 206), (f.size.descender / 64, 226)):
             d.line([(0, base - y), (img.width, base - y)], fill=grey)
+    img.paste(0, (0, 0), cov)
     tag(img, (6, 2), f"Muskako Regular - outlines at {px}px, unhinted - "
                      "guides: line-asc / asc / cap / x / base / desc / line-desc",
         dark=False)

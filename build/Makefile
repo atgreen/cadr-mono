@@ -24,7 +24,11 @@ hint: ttf
 
 # The HINTED cuts are what gets installed.  Unhinted, every horizontal
 # in this font is sub-pixel at 13px.
-install: hint
+#
+# install depends on PROOF, not just hint.  They used to be siblings off
+# hint, so installing never regenerated the sheets and the committed
+# proofs could silently lag the font they claimed to show.
+install: hint proof
 	mkdir -p $(HOME)/.local/share/fonts
 	cp build/ttf-hinted/*.ttf $(HOME)/.local/share/fonts/
 	fc-cache -f $(HOME)/.local/share/fonts

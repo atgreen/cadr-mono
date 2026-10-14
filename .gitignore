@@ -1,0 +1,5 @@
+build/*.ufo/
+build/*.ttf
+build/*.otf
+ocicl/
+*.fasl

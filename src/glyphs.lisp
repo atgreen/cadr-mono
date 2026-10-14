@@ -343,21 +343,36 @@ it opens a gap."
 
 (defglyph "y" 121
   (if (p :italic)
-      ;; A trough with a tail that sweeps left, rather than two
-      ;; straight diagonals -- the second letter JetBrains reshapes.
-      (let* ((rx (bowl-rx)) (ry (* (p :x) 0.46))
-             (cy (+ ry (/ (p :thin) 2)))
-             (r (* (p :tail) 1.1))
-             (tail-cy (+ (p :desc) r (/ (p :thin) 2))))
-        (list (stroke-open
-               (append (list (line-seg (- (centre-x) rx) (p :x) (- (centre-x) rx) cy))
-                       (arc-path (centre-x) cy rx ry 180 360)
-                       (list (line-seg (+ (centre-x) rx) cy
-                                       (+ (centre-x) rx) tail-cy))
-                       (arc-path (- (+ (centre-x) rx) r) tail-cy r r 0 -115)))))
+      ;; Two arms meeting at a vertex, with the right one carrying on
+      ;; into a tail that sweeps left.  Built as a trough -- which is
+      ;; what this was -- the right side never rises past mid height, so
+      ;; there is no V at all and the letter reads as a u with a tail.
+      ;;
+      ;; The tail is a CUBIC rather than an arc so it can leave the
+      ;; vertex along the arm's own direction and still arrive flat at
+      ;; the descender: its first control point continues the arm by the
+      ;; same slope, which is what makes the bend continuous instead of
+      ;; a corner hidden inside the stroke width.
+      (let* ((rx (bowl-rx)) (cx (centre-x))
+             (bx (+ cx rx))
+             (vx (+ cx (* rx 0.18)))            ; vertex, as in the upright
+             (ey (+ (p :desc) (/ (p :thin) 2))) ; tail ink stops at the descender
+             (ex (- cx (* rx 0.50)))
+             (k 0.26))
+        (list (diag (- cx rx) (p :x) vx 0)
+              (stroke-open
+               (list (line-seg bx (p :x) vx 0)
+                     (seg vx 0
+                          (+ vx (* k (- vx bx))) (* (- k) (p :x))
+                          (+ ex (* 0.45 (- vx ex))) ey
+                          ex ey)))))
+      ;; Both ends of the descending arm are trimmed: its foot lands in
+      ;; open air at the descender, not inside another stroke, so an
+      ;; untrimmed butt cap just hangs below the line -- y was reaching
+      ;; -507 where every other descender stopped at -471.
       (let ((rx (bowl-rx)) (cx (centre-x)))
         (list (diag (- cx rx) (p :x) (+ cx (* rx 0.18)) 0)
-              (diag (+ cx rx) (p :x) (- cx (* rx 0.55)) (p :desc) :trim :start)))))
+              (diag (+ cx rx) (p :x) (- cx (* rx 0.55)) (p :desc))))))
 
 (defglyph "z" 122
   (let ((rx (bowl-rx)) (cx (centre-x)) (h (/ (p :thin) 2)))
@@ -370,9 +385,17 @@ it opens a gap."
   (let* ((rx (bowl-rx)) (cx (centre-x)) (knee (* (p :x) 0.42)))
     (list* (stroke-open (list (line-seg (- cx rx) 0 (- cx rx) (p :asc))))
            (if (p :italic)
-               ;; The arm curves into the stem rather than striking it.
-               (list (stroke-open (arc-path (- cx rx) (* (p :x) 0.70)
-                                            (* rx 1.9) (* (p :x) 0.30) 80 -10))
+               ;; The arm curves into the stem rather than striking it --
+               ;; but it must still LAND on the stem at the knee, which
+               ;; is where the leg departs.  Swept as a free arc it ended
+               ;; in mid-air out to the right while the leg started back
+               ;; at the stem, so the two never met and the arm closed
+               ;; against the stem into something nearer a b.
+               (list (stroke-open
+                      (list (seg (+ cx rx) (p :x)
+                                 (+ cx (* rx 0.35)) (* (p :x) 0.92)
+                                 (- cx (* rx 0.30)) (* (p :x) 0.70)
+                                 (- cx rx) knee)))
                      (diag (- cx rx) knee (+ cx rx) 0 :trim :end))
                (list (diag (+ cx rx) (p :x) (- cx rx) knee :trim :start)
                      (diag (- cx rx) knee (+ cx rx) 0 :trim :end))))))
@@ -444,14 +467,22 @@ it opens a gap."
 (defglyph "g" 103
   ;; Single-storey: o's bowl, then the stem carries on below the line
   ;; and hooks left, the same turn j makes.
+  ;; The tail radius sets how long the turn is: CY is pinned so the
+  ;; bottom of the hook lands on the descender, so a larger radius
+  ;; starts the curve higher and sweeps further left.  At 1.42 with a
+  ;; quarter turn it read as a bend in the stem rather than a tail, and
+  ;; g was separated from q by NOTHING: measured, the two had exactly
+  ;; the same below-baseline ink width, 541 units each.  2.15 is the
+  ;; longest turn the cell allows -- it brings the tail out to x=119,
+  ;; which is the sidebearing exactly.
   (let* ((rx (bowl-rx))
-         (r (* (p :tail) 1.42))
+         (r (* (p :tail) 2.15))
          (cy (+ (p :desc) r (/ (p :thin) 2))))
     (append (stroke-closed (arc-path (centre-x) (bowl-cy) rx (bowl-ry) 0 360))
             (list (stroke-open
                    (append (list (line-seg (+ (centre-x) rx) (p :x)
                                            (+ (centre-x) rx) cy))
-                           (arc-path (- (+ (centre-x) rx) r) cy r r 0 -90)))))))
+                           (arc-path (- (+ (centre-x) rx) r) cy r r 0 -124)))))))
 
 (defglyph "s" 115
   ;; Two arcs that meet at mid-height by construction: the upper one

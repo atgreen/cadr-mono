@@ -55,10 +55,13 @@ descender, and `k`, `v`, `w` and `y` are redrawn so `value` can't read as
 
 ![The italic](proof/italic.png)
 
-**It's hinted, because it has to be.** At 13px a whole pixel is 158 units and
-the horizontal stroke is 147, so every horizontal is sub-pixel at the sizes
-this font exists for. Hinting roughly doubles the share of fully-covered pixels
-at 11–13px, measured through FreeType with instructions on and off.
+**It's hinted,** with `ttfautohint`. At 13px a whole pixel is 158 units and the
+horizontal stroke is 147, so every horizontal is sub-pixel at that size;
+hinting roughly triples the share of fully-covered pixels at 11–13px. Two
+caveats worth knowing: above 13px the instructions measurably *hurt*, and most
+Linux desktops run `hintslight`, which uses FreeType's own autohinter and
+ignores the font's bytecode entirely. On a HiDPI display none of it matters
+much — at 40px the font puts half its ink down at full coverage either way.
 
 **Proportions were set by measurement,** against JetBrains Mono, Fira Code,
 Hack, Adwaita Mono, Noto Sans Mono and Liberation Mono:

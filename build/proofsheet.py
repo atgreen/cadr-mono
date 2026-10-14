@@ -10,6 +10,12 @@ itself as a mask squares the coverage -- a half-covered edge pixel
 lands at 64 instead of 128 -- which made every sheet render thinner and
 harsher than the font really is, and made weight comparisons worthless.
 """
+#
+# SIZE CHOICE.  A "13px" proof is a 96dpi assumption.  On a 2x or 2.5x
+# display -- Xft.dpi 192 or 240 -- a 12pt terminal font rasterises at 32
+# or 40 real pixels, where this font measures 44-50% of its ink at full
+# coverage against 13% at 16px.  Proofing only the small sizes shows a
+# softness most readers never see, so the size sheets run up to 40.
 import freetype, pathlib
 from PIL import Image, ImageDraw, ImageFont
 
@@ -125,7 +131,7 @@ TEXT_LINES = [
 ]
 
 
-def sheet_sizes(dark, sizes=(11, 12, 13, 14, 16, 20, 28)):
+def sheet_sizes(dark, sizes=(11, 13, 16, 20, 26, 32, 40)):
     """Light sheet shows the Regular cut; the dark sheet shows the DARK
     CUT, which is the one you would actually set on a dark ground."""
     path = DARK if dark else REF
@@ -224,7 +230,7 @@ TERMINAL = [
 ]
 
 
-def sheet_terminal(sizes=(11, 12, 13, 14, 16)):
+def sheet_terminal(sizes=(13, 16, 20, 26, 32, 40)):
     """What the font is actually for: dense output, paths, addresses,
     hashes, tree glyphs and sparklines, at working sizes."""
     faces = [(s, face(DARK, s)) for s in sizes]

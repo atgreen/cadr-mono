@@ -6,6 +6,27 @@
 
 (in-package #:muskako)
 
+;;; --- release identity -------------------------------------------------
+
+(defparameter +version-major+ 0)
+(defparameter +version-minor+ 100)   ; fontRevision becomes 0.100
+
+(defun build-stamp ()
+  "A UTC stamp identifying this particular build.
+
+Two builds of the same source install to the same path under the same
+family name and the same version, which leaves no way to tell which one
+an application is actually holding.  That matters because replacing the
+file does not dislodge it: a running VTE or Pango keeps the FreeType
+face it already opened.  The stamp does not force a reload -- nothing
+in the file can -- but it makes it possible to ask what is live.
+
+  fc-query -f '%{fontversion}\n' ~/.local/share/fonts/Muskako-Regular.ttf"
+  (multiple-value-bind (sec min hour day month year)
+      (decode-universal-time (get-universal-time) 0)
+    (declare (ignore sec))
+    (format nil "~4,'0d~2,'0d~2,'0d-~2,'0d~2,'0d" year month day hour min)))
+
 (defun xml-header (s)
   (format s "<?xml version=\"1.0\" encoding=\"UTF-8\"?>~%"))
 
@@ -104,8 +125,13 @@ write it."
       ;; Release metadata.  The OFL asks that the licence travel with the
       ;; binary, not just with the repository, so the notice goes in the
       ;; name table (ID 13) rather than only in LICENSE.
-      (kv-int s "versionMajor" 0)
-      (kv-int s "versionMinor" 100)
+      (kv-int s "versionMajor" +version-major+)
+      (kv-int s "versionMinor" +version-minor+)
+      ;; ttfautohint appends its own note to this string, so it reads
+      ;; "Version 0.100; build ...; ttfautohint (...)" in the shipped font.
+      (kv-str s "openTypeNameVersion"
+              (format nil "Version ~d.~3,'0d; build ~a"
+                      +version-major+ +version-minor+ (build-stamp)))
       (kv-str s "copyright" "Copyright 2026 Anthony Green. SIL Open Font License 1.1.")
       (kv-str s "openTypeNameDesigner" "Anthony Green")
       (kv-str s "openTypeNameLicense"

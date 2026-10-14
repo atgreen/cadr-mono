@@ -50,7 +50,40 @@ install: hint proof fonts
 	cp fonts/*.ttf $(HOME)/.local/share/fonts/
 	fc-cache -f $(HOME)/.local/share/fonts
 
+# Nudge already-running applications toward the rebuilt font.
+#
+# Replacing a font file does not dislodge it from a running process:
+# VTE, Pango and the toolkits hold an open FreeType face and have no
+# reason to re-resolve a path whose family name has not changed, and
+# one process serves every tab, so a new tab shows the old font too.
+# Rewriting the caches and toggling the GNOME monospace key gives Pango
+# cause to drop what it has cached.  It does not always take, and a
+# terminal that does not pick it up has to be restarted.
+#
+# NOT "fc-cache -rf".  The -r erases every cache file before rebuilding,
+# and a running application has those caches MMAPPED -- pulling them out
+# from under it leaves it with an invalid view of the font set, which
+# renders as most glyphs silently vanishing.  It takes a restart of that
+# application to recover, which is the opposite of the point here.
+reload: install
+	fc-cache -f
+	@if command -v gsettings >/dev/null 2>&1; then \
+	  old=$$(gsettings get org.gnome.desktop.interface monospace-font-name); \
+	  if [ "$$old" = "''" ]; then \
+	    echo "no GNOME monospace font set; caches refreshed"; \
+	  else \
+	    gsettings set org.gnome.desktop.interface monospace-font-name 'Monospace 12'; \
+	    sleep 1; \
+	    gsettings set org.gnome.desktop.interface monospace-font-name "$$old"; \
+	    echo "nudged $$old -- if the terminal still shows the old font, restart it"; \
+	  fi; \
+	else \
+	  echo "no gsettings; caches refreshed, restart the terminal"; \
+	fi
+	@$(VENV)/python -c "from fontTools.ttLib import TTFont; \
+	  print('installed:', TTFont('fonts/Muskako-Regular.ttf')['name'].getDebugName(5))"
+
 clean:
 	rm -rf build/ttf build/ttf-hinted build/*.ufo proof/*.png
 
-.PHONY: all venv sources proof ttf hint fonts install clean
+.PHONY: all venv sources proof ttf hint fonts install reload clean

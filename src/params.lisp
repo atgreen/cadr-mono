@@ -22,15 +22,15 @@
 
   ;; --- stroke --------------------------------------------------------
   (stem         88)   ; vertical stroke weight.  The grade moves this.
-  (thin         69)   ; horizontal stroke weight (88 * 0.78)
-  (stress-angle -11)  ; degrees.  Humanist: the thin spots tilt off vertical.
+  (thin         62)   ; horizontal stroke weight (88 * 0.70)
+  (stress-angle -16)  ; degrees.  Humanist: the thin spots tilt off vertical.
   (tension    0.60d0) ; bowl flatness.  0.5523 is a true ellipse; higher
                       ; squares the shoulders the way drawn bowls do.
 
   ;; --- humanist detailing --------------------------------------------
   (aperture     34)   ; degrees of arc cut away on c e s.  Bigger = more open.
   (terminal-cut 22)   ; degrees.  Angled stroke ends, not flat ones.
-  (shoulder-ease 0.62); how early n m r branch off the stem (0..1)
+  (shoulder-ease 0.54); arch radius of n m h u r, as a fraction of x-height
   (tail         110)  ; centreline radius of the tail on l and t
   (dot-radius    54)  ; i j, punctuation, and the mark inside zero
 

@@ -141,10 +141,17 @@ with an on-curve point at A0."
                             (pt :curve (+ cx (* rx (cos e))) (+ cy (* ry (sin e)))))))))
     out))
 
-(defun arc-annulus (cx cy rx ry thick thin-v a0 a1)
+(defun arc-annulus (cx cy rx ry thick thin-v a0 a1 &key (stress nil))
   "An open ring segment -- the body of c, e, s and the bowl of a.
-Travels the outer edge from A0 to A1, crosses, and returns along the inner."
-  (append (arc-points cx cy rx ry a0 a1)
-          (list (pt :line (+ cx (* (- rx thick) (cos (deg a1))))
-                          (+ cy (* (- ry thin-v) (sin (deg a1))))))
-          (rest (arc-points cx cy (- rx thick) (- ry thin-v) a1 a0))))
+
+The inner arc is rotated about the centre by the stress angle.  That one
+move does two humanist jobs at once: it tilts the thin points off the
+vertical axis, and because the inner endpoints no longer sit radially
+opposite the outer ones, it leaves the terminals cut on a slant instead
+of chopped square."
+  (let* ((tilt (or stress (ignore-errors (p :stress)) 0))
+         (inner (rotate-about (arc-points cx cy (- rx thick) (- ry thin-v) a1 a0)
+                              cx cy tilt)))
+    (append (arc-points cx cy rx ry a0 a1)
+            (list (pt :line (px (first inner)) (py (first inner))))
+            (rest inner))))

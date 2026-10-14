@@ -48,14 +48,15 @@ list of contours, so every glyph is a pure function of the parameters."
          (rx (round-width))
          (ry (+ cy (p :over)))
          (a (p :aperture)))
-    (list (arc-annulus (centre-x) cy rx ry (p :stem) (p :thin) 0 (+ 270 a))
+    (list (arc-annulus (centre-x) cy rx ry (p :stem) (p :thin)
+                       (- (p :stress)) (+ 270 a))
           (bar-at cy (- (centre-x) rx) (+ (centre-x) (- rx (/ (p :stem) 3)))))))
 
 ;;; --- stems and shoulders ---------------------------------------------
 
 (defglyph "n" 110
   (let* ((rx (round-width))
-         (ry (* (p :x) 0.52))
+         (ry (* (p :x) (p :ease)))
          ;; Place the arch so its CROWN lands one overshoot above the
          ;; x-height, level with the flat top of the stem beside it.
          (cy (- (+ (p :x) (p :over)) ry (/ (p :thin) 2))))
@@ -74,7 +75,7 @@ list of contours, so every glyph is a pure function of the parameters."
     (cons (stem-at (centre-x) (if (p :l-tail) cy 0) (p :asc))
           (when (p :l-tail)
             (list (arc-annulus (+ (centre-x) r) cy (+ r half) (+ r half)
-                               (p :stem) (p :stem) 180 270))))))
+                               (p :stem) (p :stem) 180 270 :stress 0))))))
 
 ;;; --- figures ----------------------------------------------------------
 

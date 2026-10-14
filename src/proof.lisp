@@ -71,15 +71,14 @@ ones I forget to add."
      (vecto:save-png ,path)))
 
 (defparameter *specimen-lines*
-  '("humble pond require"
-    "chimp bud our melon"
-    "0o 1l il 1i rn m cl d"
-    "illi nnnn mmmm oooo"
-    "mammillaria hubbub")
-  "Built from the glyphs that exist so far, but chosen to stress what a
-specimen is for: words for rhythm, the confusable pairs this font is
-supposed to disambiguate, and runs of one letter to expose uneven
-spacing.")
+  '("(defun grade (glyph &key (units 4))"
+    "  (dolist (c (contours glyph))     ; 4u/side"
+    "    (offset c (- units)))          ; 180 -> 164"
+    "  (assert (= (width glyph) 1229)))"
+    ""
+    "Illegible? 0O1lI {}[]()<> =>|& #!$%^~"
+    "The quick brown fox jumps over 42 dogs.")
+  "Real code and the confusable pairs, at the sizes a terminal uses.")
 
 (defparameter *specimen* (first *specimen-lines*))
 

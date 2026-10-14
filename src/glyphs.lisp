@@ -375,3 +375,442 @@ it opens a gap."
     (list (stroke-open
            (append (arc-path (centre-x) cy-u rx ry 10 270)
                    (arc-path (centre-x) cy-l rx ry 90 -170))))))
+
+;;; ==========================================================================
+;;; UPPERCASE
+;;; ==========================================================================
+
+(defun cap-cy () (/ (p :cap) 2))
+(defun cap-ry () (- (+ (cap-cy) (p :over)) (/ (p :thin) 2)))
+
+(defun hbar (y x0 x1 &key (align :centre) (scale 1d0))
+  "A horizontal bar.  ALIGN :on puts its ink above Y, :under below, so
+bars land on the cap line and the baseline instead of straddling them."
+  (with-pen-scale (scale)
+    (let* ((w (* (p :thin) scale))
+           (yy (ecase align (:centre y) (:on (+ y (/ w 2))) (:under (- y (/ w 2))))))
+      (stroke-open (list (line-seg x0 yy x1 yy))))))
+
+(defun vstem (x y0 y1) (stroke-open (list (line-seg x y0 x y1))))
+
+;;; --- round caps ------------------------------------------------------------
+
+(defglyph "O" 79
+  (stroke-closed (arc-path (centre-x) (cap-cy) (bowl-rx) (cap-ry) 0 360)))
+
+(defglyph "Q" 81
+  (append (stroke-closed (arc-path (centre-x) (cap-cy) (bowl-rx) (cap-ry) 0 360))
+          (list (diag (+ (centre-x) (* (bowl-rx) 0.10)) (* (p :cap) 0.30)
+                      (+ (centre-x) (bowl-rx)) (* (p :cap) -0.06) :trim nil))))
+
+(defglyph "C" 67
+  (let ((half (/ (p :aperture) 2)))
+    (list (stroke-open (arc-path (centre-x) (cap-cy) (* (bowl-rx) 1.03) (cap-ry)
+                                 half (- 360 half))))))
+
+(defglyph "G" 71
+  (let ((half (/ (p :aperture) 2))
+        (rx (* (bowl-rx) 1.03)))
+    (list (stroke-open (arc-path (centre-x) (cap-cy) rx (cap-ry) half (- 360 half)))
+          (vstem (+ (centre-x) rx) (cap-cy) (* (p :cap) 0.30))
+          (hbar (cap-cy) (* (centre-x) 1.02) (+ (centre-x) rx)))))
+
+(defglyph "S" 83
+  (let* ((rx (* (bowl-rx) 0.95))
+         (ry (/ (+ (p :cap) (* 2 (p :over)) (- (p :thin))) 4))
+         (cy-u (/ (+ (p :cap) (* 2 ry)) 2))
+         (cy-l (/ (- (p :cap) (* 2 ry)) 2)))
+    (list (stroke-open (append (arc-path (centre-x) cy-u rx ry 10 270)
+                               (arc-path (centre-x) cy-l rx ry 90 -170))))))
+
+;;; --- stem and bowl ----------------------------------------------------------
+
+(defun left-stem-x () (- (centre-x) (bowl-rx)))
+
+(defglyph "D" 68
+  (let ((x0 (left-stem-x)))
+    (list (vstem x0 0 (p :cap))
+          (stroke-open (append (list (line-seg x0 (p :cap) (centre-x) (p :cap)))
+                               (arc-path (centre-x) (cap-cy) (bowl-rx) (cap-ry) 90 -90)
+                               (list (line-seg (centre-x) 0 x0 0)))))))
+
+(defglyph "P" 80
+  (let* ((x0 (left-stem-x))
+         (ry (* (p :cap) 0.27)))
+    (list (vstem x0 0 (p :cap))
+          (stroke-open (append (list (line-seg x0 (p :cap) (centre-x) (p :cap)))
+                               (arc-path (centre-x) (- (p :cap) ry) (bowl-rx) ry 90 -90)
+                               (list (line-seg (centre-x) (- (p :cap) (* 2 ry)) x0
+                                               (- (p :cap) (* 2 ry)))))))))
+
+(defglyph "B" 66
+  (let* ((x0 (left-stem-x))
+         (ry (* (p :cap) 0.25))
+         (mid (* (p :cap) 0.52)))
+    (list (vstem x0 0 (p :cap))
+          (stroke-open (append (list (line-seg x0 (p :cap) (centre-x) (p :cap)))
+                               (arc-path (centre-x) (- (p :cap) ry) (* (bowl-rx) 0.92) ry 90 -90)
+                               (list (line-seg (centre-x) mid x0 mid))))
+          (stroke-open (append (list (line-seg x0 mid (centre-x) mid))
+                               (arc-path (centre-x) (/ mid 2) (bowl-rx) (/ mid 2) 90 -90)
+                               (list (line-seg (centre-x) 0 x0 0)))))))
+
+(defglyph "R" 82
+  (let* ((x0 (left-stem-x))
+         (ry (* (p :cap) 0.27))
+         (waist (- (p :cap) (* 2 ry))))
+    (list (vstem x0 0 (p :cap))
+          (stroke-open (append (list (line-seg x0 (p :cap) (centre-x) (p :cap)))
+                               (arc-path (centre-x) (- (p :cap) ry) (bowl-rx) ry 90 -90)
+                               (list (line-seg (centre-x) waist x0 waist))))
+          (diag (+ x0 (* (bowl-rx) 0.55)) waist (+ (centre-x) (bowl-rx)) 0 :trim :end))))
+
+;;; --- stems and bars ----------------------------------------------------------
+
+(defglyph "E" 69
+  (let ((x0 (left-stem-x)) (x1 (+ (centre-x) (* (bowl-rx) 0.88))))
+    (list (vstem x0 0 (p :cap))
+          (hbar (p :cap) x0 x1 :align :under)
+          (hbar (* (p :cap) 0.52) x0 (- x1 (u 30)))
+          (hbar 0 x0 x1 :align :on))))
+
+(defglyph "F" 70
+  (let ((x0 (left-stem-x)) (x1 (+ (centre-x) (* (bowl-rx) 0.88))))
+    (list (vstem x0 0 (p :cap))
+          (hbar (p :cap) x0 x1 :align :under)
+          (hbar (* (p :cap) 0.54) x0 (- x1 (u 30))))))
+
+(defglyph "H" 72
+  (list (vstem (left-stem-x) 0 (p :cap))
+        (vstem (+ (centre-x) (bowl-rx)) 0 (p :cap))
+        (hbar (* (p :cap) 0.52) (left-stem-x) (+ (centre-x) (bowl-rx)))))
+
+(defglyph "I" 73
+  ;; serifs, or a bare stem floats in the cell
+  (list (vstem (centre-x) 0 (p :cap))
+        (hbar (p :cap) (- (centre-x) (p :serif)) (+ (centre-x) (p :serif))
+              :align :under :scale (p :serif-weight))
+        (hbar 0 (- (centre-x) (p :serif)) (+ (centre-x) (p :serif))
+              :align :on :scale (p :serif-weight))))
+
+(defglyph "J" 74
+  (let* ((cx (+ (centre-x) (* (bowl-rx) 0.42)))
+         (r (* (p :tail) 1.5))
+         (cy (+ r (/ (p :thin) 2))))
+    (list (stroke-open (cons (line-seg cx (p :cap) cx cy)
+                             (arc-path (- cx r) cy r r 0 -90)))
+          (hbar (p :cap) (- cx (p :serif)) (+ cx (* (p :serif) 0.5))
+                :align :under :scale (p :serif-weight)))))
+
+(defglyph "L" 76
+  (list (vstem (left-stem-x) 0 (p :cap))
+        (hbar 0 (left-stem-x) (+ (centre-x) (* (bowl-rx) 0.88)) :align :on)))
+
+(defglyph "T" 84
+  (list (vstem (centre-x) 0 (p :cap))
+        (hbar (p :cap) (- (centre-x) (bowl-rx)) (+ (centre-x) (bowl-rx)) :align :under)))
+
+(defglyph "U" 85
+  (let* ((rx (bowl-rx))
+         (ry (* (p :cap) 0.32))
+         (cy (+ ry (/ (p :thin) 2))))
+    (list (stroke-open
+           (append (list (line-seg (- (centre-x) rx) (p :cap) (- (centre-x) rx) cy))
+                   (arc-path (centre-x) cy rx ry 180 360)
+                   (list (line-seg (+ (centre-x) rx) cy (+ (centre-x) rx) (p :cap))))))))
+
+;;; --- diagonal caps -------------------------------------------------------------
+
+(defglyph "A" 65
+  (let ((rx (bowl-rx)) (cx (centre-x)))
+    (list (diag (- cx rx) 0 cx (p :cap))
+          (diag (+ cx rx) 0 cx (p :cap))
+          (hbar (* (p :cap) 0.28) (- cx (* rx 0.62)) (+ cx (* rx 0.62))))))
+
+(defglyph "V" 86
+  (let ((rx (bowl-rx)) (cx (centre-x)))
+    (list (diag (- cx rx) (p :cap) cx 0) (diag (+ cx rx) (p :cap) cx 0))))
+
+(defglyph "W" 87
+  (with-pen-scale (0.84d0)
+    (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :cap) 0.64)))
+      (list (diag (- cx rx) (p :cap) (- cx (* rx 0.46)) 0)
+            (diag (- cx (* rx 0.46)) 0 cx mid :trim :start)
+            (diag cx mid (+ cx (* rx 0.46)) 0 :trim :end)
+            (diag (+ cx (* rx 0.46)) 0 (+ cx rx) (p :cap))))))
+
+(defglyph "X" 88
+  (let ((rx (bowl-rx)) (cx (centre-x)))
+    (list (diag (- cx rx) (p :cap) (+ cx rx) 0) (diag (+ cx rx) (p :cap) (- cx rx) 0))))
+
+(defglyph "Y" 89
+  (let ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :cap) 0.46)))
+    (list (diag (- cx rx) (p :cap) cx mid :trim :start)
+          (diag (+ cx rx) (p :cap) cx mid :trim :start)
+          (vstem cx 0 mid))))
+
+(defglyph "Z" 90
+  (let ((rx (bowl-rx)) (cx (centre-x)))
+    (list (hbar (p :cap) (- cx rx) (+ cx rx) :align :under)
+          (diag (+ cx rx) (p :cap) (- cx rx) 0)
+          (hbar 0 (- cx rx) (+ cx rx) :align :on))))
+
+(defglyph "K" 75
+  (let* ((rx (bowl-rx)) (cx (centre-x)) (knee (* (p :cap) 0.42)))
+    (list (vstem (- cx rx) 0 (p :cap))
+          (diag (+ cx rx) (p :cap) (- cx rx) knee :trim :start)
+          (diag (- cx rx) knee (+ cx rx) 0 :trim :end))))
+
+(defglyph "M" 77
+  (with-pen-scale (0.84d0)
+    (let* ((rx (bowl-rx)) (cx (centre-x)) (vee (* (p :cap) 0.26)))
+      (list (vstem (- cx rx) 0 (p :cap))
+            (vstem (+ cx rx) 0 (p :cap))
+            (diag (- cx rx) (p :cap) cx vee :trim :start)
+            (diag (+ cx rx) (p :cap) cx vee :trim :start)))))
+
+(defglyph "N" 78
+  (with-pen-scale (0.90d0)
+    (let ((rx (bowl-rx)) (cx (centre-x)))
+      (list (vstem (- cx rx) 0 (p :cap))
+            (vstem (+ cx rx) 0 (p :cap))
+            (diag (- cx rx) (p :cap) (+ cx rx) 0)))))
+
+;;; ==========================================================================
+;;; FIGURES -- cap height, slightly narrower than the round caps
+;;; ==========================================================================
+
+(defun fig-rx () (- (round-width) (u 6) (/ (p :stem) 2)))
+
+(defglyph "two" 50
+  (let* ((rx (fig-rx)) (cx (centre-x)) (ry (* (p :cap) 0.27)))
+    (list (stroke-open (arc-path cx (- (p :cap) ry) rx ry 195 -35))
+          (diag (+ cx (* rx 0.72)) (* (p :cap) 0.42) (- cx rx) (u 40) :trim nil)
+          (hbar 0 (- cx rx) (+ cx rx) :align :on))))
+
+(defglyph "three" 51
+  (let* ((rx (* (fig-rx) 0.96)) (cx (centre-x)) (ry (* (p :cap) 0.26)))
+    (list (stroke-open (arc-path cx (- (p :cap) ry) rx ry 170 -55))
+          (stroke-open (arc-path cx ry rx ry 55 -170)))))
+
+(defglyph "four" 52
+  (let* ((rx (fig-rx)) (cx (centre-x)) (bar (* (p :cap) 0.28)))
+    (list (diag (+ cx (* rx 0.34)) (p :cap) (- cx rx) bar :trim :start)
+          (hbar bar (- cx rx) (+ cx rx))
+          (vstem (+ cx (* rx 0.34)) 0 (p :cap)))))
+
+(defglyph "five" 53
+  (let* ((rx (fig-rx)) (cx (centre-x)) (x0 (- cx rx))
+         (ry (* (p :cap) 0.29))
+         (waist (* 2 ry)))
+    (list (hbar (p :cap) x0 (+ cx (* rx 0.86)) :align :under)
+          (vstem x0 waist (p :cap))
+          (stroke-open (cons (line-seg x0 waist cx waist)
+                             (arc-path cx ry rx ry 90 -160))))))
+
+(defglyph "six" 54
+  (let* ((rx (fig-rx)) (cx (centre-x)) (ry (* (p :cap) 0.30)))
+    (append (stroke-closed (arc-path cx ry rx (- ry (/ (p :thin) 2)) 0 360))
+            (list (stroke-open (arc-path cx ry rx (* (p :cap) 0.70) 180 75))))))
+
+(defglyph "seven" 55
+  (let* ((rx (fig-rx)) (cx (centre-x)))
+    (list (hbar (p :cap) (- cx rx) (+ cx rx) :align :under)
+          (diag (+ cx rx) (p :cap) (- cx (* rx 0.30)) 0 :trim :start))))
+
+(defglyph "eight" 56
+  (let* ((rx (fig-rx)) (cx (centre-x))
+         (ryl (* (p :cap) 0.29)) (ryu (* (p :cap) 0.24)))
+    (append (stroke-closed (arc-path cx ryl rx (- ryl (/ (p :thin) 2)) 0 360))
+            (stroke-closed (arc-path cx (- (p :cap) ryu) (* rx 0.86)
+                                     (- ryu (/ (p :thin) 2)) 0 360)))))
+
+(defglyph "nine" 57
+  (let* ((rx (fig-rx)) (cx (centre-x)) (ry (* (p :cap) 0.30)))
+    (append (stroke-closed (arc-path cx (- (p :cap) ry) rx (- ry (/ (p :thin) 2)) 0 360))
+            (list (stroke-open (arc-path cx (- (p :cap) ry) rx (* (p :cap) 0.70) 0 -105))))))
+
+;;; ==========================================================================
+;;; PUNCTUATION AND SYMBOLS
+;;; ==========================================================================
+
+(defglyph "exclam" 33
+  (list (stroke-open (list (line-seg (centre-x) (* (p :cap) 0.30)
+                                     (centre-x) (p :cap))))
+        (dot-at (centre-x) (p :dot))))
+
+(defglyph "quotedbl" 34
+  (let ((d (u 95)))
+    (list (vstem (- (centre-x) d) (* (p :cap) 0.66) (p :cap))
+          (vstem (+ (centre-x) d) (* (p :cap) 0.66) (p :cap)))))
+
+(defglyph "quotesingle" 39
+  (list (vstem (centre-x) (* (p :cap) 0.66) (p :cap))))
+
+(defglyph "numbersign" 35
+  (let* ((cx (centre-x)) (rx (* (bowl-rx) 0.92)) (lean (u 48)))
+    (list (diag (+ (- cx (* rx 0.38)) lean) (p :cap) (- (- cx (* rx 0.38)) lean) 0 :trim nil)
+          (diag (+ (+ cx (* rx 0.38)) lean) (p :cap) (- (+ cx (* rx 0.38)) lean) 0 :trim nil)
+          (hbar (* (p :cap) 0.66) (- cx rx) (+ cx rx))
+          (hbar (* (p :cap) 0.30) (- cx rx) (+ cx rx)))))
+
+(defglyph "dollar" 36
+  (let* ((rx (* (bowl-rx) 0.84))
+         (ry (/ (+ (p :cap) (* 2 (p :over)) (- (p :thin))) 4))
+         (cy-u (/ (+ (p :cap) (* 2 ry)) 2))
+         (cy-l (/ (- (p :cap) (* 2 ry)) 2)))
+    (list (stroke-open (append (arc-path (centre-x) cy-u rx ry 10 270)
+                               (arc-path (centre-x) cy-l rx ry 90 -170)))
+          (vstem (centre-x) (u -40) (+ (p :cap) (u 40))))))
+
+(defglyph "percent" 37
+  (let* ((cx (centre-x)) (rx (bowl-rx)) (r (* (p :cap) 0.17)))
+    (append (stroke-closed (arc-path (- cx (* rx 0.52)) (- (p :cap) r)
+                                     (* r 0.92) (- r (/ (p :thin) 2)) 0 360))
+            (stroke-closed (arc-path (+ cx (* rx 0.52)) r
+                                     (* r 0.92) (- r (/ (p :thin) 2)) 0 360))
+            (list (diag (+ cx rx) (p :cap) (- cx rx) 0)))))
+
+(defglyph "ampersand" 38
+  ;; Built from parts that read rather than from a faithful et-ligature
+  ;; spine: a small closed loop above, a larger bowl below it open to
+  ;; the right, and a tail out to the lower right.  The honest version
+  ;; of a glyph I could not land by construction.
+  (let* ((cx (centre-x)) (rx (* (bowl-rx) 0.92))
+         (r1x (* rx 0.44)) (r1y (* (p :cap) 0.195))
+         (r2x (* rx 0.70)) (r2y (* (p :cap) 0.275)))
+    (append
+     (stroke-closed (arc-path (- cx (* rx 0.16)) (* (p :cap) 0.765)
+                              r1x (- r1y (/ (p :thin) 2)) 0 360))
+     (list (stroke-open (arc-path (- cx (* rx 0.06)) (* (p :cap) 0.285)
+                                  r2x r2y 55 340)))
+     (list (diag (- cx (* rx 0.20)) (* (p :cap) 0.50)
+                 (+ cx (* (bowl-rx) 0.92)) (u 25) :trim :end)))))
+
+(defglyph "parenleft" 40
+  (list (stroke-open (arc-path (+ (centre-x) (u 150)) (* (p :cap) 0.40)
+                               (u 230) (* (p :cap) 0.78) 118 242))))
+
+(defglyph "parenright" 41
+  (list (stroke-open (arc-path (- (centre-x) (u 150)) (* (p :cap) 0.40)
+                               (u 230) (* (p :cap) 0.78) -62 62))))
+
+(defglyph "bracketleft" 91
+  (let ((x0 (- (centre-x) (u 90))) (x1 (+ (centre-x) (u 130)))
+        (y0 (u -90)) (y1 (* (p :cap) 0.98)))
+    (list (vstem x0 y0 y1) (hbar y1 x0 x1 :align :under) (hbar y0 x0 x1 :align :on))))
+
+(defglyph "bracketright" 93
+  (let ((x1 (+ (centre-x) (u 90))) (x0 (- (centre-x) (u 130)))
+        (y0 (u -90)) (y1 (* (p :cap) 0.98)))
+    (list (vstem x1 y0 y1) (hbar y1 x0 x1 :align :under) (hbar y0 x0 x1 :align :on))))
+
+(defglyph "braceleft" 123
+  (let* ((cx (centre-x)) (r (u 140)) (top (* (p :cap) 0.98)) (bot (u -90))
+         (mid (/ (+ top bot) 2)))
+    (list (stroke-open (arc-path (+ cx r) (- top r) r r 180 90))
+          (vstem cx (+ mid (u 70)) (- top r))
+          (stroke-open (arc-path (- cx r) (+ mid (u 70)) r r 0 -90))
+          (stroke-open (arc-path (- cx r) (- mid (u 70)) r r 90 0))
+          (vstem cx (+ bot r) (- mid (u 70)))
+          (stroke-open (arc-path (+ cx r) (+ bot r) r r 180 270)))))
+
+(defglyph "braceright" 125
+  (let* ((cx (centre-x)) (r (u 140)) (top (* (p :cap) 0.98)) (bot (u -90))
+         (mid (/ (+ top bot) 2)))
+    (list (stroke-open (arc-path (- cx r) (- top r) r r 0 90))
+          (vstem cx (+ mid (u 70)) (- top r))
+          (stroke-open (arc-path (+ cx r) (+ mid (u 70)) r r 180 270))
+          (stroke-open (arc-path (+ cx r) (- mid (u 70)) r r 90 180))
+          (vstem cx (+ bot r) (- mid (u 70)))
+          (stroke-open (arc-path (- cx r) (+ bot r) r r 0 -90)))))
+
+(defglyph "asterisk" 42
+  (let ((cx (centre-x)) (cy (* (p :cap) 0.74)) (r (u 190)))
+    (loop for k from 0 below 3
+          collect (let ((a (deg (+ 90 (* k 60)))))
+                    (diag (- cx (* r (cos a))) (- cy (* r (sin a)))
+                          (+ cx (* r (cos a))) (+ cy (* r (sin a))) :trim nil)))))
+
+(defglyph "plus" 43
+  (let ((cy (* (p :cap) 0.46)) (r (u 215)))
+    (list (hbar cy (- (centre-x) r) (+ (centre-x) r))
+          (vstem (centre-x) (- cy r) (+ cy r)))))
+
+
+(defglyph "equal" 61
+  (let ((cy (* (p :cap) 0.46)) (r (u 215)) (g (u 105)))
+    (list (hbar (+ cy g) (- (centre-x) r) (+ (centre-x) r))
+          (hbar (- cy g) (- (centre-x) r) (+ (centre-x) r)))))
+
+(defglyph "less" 60
+  (let ((cy (* (p :cap) 0.46)) (r (u 215)))
+    (list (diag (+ (centre-x) r) (+ cy r) (- (centre-x) r) cy :trim nil)
+          (diag (- (centre-x) r) cy (+ (centre-x) r) (- cy r) :trim nil))))
+
+(defglyph "greater" 62
+  (let ((cy (* (p :cap) 0.46)) (r (u 215)))
+    (list (diag (- (centre-x) r) (+ cy r) (+ (centre-x) r) cy :trim nil)
+          (diag (+ (centre-x) r) cy (- (centre-x) r) (- cy r) :trim nil))))
+
+(defglyph "comma" 44
+  (let ((r (* (p :tail) 0.5)))
+    (list (stroke-open (list (line-seg (+ (centre-x) (u 40)) (* (p :x) 0.26)
+                                       (- (centre-x) (u 70)) (u -150)))))))
+
+(defglyph "colon" 58
+  (list (dot-at (centre-x) (p :dot))
+        (dot-at (centre-x) (* (p :x) 0.62))))
+
+(defglyph "semicolon" 59
+  (list (dot-at (centre-x) (* (p :x) 0.62))
+        (stroke-open (list (line-seg (+ (centre-x) (u 40)) (* (p :x) 0.26)
+                                     (- (centre-x) (u 70)) (u -150))))))
+
+(defglyph "question" 63
+  (let* ((cx (centre-x)) (rx (* (bowl-rx) 0.78)) (ry (* (p :cap) 0.22)))
+    (list (stroke-open (append (arc-path cx (- (p :cap) ry) rx ry 180 -30)
+                               (list (line-seg (+ cx (* rx 0.1)) (* (p :cap) 0.52)
+                                               cx (* (p :cap) 0.32)))))
+          (dot-at cx (p :dot)))))
+
+(defglyph "at" 64
+  ;; An outer ring left OPEN at the lower right, around an inner bowl
+  ;; big enough to keep a counter.  A full-circle outer and a bowl
+  ;; narrower than the stroke made this a filled blob.
+  (let* ((cx (centre-x)) (rx (bowl-rx)) (ry (* (p :cap) 0.44))
+         (cy (* (p :cap) 0.46))
+         (irx (* rx 0.44)) (iry (* ry 0.46)))
+    (append (list (stroke-open (arc-path cx cy rx ry -28 268)))
+            (stroke-closed (arc-path cx cy irx iry 0 360))
+            ;; the inner bowl's right wall, carried down and out
+            (list (stroke-open
+                   (append (list (line-seg (+ cx irx) (+ cy iry) (+ cx irx) (- cy iry)))
+                           (arc-path (+ cx (* irx 0.1)) (- cy iry)
+                                     (* irx 0.9) (* iry 0.5) 0 -70)))))))
+
+(defglyph "slash" 47
+  (list (diag (- (centre-x) (u 200)) (u -90) (+ (centre-x) (u 200)) (p :cap))))
+
+(defglyph "backslash" 92
+  (list (diag (+ (centre-x) (u 200)) (u -90) (- (centre-x) (u 200)) (p :cap))))
+
+(defglyph "bar" 124
+  (list (vstem (centre-x) (u -110) (* (p :cap) 1.02))))
+
+(defglyph "underscore" 95
+  (list (hbar (u -180) (- (centre-x) (/ (p :advance) 2))
+              (+ (centre-x) (/ (p :advance) 2)) :align :on)))
+
+(defglyph "asciicircum" 94
+  (let ((r (u 200)) (cy (* (p :cap) 0.62)))
+    (list (diag (- (centre-x) r) cy (centre-x) (p :cap))
+          (diag (+ (centre-x) r) cy (centre-x) (p :cap)))))
+
+(defglyph "grave" 96
+  (list (diag (- (centre-x) (u 110)) (p :cap) (+ (centre-x) (u 60)) (* (p :cap) 0.74))))
+
+(defglyph "asciitilde" 126
+  (let* ((cx (centre-x)) (r (u 215)) (cy (* (p :cap) 0.46)) (h (u 85)))
+    (list (stroke-open (append (arc-path (- cx (/ r 2)) cy (/ r 2) h 180 0)
+                               (arc-path (+ cx (/ r 2)) cy (/ r 2) h 180 360))))))

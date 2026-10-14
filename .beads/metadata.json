@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "muskako",
+  "project_id": "5a68b052-0b10-4688-998d-583e5618c671"
+}

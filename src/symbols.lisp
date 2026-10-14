@@ -185,21 +185,21 @@
                    (arc-path (- cx r) (+ (p :desc) r) r r 0 -100))))))
 
 (defglyph "partialdiff" 8706
-  ;; The upper sweep shares the bowl's CENTRE, so its 180-degree point
-  ;; lands exactly on the bowl's own; only its vertical radius is
-  ;; larger.  Drawn as a separate ellipse higher up, the arch floated
-  ;; clear of the bowl and the mark read as a six.
+  ;; The sweep runs the other way from a six.  Its FREE TERMINAL is at
+  ;; the upper LEFT, and it curves right and down INTO the bowl's right
+  ;; side -- ending at 0 degrees, which is the bowl's own rightmost
+  ;; point, so the join needs no fitting.
+  ;;
+  ;; Built the other way round, attached at the left and free at the
+  ;; right, it is not a near-miss: it is exactly a six.  Beside peers
+  ;; the reflection was obvious, and no amount of opening the aperture
+  ;; was going to fix a mirrored topology.
   (let* ((cx (centre-x)) (rx (* (bowl-rx) 0.86))
          (ry (* (p :cap) 0.30))
          (cy (- (+ ry (/ (p :thin) 2)) (p :over)))
          (sweep (- (+ (p :cap) (p :over)) cy (/ (p :thin) 2))))
-    ;; The sweep must END ABOVE the bowl, leaving the upper right open.
-    ;; Carried down to 20 degrees it came back alongside the bowl's own
-    ;; right side and closed a second compartment -- which is a theta,
-    ;; not a partial.  It also swings a little wider than the bowl so
-    ;; the terminal clears it outright.
     (append (stroke-closed (arc-path cx cy rx ry 0 360))
-            (list (stroke-open (arc-path cx cy (* rx 1.1) sweep 180 34))))))
+            (list (stroke-open (arc-path cx cy rx sweep 140 0))))))
 
 ;;; --- typographic ---------------------------------------------------------------------
 

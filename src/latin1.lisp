@@ -274,3 +274,42 @@ had its hook and stem as separate pieces that merely crossed."
                    (list (line-seg cx (- (p :asc) r (/ (p :thin) 2))
                                    (- cx (u 60)) (p :desc)))))
           (hbar (* (p :x) 0.52) (- cx (u 190)) (+ cx (u 180))))))
+
+;;; --- completing Latin-1 ---------------------------------------------------
+
+(defglyph "space.nb" 160 nil)          ; no-break space: blank, full advance
+(defglyph "softhyphen" 173
+  (list (hbar (* (p :x) 0.46) (- (centre-x) (u 150)) (+ (centre-x) (u 150)))))
+
+(defglyph "brokenbar" 166
+  (let ((g (u 90)))
+    (list (vstem (centre-x) (u -110) (- (* (p :cap) 0.5) g))
+          (vstem (centre-x) (+ (* (p :cap) 0.5) g) (* (p :cap) 1.02)))))
+
+(defun superior (base)
+  "A figure raised and shrunk to superscript size."
+  (let ((small (scale-contours (glyph-contours (find-glyph base)) 0.56
+                               :about-x (centre-x) :about-y 0)))
+    (move-contours small 0 (round (* (p :cap) 0.46)))))
+
+(defglyph "onesuperior"   185 (superior "one"))
+(defglyph "twosuperior"   178 (superior "two"))
+(defglyph "threesuperior" 179 (superior "three"))
+
+(defun vulgar (num den)
+  "A fraction: numerator raised, denominator on the line, divided by a
+solidus.  Both figures are shrunk, so the whole thing still fits one
+cell -- which is the only width it may have."
+  (let* ((k 0.50)
+         (n (scale-contours (glyph-contours (find-glyph num)) k
+                            :about-x (centre-x) :about-y 0))
+         (d (scale-contours (glyph-contours (find-glyph den)) k
+                            :about-x (centre-x) :about-y 0)))
+    (append (move-contours n (round (u -150)) (round (* (p :cap) 0.44)))
+            (move-contours d (round (u 160)) 0)
+            (list (diag (- (centre-x) (u 150)) (u -40)
+                        (+ (centre-x) (u 150)) (p :cap) :trim nil)))))
+
+(defglyph "onequarter" 188 (vulgar "one" "four"))
+(defglyph "onehalf"    189 (vulgar "one" "two"))
+(defglyph "threequarters" 190 (vulgar "three" "four"))

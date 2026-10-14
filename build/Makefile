@@ -11,6 +11,7 @@ sources:
 # generator's own contour lists, which share its assumptions.
 proof: hint
 	$(VENV)/python build/proofsheet.py
+	$(VENV)/python build/compare.py
 
 ttf: sources
 	$(VENV)/fontmake -u build/Muskako-Regular.ufo -o ttf \

@@ -88,3 +88,36 @@ build instead of waiting for someone to notice."
                             ((> (abs skew) 12) "<-- drifting")
                             ((< fill 0.62) "<-- narrow")
                             (t ""))))))))))
+
+
+(defun segment-violations (c)
+  "Count cubic segments in C whose extremes carry no on-curve point."
+  (let ((c (normalize-start c)) (cur nil) (pending '()) (bad 0))
+    (setf cur (first c))
+    (dolist (pnt (append (rest c) (list (first c))))
+      (if (eq (kind pnt) :offcurve)
+          (push pnt pending)
+          (let ((ctrl (nreverse pending)))
+            (setf pending '())
+            (when (= (length ctrl) 2)
+              (when (or (extrema-ts (px cur) (px (first ctrl)) (px (second ctrl)) (px pnt))
+                        (extrema-ts (py cur) (py (first ctrl)) (py (second ctrl)) (py pnt)))
+                (incf bad)))
+            (setf cur pnt))))
+    bad))
+
+(defun extrema-audit ()
+  "How many outline segments hide an extreme?  Every one of them is a
+curve the hinting cannot grab."
+  (let ((bad 0) (total 0) (glyphs 0))
+    (dolist (g (all-glyphs))
+      (let ((n (reduce #'+ (mapcar #'segment-violations (glyph-contours g))
+                       :initial-value 0)))
+        (incf bad n)
+        (when (plusp n) (incf glyphs))
+        (incf total (reduce #'+ (mapcar (lambda (c) (count :curve c :key #'kind))
+                                        (glyph-contours g))
+                            :initial-value 0))))
+    (format t "~&  segments with a hidden extreme: ~a of ~a curve points, across ~a glyphs~%"
+            bad total glyphs)
+    bad))

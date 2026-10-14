@@ -160,6 +160,57 @@ local normals.  Positive is to the left of travel."
                              (pt :offcurve (seg-x2 s) (seg-y2 s))
                              (pt :curve (seg-x3 s) (seg-y3 s))))))
 
+(defvar *insert-extrema* t
+  "Whether to split outline segments at their extrema.  Togglable so the
+audit can measure the difference rather than assume it.")
+
+(defun extrema-ts (q0 q1 q2 q3)
+  "Parameters strictly inside (0,1) where a cubic's derivative in one
+axis vanishes -- the positions of its extremes.
+
+The derivative of a cubic is a quadratic: with a = q1-q0, b = q2-q1 and
+c = q3-q2, it is (a-2b+c)t^2 + 2(b-a)t + a."
+  (let* ((a (- q1 q0)) (b (- q2 q1)) (c (- q3 q2))
+         (aa (+ a (* -2 b) c)) (bb (* 2 (- b a))) (cc a)
+         (eps 0.02d0)
+         (out '()))
+    (flet ((keep (tt) (when (and (realp tt) (> tt eps) (< tt (- 1 eps)))
+                        (push (float tt 1d0) out))))
+      (if (< (abs aa) 1d-9)
+          (unless (< (abs bb) 1d-9) (keep (/ (- cc) bb)))
+          (let ((disc (- (* bb bb) (* 4 aa cc))))
+            (when (>= disc 0)
+              (let ((r (sqrt (float disc 1d0))))
+                (keep (/ (+ (- bb) r) (* 2 aa)))
+                (keep (/ (- (- bb) r) (* 2 aa))))))))
+    (sort out #'<)))
+
+(defun split-at-extrema (s)
+  "Split S so that every extreme of the curve falls on an on-curve
+point.  A curve whose y-max or y-min has no point on it cannot be
+hinted: the rasteriser has nothing to snap to the pixel grid."
+  (let ((ts (remove-duplicates
+             (sort (append (extrema-ts (seg-x0 s) (seg-x1 s) (seg-x2 s) (seg-x3 s))
+                           (extrema-ts (seg-y0 s) (seg-y1 s) (seg-y2 s) (seg-y3 s)))
+                   #'<)
+             :test (lambda (a b) (< (abs (- a b)) 0.02d0)))))
+    (if (null ts)
+        (list s)
+        (let ((pieces '()) (rest s) (prev 0d0))
+          (dolist (tt ts)
+            ;; remap into what is left of the curve after earlier splits
+            (let ((local (/ (- tt prev) (- 1d0 prev))))
+              (when (and (> local 0.01d0) (< local 0.99d0))
+                (multiple-value-bind (head tail) (split-seg rest local)
+                  (push head pieces)
+                  (setf rest tail prev tt)))))
+          (nreverse (cons rest pieces))))))
+
+(defun with-extrema (segs)
+  (if *insert-extrema*
+      (loop for s in segs append (split-at-extrema s))
+      segs))
+
 (defun stroke-open (segs &key (refine 4))
   "Stroke an open skeleton, returning one closed contour."
   (let* ((segs (refine segs refine))
@@ -169,9 +220,10 @@ local normals.  Positive is to the left of travel."
          (right (loop for s in segs for i from 0
                       collect (offset-seg s (- (nth i w)) (- (nth (1+ i) w))))))
     (normalize-start
-     (append (segs->points left)
+     (append (segs->points (with-extrema left))
              (list (pt :line (seg-x3 (car (last right))) (seg-y3 (car (last right)))))
-             (rest (segs->points (mapcar #'flip-seg (reverse right)) :start t))))))
+             (rest (segs->points (with-extrema (mapcar #'flip-seg (reverse right)))
+                                 :start t))))))
 
 (defun flip-seg (s)
   (seg (seg-x3 s) (seg-y3 s) (seg-x2 s) (seg-y2 s)
@@ -185,5 +237,5 @@ local normals.  Positive is to the left of travel."
                       collect (offset-seg s (nth i w) (nth (1+ i) w))))
          (inner (loop for s in segs for i from 0
                       collect (offset-seg s (- (nth i w)) (- (nth (1+ i) w))))))
-    (list (rest (segs->points outer))
-          (reverse-contour (rest (segs->points inner))))))
+    (list (rest (segs->points (with-extrema outer)))
+          (reverse-contour (rest (segs->points (with-extrema inner)))))))

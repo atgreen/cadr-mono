@@ -139,7 +139,7 @@ optical offset the box cannot give them."
     (append (stroke-closed (arc-path (centre-x) cy rx ry 0 360))
             (ecase (p :zero)
               (:none nil)
-              (:dot (list (dot-at (centre-x) cy (* 0.62 (p :dot)))))
+              (:dot (list (dot-at (centre-x) cy (* 0.95 (p :dot)))))
               (:slash (list (stroke-open
                              (list (line-seg (centre-x) (- cy (* ry 0.82))
                                              (centre-x) (+ cy (* ry 0.82)))))))))))
@@ -224,7 +224,9 @@ leg that drops to TO."
 
 (defglyph "m" 109
   (let* ((rx (bowl-rx)) (half (/ rx 2)))
-    (with-pen-scale (0.82d0)
+    ;; Three stems in one cell leave narrow counters, so m is thinned
+    ;; harder than n.  Re-set after the proofs composited correctly.
+    (with-pen-scale (0.76d0)
       (list (stroke-open (list (line-seg (- (centre-x) rx) 0
                                          (- (centre-x) rx) (p :x))))
             (stroke-open (shoulder-path (- (centre-x) half) half))
@@ -285,11 +287,11 @@ it opens a gap."
           (diag (+ cx rx) (p :x) cx 0))))
 
 (defglyph "w" 119
-  (with-pen-scale (0.84d0)
+  (with-pen-scale (0.78d0)
    (let* ((rx (bowl-rx)) (cx (centre-x))
          ;; raised crossing point shortens the inner arms, the standard
          ;; way of taking weight out of a crowded w
-         (mid (* (p :x) 0.64)))
+         (mid (* (p :x) 0.70)))
     (list (diag (- cx rx) (p :x) (- cx (* rx 0.46)) 0)
           ;; the inner arms are trimmed only where they touch the
           ;; baseline; the middle apex is interior and must stay long
@@ -560,8 +562,8 @@ bars land on the cap line and the baseline instead of straddling them."
     (list (diag (- cx rx) (p :cap) cx 0) (diag (+ cx rx) (p :cap) cx 0))))
 
 (defglyph "W" 87
-  (with-pen-scale (0.84d0)
-    (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :cap) 0.64)))
+  (with-pen-scale (0.78d0)
+    (let* ((rx (bowl-rx)) (cx (centre-x)) (mid (* (p :cap) 0.70)))
       (list (diag (- cx rx) (p :cap) (- cx (* rx 0.46)) 0)
             (diag (- cx (* rx 0.46)) 0 cx mid :trim :start)
             (diag cx mid (+ cx (* rx 0.46)) 0 :trim :end)
@@ -611,15 +613,45 @@ bars land on the cap line and the baseline instead of straddling them."
 (defun fig-rx () (- (round-width) (u 6) (/ (p :stem) 2)))
 
 (defglyph "two" 50
-  (let* ((rx (fig-rx)) (cx (centre-x)) (ry (* (p :cap) 0.27)))
-    (list (stroke-open (arc-path cx (- (p :cap) ry) rx ry 195 -35))
-          (diag (+ cx (* rx 0.72)) (* (p :cap) 0.42) (- cx rx) (u 40) :trim nil)
+  ;; One stroke: over the top, down the right, then the diagonal away
+  ;; to the baseline.  The diagonal starts at the arc's COMPUTED
+  ;; endpoint -- it used to start at a guessed point short of it, which
+  ;; left a step in the middle where the two were meant to join.
+  (let* ((rx (fig-rx)) (cx (centre-x))
+         (ry (* (p :cap) 0.27))
+         (cy (- (p :cap) ry))
+         (a-end -42)
+         (ex (+ cx (* rx (cos (deg a-end)))))
+         (ey (+ cy (* ry (sin (deg a-end)))))
+         (by (/ (p :thin) 2)))
+    (list (stroke-open
+           (append (arc-path cx cy rx ry 196 a-end)
+                   (list (line-seg ex ey (- cx rx) (+ by (u 12))))))
           (hbar 0 (- cx rx) (+ cx rx) :align :on))))
 
 (defglyph "three" 51
-  (let* ((rx (* (fig-rx) 0.96)) (cx (centre-x)) (ry (* (p :cap) 0.26)))
-    (list (stroke-open (arc-path cx (- (p :cap) ry) rx ry 170 -55))
-          (stroke-open (arc-path cx ry rx ry 55 -170)))))
+  ;; Two bowls that OVERLAP at the waist.  Centres are placed by the
+  ;; closed form that fixed s, so the circles are tangent at mid-height;
+  ;; each arc then runs 30 degrees past that point, and the union of the
+  ;; two strokes forms the waist.
+  ;;
+  ;; The join is a 180-degree reversal whichever way it is cut -- the
+  ;; upper arc arrives travelling left and the lower departs travelling
+  ;; right -- and a cusp in a skeleton puts a spur in the stroke.
+  ;; Running the arcs further past the tangent point makes it worse, not
+  ;; better: tangent circles diverge on both sides of the touch.  So the
+  ;; arcs stop just short and a disc of the local stroke width fills the
+  ;; join, which is what a round cap would do.
+  (let* ((rx (* (fig-rx) 0.96)) (cx (centre-x))
+         (ry (/ (+ (p :cap) (* 2 (p :over)) (- (p :thin))) 4))
+         (cy-u (/ (+ (p :cap) (* 2 ry)) 2))
+         (cy-l (/ (- (p :cap) (* 2 ry)) 2)))
+    (let* ((a 96)
+           (wx (+ cx (* rx (cos (deg (- a))))))
+           (wy (+ cy-u (* ry (sin (deg (- a)))))))
+      (list (stroke-open (arc-path cx cy-u rx ry 168 (- a)))
+            (stroke-open (arc-path cx cy-l rx ry a -168))
+            (dot-at wx wy (/ (p :thin) 2))))))
 
 (defglyph "four" 52
   (let* ((rx (fig-rx)) (cx (centre-x)) (bar (* (p :cap) 0.28)))

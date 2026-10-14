@@ -4,6 +4,15 @@ ROOT := $(shell pwd)
 
 all: hint proof
 
+# The generator itself has NO Lisp dependencies: SBCL alone writes the
+# UFO sources.  Everything in the venv is for turning them into fonts.
+$(VENV)/fontmake:
+	python3 -m venv build/venv
+	$(VENV)/pip install --quiet fontmake skia-pathops ttfautohint-py \
+	  freetype-py pillow
+
+venv: $(VENV)/fontmake
+
 sources:
 	sbcl --script build/build.lisp
 
@@ -13,7 +22,7 @@ proof: hint
 	$(VENV)/python build/proofsheet.py
 	$(VENV)/python build/compare.py
 
-ttf: sources
+ttf: sources venv
 	for u in build/*.ufo; do \
 	  $(VENV)/fontmake -u $$u -o ttf --output-dir build/ttf \
 	    --overlaps-backend pathops || exit 1; \
@@ -37,4 +46,4 @@ install: hint proof
 clean:
 	rm -rf build/ttf build/ttf-hinted build/*.ufo proof/*.png
 
-.PHONY: all sources proof ttf hint install clean
+.PHONY: all venv sources proof ttf hint install clean

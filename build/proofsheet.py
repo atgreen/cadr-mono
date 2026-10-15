@@ -22,12 +22,12 @@ from PIL import Image, ImageDraw, ImageFont
 HINTED = pathlib.Path("build/ttf-hinted")
 OUT = pathlib.Path("proof")
 OUT.mkdir(exist_ok=True)
-REF = HINTED / "Muskako-Regular.ttf"
-DARK = HINTED / "MuskakoDark-Regular.ttf"
-ITAL = HINTED / "Muskako-Italic.ttf"
-BOLD = HINTED / "Muskako-Bold.ttf"
-BOLDITAL = HINTED / "Muskako-BoldItalic.ttf"
-DARKITAL = HINTED / "MuskakoDark-Italic.ttf"
+REF = HINTED / "CadrMono-Regular.ttf"
+DARK = HINTED / "CadrMonoDark-Regular.ttf"
+ITAL = HINTED / "CadrMono-Italic.ttf"
+BOLD = HINTED / "CadrMono-Bold.ttf"
+BOLDITAL = HINTED / "CadrMono-BoldItalic.ttf"
+DARKITAL = HINTED / "CadrMonoDark-Italic.ttf"
 
 _LABEL_PATHS = ["/usr/share/fonts/dejavu-sans-fonts/DejaVuSans.ttf",
                 "/usr/share/fonts/google-noto/NotoSans-Regular.ttf"]
@@ -114,7 +114,7 @@ def sheet_letters(px=120, cols=10):
                         (-230 * k, 206), (f.size.descender / 64, 226)):
             d.line([(0, base - y), (img.width, base - y)], fill=grey)
     img.paste(0, (0, 0), cov)
-    tag(img, (6, 2), f"Muskako Regular - outlines at {px}px, unhinted - "
+    tag(img, (6, 2), f"Cadr Mono Regular - outlines at {px}px, unhinted - "
                      "guides: line-asc / asc / cap / x / base / desc / line-desc",
         dark=False)
     img.save(OUT / "letters.png")
@@ -135,7 +135,7 @@ def sheet_sizes(dark, sizes=(11, 13, 16, 20, 26, 32, 40)):
     """Light sheet shows the Regular cut; the dark sheet shows the DARK
     CUT, which is the one you would actually set on a dark ground."""
     path = DARK if dark else REF
-    name = "Muskako Dark" if dark else "Muskako Regular"
+    name = "Cadr Mono Dark" if dark else "Cadr Mono Regular"
     faces = [(s, face(path, s)) for s in sizes]
     h = sum(int(fc.size.height / 64) * len(TEXT_LINES) + 16 for _, fc in faces) + 20
     w = max(advance_of(fc) * max(len(l) for l in TEXT_LINES) for _, fc in faces) + GUT + 20
@@ -221,7 +221,7 @@ def sheet_boxes(sizes=(11, 13, 17, 26)):
 TERMINAL = [
     "$ rg --json 'defun (grade|stroke)' src/ | jq -r '.data.path.text'",
     "src/pen.lisp:  2026-10-14T13:07:41.882Z  INFO   127.0.0.1:8443 -> 10.0.2.15",
-    "  [warn] ~/.local/share/fonts/Muskako-Regular.ttf: no 'DSIG' table",
+    "  [warn] ~/.local/share/fonts/CadrMono-Regular.ttf: no 'DSIG' table",
     "  commit 8ad8b47  (HEAD -> main)  fix: bowls cancelling against stems",
     "  ├── build/   47.3 KiB   ├── src/     12 files   └── proof/  8 sheets",
     "  cpu ⣀⣄⣆⣇⣧⣷⣿⣿⣷⣧⣇⣆⣄⣀  mem ▁▂▃▅▆▇█▇▆▅▃▂▁  io ░▒▓█▓▒░",
@@ -248,7 +248,7 @@ def sheet_terminal(sizes=(13, 16, 20, 26, 32, 40)):
     img = finish(cov, dark=True)
     for yy, txt in marks:
         tag(img, (8, yy), txt, True)
-    tag(img, (8, h - 16), "Muskako Dark", True)
+    tag(img, (8, h - 16), "Cadr Mono Dark", True)
     img.save(OUT / "terminal.png")
 
 

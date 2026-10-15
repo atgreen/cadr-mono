@@ -6,7 +6,7 @@
 ;;;; the join is continuous by construction rather than two parts
 ;;;; abutted and hoped over.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 (defstruct glyph name code advance contours)
 
@@ -146,9 +146,15 @@ optical offset the box cannot give them."
             (ecase (p :zero)
               (:none nil)
               (:dot (list (dot-at (centre-x) cy (* 0.95 (p :dot)))))
+              ;; A real diagonal.  This branch used to draw a line from
+              ;; (centre-x ...) to (centre-x ...) -- a vertical BAR, not a
+              ;; slash, whatever the keyword said.  Corner to corner of the
+              ;; bowl exactly: shorter and the mark stops carrying at 13px,
+              ;; longer and thin spurs poke out past the oval at display
+              ;; sizes.
               (:slash (list (stroke-open
-                             (list (line-seg (centre-x) (- cy (* ry 0.82))
-                                             (centre-x) (+ cy (* ry 0.82)))))))))))
+                             (list (line-seg (- (centre-x) rx) (- cy ry)
+                                             (+ (centre-x) rx) (+ cy ry))))))))))
 
 (defglyph "one" 49
   (let ((cx (centre-x)) (h (p :cap)))
@@ -463,7 +469,16 @@ it opens a gap."
               (stroke-closed (arc-path (centre-x) (bowl-cy) (bowl-rx)
                                        (bowl-ry) 0 360)))
       (let* ((rx (bowl-rx))
-             (ry-b (* (p :x) 0.30))
+             ;; 0.30 squashed the upper counter flat.  The gap between
+             ;; the bowl and the arm works out to x - 2*thin - 2*ry-b +
+             ;; over, so the bowl's radius sets it directly: at 0.30
+             ;; that gap was 15.2% of the x-height against a field of
+             ;; 25.2-28.6%, barely half the narrowest of seven
+             ;; references, while the bowl's own counter ran 46.1%
+             ;; against their 32.2-38.9%.  One number was wrong in both
+             ;; directions -- the bowl was eating the arm's room.
+             ;; 0.24 puts both inside the field: upper 27.1%, lower 34.4%.
+             (ry-b (* (p :x) 0.24))
              (cy-b (+ ry-b (/ (p :thin) 2) (- (p :over))))
              (ry-t (* (p :x) 0.21))
              (cy-t (- (p :x) ry-t (/ (p :thin) 2))))
@@ -567,40 +582,67 @@ bars land on the cap line and the baseline instead of straddling them."
 (defun left-stem-x () (- (centre-x) (bowl-rx)))
 
 (defglyph "D" 68
-  (let ((x0 (left-stem-x)))
+  ;; B D P R are FLAT-topped: all seven reference monospaces give them
+  ;; exactly zero overshoot, aligning them with H E T.  Ours stood 36
+  ;; per mille proud of the flat caps and hung 36 below the baseline,
+  ;; three times the overshoot parameter and in the wrong places --
+  ;; because the top and bottom strokes were drawn as CENTRELINES at
+  ;; cap and at 0, so the pen laid half its width outside each.  A
+  ;; horizontal stroke has to be inset by thin/2 to land ON a line;
+  ;; that is what HBAR's :on and :under do for the glyphs that use it,
+  ;; and these four could not use it because their bar runs
+  ;; continuously into the bowl.
+  (let* ((x0 (left-stem-x))
+         (y1 (- (p :cap) (/ (p :thin) 2)))   ; ink tops out at cap
+         (y0 (/ (p :thin) 2)))               ; ink bottoms out at baseline
     (list (vstem x0 0 (p :cap))
-          (stroke-open (append (list (line-seg x0 (p :cap) (centre-x) (p :cap)))
-                               (arc-path (centre-x) (cap-cy) (bowl-rx) (cap-ry) 90 -90)
-                               (list (line-seg (centre-x) 0 x0 0)))))))
+          (stroke-open (append (list (line-seg x0 y1 (centre-x) y1))
+                               (arc-path (centre-x) (cap-cy) (bowl-rx)
+                                         (- (cap-cy) (/ (p :thin) 2)) 90 -90)
+                               (list (line-seg (centre-x) y0 x0 y0)))))))
 
 (defglyph "P" 80
   (let* ((x0 (left-stem-x))
-         (ry (* (p :cap) 0.27)))
+         (y1 (- (p :cap) (/ (p :thin) 2)))   ; see D
+         ;; 0.262, not 0.27.  Lowering the bowl's apex by thin/2 to sit
+         ;; on the cap line carried the waist down with it, to 38.4% of
+         ;; cap against a field of 40.6-43.1 -- below all seven.  A
+         ;; slightly shallower bowl puts the waist back at 42.5%.
+         (ry (* (p :cap) 0.262))
+         (waist (- y1 (* 2 ry))))
     (list (vstem x0 0 (p :cap))
-          (stroke-open (append (list (line-seg x0 (p :cap) (centre-x) (p :cap)))
-                               (arc-path (centre-x) (- (p :cap) ry) (bowl-rx) ry 90 -90)
-                               (list (line-seg (centre-x) (- (p :cap) (* 2 ry)) x0
-                                               (- (p :cap) (* 2 ry)))))))))
+          (stroke-open (append (list (line-seg x0 y1 (centre-x) y1))
+                               (arc-path (centre-x) (- y1 ry) (bowl-rx) ry 90 -90)
+                               (list (line-seg (centre-x) waist x0 waist)))))))
 
 (defglyph "B" 66
+  ;; Each bowl is now derived from the two lines it joins, so the arc
+  ;; lands exactly on them.  It did not before: the upper arc's nadir
+  ;; sat at cap - 2*0.25cap = 0.50cap while the bar it ran into was at
+  ;; 0.52cap, a step the pen had to paper over.  See D for the
+  ;; cap-alignment half of this.
   (let* ((x0 (left-stem-x))
-         (ry (* (p :cap) 0.25))
+         (y1 (- (p :cap) (/ (p :thin) 2)))
+         (y0 (/ (p :thin) 2))
          (mid (* (p :cap) 0.52)))
     (list (vstem x0 0 (p :cap))
-          (stroke-open (append (list (line-seg x0 (p :cap) (centre-x) (p :cap)))
-                               (arc-path (centre-x) (- (p :cap) ry) (* (bowl-rx) 0.92) ry 90 -90)
+          (stroke-open (append (list (line-seg x0 y1 (centre-x) y1))
+                               (arc-path (centre-x) (/ (+ y1 mid) 2) (* (bowl-rx) 0.92)
+                                         (/ (- y1 mid) 2) 90 -90)
                                (list (line-seg (centre-x) mid x0 mid))))
           (stroke-open (append (list (line-seg x0 mid (centre-x) mid))
-                               (arc-path (centre-x) (/ mid 2) (bowl-rx) (/ mid 2) 90 -90)
-                               (list (line-seg (centre-x) 0 x0 0)))))))
+                               (arc-path (centre-x) (/ (+ mid y0) 2) (bowl-rx)
+                                         (/ (- mid y0) 2) 90 -90)
+                               (list (line-seg (centre-x) y0 x0 y0)))))))
 
 (defglyph "R" 82
   (let* ((x0 (left-stem-x))
-         (ry (* (p :cap) 0.27))
-         (waist (- (p :cap) (* 2 ry))))
+         (y1 (- (p :cap) (/ (p :thin) 2)))   ; see D
+         (ry (* (p :cap) 0.262))             ; see P
+         (waist (- y1 (* 2 ry))))
     (list (vstem x0 0 (p :cap))
-          (stroke-open (append (list (line-seg x0 (p :cap) (centre-x) (p :cap)))
-                               (arc-path (centre-x) (- (p :cap) ry) (bowl-rx) ry 90 -90)
+          (stroke-open (append (list (line-seg x0 y1 (centre-x) y1))
+                               (arc-path (centre-x) (- y1 ry) (bowl-rx) ry 90 -90)
                                (list (line-seg (centre-x) waist x0 waist))))
           (diag (+ x0 (* (bowl-rx) 0.55)) waist (+ (centre-x) (bowl-rx)) 0 :trim :end))))
 
@@ -633,13 +675,27 @@ bars land on the cap line and the baseline instead of straddling them."
               :align :on :scale (p :serif-weight))))
 
 (defglyph "J" 74
-  (let* ((cx (+ (centre-x) (* (bowl-rx) 0.42)))
-         (r (* (p :tail) 1.5))
-         (cy (+ r (/ (p :thin) 2))))
+  ;; No crossbar.  Rendered J from the seven monospaces on this machine
+  ;; -- JetBrains Mono, Fira Code, Hack, Adwaita Mono, Noto Sans Mono,
+  ;; Liberation Mono, Source Code Pro -- and not one has a top bar.
+  ;; Ours did, because (p :serif) is documented as the arms on i j l,
+  ;; narrow glyphs earning their width in a monospace.  J is not narrow:
+  ;; given a real hook it is as wide as U, so it never needed to earn
+  ;; anything, and the bar was simply the widest thing in the letter.
+  ;; That is what made it read as a T.
+  ;;
+  ;; Taking the bar away leaves the hook to carry the width alone, so
+  ;; the hook grew: the stem moves three-quarters of the way out to
+  ;; where U's right stem stands, and the bowl sweeps back to where the
+  ;; round letters end.  Removing the bar WITHOUT this would have left
+  ;; J at 0.53 of the advance against a field of 0.61-0.75 -- the
+  ;; narrowest J anywhere, floating in its cell.
+  (let* ((cx (+ (centre-x) (* (bowl-rx) 0.75)))
+         (rx (- cx (p :sidebearing) (/ (p :thin) 2)))
+         (ry (* (p :cap) 0.34))
+         (cy (+ ry (/ (p :thin) 2))))
     (list (stroke-open (cons (line-seg cx (p :cap) cx cy)
-                             (arc-path (- cx r) cy r r 0 -90)))
-          (hbar (p :cap) (- cx (p :serif)) (+ cx (* (p :serif) 0.5))
-                :align :under :scale (p :serif-weight)))))
+                             (arc-path (- cx rx) cy rx ry 0 -90))))))
 
 (defglyph "L" 76
   (list (vstem (left-stem-x) 0 (p :cap))

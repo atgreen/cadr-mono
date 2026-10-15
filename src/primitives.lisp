@@ -4,7 +4,7 @@
 ;;;; builds a static TTF, so a stem and a shoulder simply sit on top of
 ;;;; one another instead of needing a hand-fitted join.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 (defun stem-at (x y0 y1 &optional (w (p :stem)))
   "A vertical stroke centred on X, running from Y0 to Y1."

@@ -1,7 +1,7 @@
 ;;;; latin1.lisp -- the rest of Latin-1: ligatures, slashed and
 ;;;; crossed letters, and the symbols that live in the same block.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 ;;; --- ligatures and odd letters ---------------------------------------------
 

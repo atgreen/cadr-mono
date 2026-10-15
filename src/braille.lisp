@@ -5,7 +5,7 @@
 ;;;; placement is exactly why those graphs look uneven today: the dots
 ;;;; here come straight off the cell metrics, so the grid is exact.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 (defun braille-dot-centre (index)
   "Centre of braille dot INDEX (0-7) in the standard 2x4 arrangement:

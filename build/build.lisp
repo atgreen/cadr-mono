@@ -8,8 +8,8 @@
 (asdf:initialize-source-registry
   `(:source-registry (:tree ,*root*) :inherit-configuration))
 (handler-bind ((warning #'muffle-warning))
-  (asdf:load-system :muskako))
-(in-package :muskako)
+  (asdf:load-system :cadr-mono))
+(in-package :cadr-mono)
 
 ;; The DEFPARAMETER above ran in CL-USER, so it interned CL-USER::*ROOT*.
 ;; Reading a bare *ROOT* from here would be a different symbol entirely.
@@ -22,14 +22,14 @@
     (write-ufo (merge-pathnames (format nil "build/~a.ufo" name) *root*))))
 
 (defun build-all ()
-  (emit (light-cut) "Muskako-Regular")
-  (emit (italicise (light-cut)) "Muskako-Italic")
-  (emit (embolden (light-cut)) "Muskako-Bold")
-  (emit (embolden (italicise (light-cut))) "Muskako-BoldItalic")
-  (emit (dark-cut) "MuskakoDark-Regular")
-  (emit (italicise (dark-cut)) "MuskakoDark-Italic")
-  (emit (embolden (dark-cut)) "MuskakoDark-Bold")
-  (emit (embolden (italicise (dark-cut))) "MuskakoDark-BoldItalic")
+  (emit (light-cut) "CadrMono-Regular")
+  (emit (italicise (light-cut)) "CadrMono-Italic")
+  (emit (embolden (light-cut)) "CadrMono-Bold")
+  (emit (embolden (italicise (light-cut))) "CadrMono-BoldItalic")
+  (emit (dark-cut) "CadrMonoDark-Regular")
+  (emit (italicise (dark-cut)) "CadrMonoDark-Italic")
+  (emit (embolden (dark-cut)) "CadrMonoDark-Bold")
+  (emit (embolden (italicise (dark-cut))) "CadrMonoDark-BoldItalic")
   (format t "done~%"))
 
 (handler-case (build-all) (error (e) (format t "~&ERROR: ~a~%" e)))

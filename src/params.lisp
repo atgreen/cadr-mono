@@ -4,7 +4,7 @@
 ;;;; function of these numbers, so changing one here changes it everywhere
 ;;;; and consistently.  All values are in font units at 1000 per em.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 (defstruct (design (:conc-name d-))
   ;; --- the em and the cell -------------------------------------------
@@ -76,17 +76,39 @@
   (shoulder-ease 0.54); arch radius of n m h u r, as a fraction of x-height
   (tail         110)  ; centreline radius of the tail on l and t
   (dot-radius    54)  ; i j, punctuation, and the mark inside zero
-  (serif-weight 1.55d0) ; serifs on the narrow glyphs are SLABS, not
-                      ; hairlines.  Length alone adds almost no ink:
-                      ; reaching further with a thin stroke still leaves
-                      ; illi far lighter than nnnn.  Weight is the lever.
-  (serif        245)  ; half-length of the serif arms on i j l.  A bare
-                      ; stem leaves four times the sidebearing of a round
-                      ; letter and floats in its cell; narrow glyphs have
-                      ; to earn their width in a monospace.
+  (serif-weight 1.05d0) ; serifs on the narrow glyphs carry weight, not
+                      ; just length: reaching further with a hairline
+                      ; still leaves illi lighter than nnnn.  But 1.55
+                      ; overshot badly.  It made i's foot 1.26x the
+                      ; STEM, where every serifed reference draws that
+                      ; slab THINNER than its stem (0.76-0.91), and it
+                      ; pushed illi/nnnn to 0.93 against a field of
+                      ; 0.74-0.91 -- denser than any of them, solving a
+                      ; lightness problem that had stopped existing.
+                      ; 1.05 puts the slab at 0.86 of the stem, mid
+                      ; field, and illi at 0.77.
+  (serif        210)  ; half-length of the serif arms on i j l, and of
+                      ; both bars on I.  A bare stem leaves four times
+                      ; the sidebearing of a round letter and floats in
+                      ; its cell; narrow glyphs have to earn their width
+                      ; in a monospace.  245 earned too much: i's foot
+                      ; spanned 82% of the cell and I's bars the same,
+                      ; against fields of 66-80% and 46-68%, making I
+                      ; the second most unconventional glyph in the
+                      ; font.  210 lands i at 70% and I inside its
+                      ; field.
 
   ;; --- disambiguation choices ----------------------------------------
-  (zero-mark    :dot) ; :dot :slash or :none
+  ;; :SLASH, not :dot.  Measured on blurred rasters at 11/13/16px
+  ;; (build/confusion.py), O against 0 scores 0.0001 with no mark,
+  ;; 0.0017 with the dot and 0.0620 with the slash -- so the dot
+  ;; recovers almost none of the distance and left O/0 the second most
+  ;; confusable pair in the font.  The dot is 0.7px at 13px: a
+  ;; sub-pixel mark inside a counter cannot survive rasterising.
+  ;; Enlarging it fails the other way, since a dot big enough at 13px
+  ;; is a theta at 40px.  A slash is the same proportional mark at
+  ;; every size, which is the property that was actually needed.
+  (zero-mark  :slash) ; :dot :slash or :none
   (one-serif      t)  ; base serif on the numeral 1
   (l-tail         t)  ; tail on lowercase l
 
@@ -115,7 +137,7 @@
   (italic      nil)   ; whether to use the italic letterforms
 
   ;; --- provenance ----------------------------------------------------
-  (family "Muskako")
+  (family "Cadr Mono")
   (style  "Regular")
   (grade     0))      ; units of ink removed per side; 0 is the reference cut
 
@@ -170,7 +192,7 @@ of the current em; everything else comes back as written."
 
 (defun light-cut (&rest overrides)
   "The reference cut, drawn for dark-on-light."
-  (apply #'make-design :family "Muskako" :style "Regular" :grade 0 overrides))
+  (apply #'make-design :family "Cadr Mono" :style "Regular" :grade 0 overrides))
 
 (defun embolden (d)
   "Make a cut bold.
@@ -202,7 +224,7 @@ flag switches the letters that are genuinely redrawn."
   "The graded cut for light-on-dark.  GRADE units of ink come off each
 side of every stroke.  Advance widths and every vertical metric are
 untouched, so the two cuts are swappable without reflowing a column."
-  (let ((d (make-design :family "Muskako Dark" :style "Regular" :grade grade)))
+  (let ((d (make-design :family "Cadr Mono Dark" :style "Regular" :grade grade)))
     (setf (d-stem d)        (- (d-stem d) (* 2 grade))
           (d-thin d)        (- (d-thin d) (* 2 grade))
           (d-dot-radius d)  (- (d-dot-radius d) grade)

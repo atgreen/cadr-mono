@@ -1,9 +1,9 @@
-# Muskako
+# Cadr Mono
 
 A monospace typeface for terminals and code, generated from Common Lisp.
 714 glyphs · 8 static cuts · [OFL 1.1](LICENSE)
 
-![Muskako set as a terminal font](proof/terminal.png)
+![Cadr Mono in a terminal: git, a diff, box drawing, braille meters and source](proof/sample.png)
 
 Every glyph is a pure function of the parameters in `src/params.lisp`. There are
 no drawn outlines and no font editor in the loop: change a number, regenerate,
@@ -20,14 +20,14 @@ cp fonts/*.ttf ~/Library/Fonts/                         # macOS
 
 On Windows, select the eight files, right-click, *Install for all users*.
 
-Then set `Muskako` on a light theme or `Muskako Dark` on a dark one. A running
+Then set `Cadr Mono` on a light theme or `Cadr Mono Dark` on a dark one. A running
 terminal won't see a newly installed font — restart it.
 
 ## What makes it different
 
 **It ships a dark-background cut.** Light text on a dark field looks heavier
 than the same text dark-on-light, and every coding font is proofed against
-white then used in a terminal. `Muskako Dark` has ink removed for that
+white then used in a terminal. `Cadr Mono Dark` has ink removed for that
 polarity — stem 164 against 180 — with *identical* advances and vertical
 metrics, so swapping never reflows a column.
 
@@ -49,7 +49,7 @@ shear. An italic terminal still draws a straight box.
 
 **The italic is drawn, not sloped.** Hack and Liberation Mono redraw *nothing*
 for their italics; JetBrains Mono reshapes `f` and `y`; Adwaita Mono reshapes
-`f` alone. Muskako reshapes six letters — `a` goes single-storey, `f` gains a
+`f` alone. Cadr Mono reshapes six letters — `a` goes single-storey, `f` gains a
 descender, and `k`, `v`, `w` and `y` are redrawn so `value` can't read as
 `ualue`.
 
@@ -66,7 +66,7 @@ much — at 40px the font puts half its ink down at full coverage either way.
 **Proportions were set by measurement,** against JetBrains Mono, Fira Code,
 Hack, Adwaita Mono, Noto Sans Mono and Liberation Mono:
 
-| | Muskako | field |
+| | Cadr Mono | field |
 |---|---|---|
 | x-height / advance | 0.885 | 0.867–0.917 |
 | thin / stem | 0.82 | 0.70–0.89 |
@@ -85,12 +85,13 @@ Hack, Adwaita Mono, Noto Sans Mono and Liberation Mono:
 French is complete, including `œ`, the guillemets and the cedilla. There are no
 programming ligatures.
 
+
 ## The eight cuts
 
 |  | Regular | Italic | Bold | Bold Italic |
 |---|---|---|---|---|
-| **Muskako** | ✓ | ✓ | ✓ | ✓ |
-| **Muskako Dark** | ✓ | ✓ | ✓ | ✓ |
+| **Cadr Mono** | ✓ | ✓ | ✓ | ✓ |
+| **Cadr Mono Dark** | ✓ | ✓ | ✓ | ✓ |
 
 Family carries the grade, style carries slope and weight, so a terminal's bold
 and italic switches land where they should.

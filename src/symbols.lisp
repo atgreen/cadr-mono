@@ -1,7 +1,7 @@
 ;;;; symbols.lisp -- arrows, comparisons, set and logic operators, and
 ;;;; the typographic marks prose needs.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 (defun math-cy () (* (p :cap) 0.46))
 (defun math-r  () (u 215))

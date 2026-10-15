@@ -4,7 +4,7 @@
 ;;;; translation, which is why this is the seam between our Lisp and the
 ;;;; rest of the world's font tooling.  fontmake/fontc take it from here.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 ;;; --- release identity -------------------------------------------------
 
@@ -21,7 +21,7 @@ file does not dislodge it: a running VTE or Pango keeps the FreeType
 face it already opened.  The stamp does not force a reload -- nothing
 in the file can -- but it makes it possible to ask what is live.
 
-  fc-query -f '%{fontversion}\n' ~/.local/share/fonts/Muskako-Regular.ttf"
+  fc-query -f '%{fontversion}\n' ~/.local/share/fonts/CadrMono-Regular.ttf"
   (multiple-value-bind (sec min hour day month year)
       (decode-universal-time (get-universal-time) 0)
     (declare (ignore sec))
@@ -85,7 +85,7 @@ write it."
     (with-open-file (s (merge-pathnames "metainfo.plist" dir) :direction :output
                        :if-exists :supersede :external-format :utf-8)
       (plist-open s)
-      (kv-str s "creator" "org.moxielogic.muskako")
+      (kv-str s "creator" "org.moxielogic.cadr-mono")
       (kv-int s "formatVersion" 3)
       (plist-close s))
 
@@ -99,7 +99,7 @@ write it."
                        :if-exists :supersede :external-format :utf-8)
       (plist-open s)
       ;; Family carries the CUT (the grade); style carries the slope.
-      ;; So Muskako / Muskako Dark each get a Regular and an Italic, and
+      ;; So Cadr Mono / Cadr Mono Dark each get a Regular and an Italic, and
       ;; a terminal's bold-and-italic switches land where they should.
       (kv-str s "familyName" (p :family))
       (kv-str s "styleName" (p :style))

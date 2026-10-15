@@ -8,7 +8,7 @@
 ;;;; Marks are drawn about x = 0 with their own foot at y = 0, so
 ;;;; placing one is a translation.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 (defun mark-acute ()
   (list (diag (u -58) 0 (u 62) (u 148) :trim nil)))

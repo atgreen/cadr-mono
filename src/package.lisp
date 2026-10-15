@@ -1,6 +1,6 @@
 ;;;; package.lisp
 
-(defpackage #:muskako
+(defpackage #:cadr-mono
   (:use #:cl)
   (:export #:*design* #:design #:make-design #:light-cut #:dark-cut
            #:with-design #:p

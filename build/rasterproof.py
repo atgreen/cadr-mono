@@ -12,7 +12,7 @@ to deliver at terminal sizes.
 import freetype, pathlib
 from PIL import Image
 
-FONT = "build/ttf-hinted/Muskako-Regular.ttf"
+FONT = "build/ttf-hinted/CadrMono-Regular.ttf"
 TEXT = "illi nnnn 0O1lI"
 SIZES = [11, 13, 16]
 PAD, GAP = 10, 6

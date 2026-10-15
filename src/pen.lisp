@@ -17,7 +17,7 @@
 ;;;; accurate enough at type stroke widths, and it keeps the outline to
 ;;;; a handful of points per stroke so the result stays hintable.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 (defstruct (seg (:constructor seg (x0 y0 x1 y1 x2 y2 x3 y3)))
   x0 y0 x1 y1 x2 y2 x3 y3)

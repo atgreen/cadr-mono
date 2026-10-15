@@ -1,4 +1,4 @@
-# Muskako build.  Run from the repo root: make -f build/Makefile
+# Cadr Mono build.  Run from the repo root: make -f build/Makefile
 VENV := build/venv/bin
 ROOT := $(shell pwd)
 
@@ -21,6 +21,7 @@ sources:
 proof: hint
 	$(VENV)/python build/proofsheet.py
 	$(VENV)/python build/compare.py
+	$(VENV)/python build/sample.py
 
 ttf: sources venv
 	for u in build/*.ufo; do \
@@ -81,7 +82,7 @@ reload: install
 	  echo "no gsettings; caches refreshed, restart the terminal"; \
 	fi
 	@$(VENV)/python -c "from fontTools.ttLib import TTFont; \
-	  print('installed:', TTFont('fonts/Muskako-Regular.ttf')['name'].getDebugName(5))"
+	  print('installed:', TTFont('fonts/CadrMono-Regular.ttf')['name'].getDebugName(5))"
 
 clean:
 	rm -rf build/ttf build/ttf-hinted build/*.ufo proof/*.png

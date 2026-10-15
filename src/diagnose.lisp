@@ -4,7 +4,7 @@
 ;;;; whether it sits in its cell, whether its strokes are the weight the
 ;;;; parameters claim, or whether it aligns to the grid.  This does.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 (defun contour-area-exact (c)
   "Signed area by the shoelace formula on a FLATTENED contour.

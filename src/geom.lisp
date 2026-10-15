@@ -5,7 +5,7 @@
 ;;;; emitting a UFO is a transcription rather than a translation.
 ;;;; Contours are always closed.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 (defconstant +kappa+ 0.5522847498307936d0
   "Control-point ratio that makes a cubic bezier approximate a quarter arc.")

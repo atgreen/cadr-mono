@@ -9,7 +9,7 @@
 ;;;; They are uniform weight, drawn as rectangles rather than with the
 ;;;; pen: a modulated rule would change thickness as it turned.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 (defun cell-left   () 0)
 (defun cell-right  () (p :advance))

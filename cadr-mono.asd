@@ -1,6 +1,6 @@
-;;;; muskako.asd -- a parametric monospace for terminals
+;;;; cadr-mono.asd -- a parametric monospace for terminals
 
-(asdf:defsystem #:muskako
+(asdf:defsystem #:cadr-mono
   :description "Parametric terminal typeface: generated glyphs, UFO output, PNG proofs."
   :author "Anthony Green <green@moxielogic.com>"
   :license "OFL-1.1"

@@ -1,7 +1,7 @@
 ;;;; greek.lisp -- Greek, which in a coding font is mostly a maths
 ;;;; alphabet: lambda, mu, pi, sigma, delta, theta, epsilon.
 
-(in-package #:muskako)
+(in-package #:cadr-mono)
 
 (defun gx () (bowl-rx))
 (defun gcy () (bowl-cy))

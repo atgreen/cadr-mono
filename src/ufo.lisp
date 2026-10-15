@@ -15,7 +15,7 @@
 ;;; CADR_MONO_VERSION so a tagged build stamps itself; a local build
 ;;; falls back to the constant below, which is the version in
 ;;; CHANGELOG.md and must be bumped with it.
-(defparameter +version+ "1.0.0")
+(defparameter +version+ "1.0.1")
 
 (defun env (name)
   (let ((v #+sbcl (sb-ext:posix-getenv name) #-sbcl nil))

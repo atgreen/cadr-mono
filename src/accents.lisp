@@ -93,7 +93,29 @@ it sits over the letter rather than over the middle of the box."
 
 ;;; --- the marks as glyphs in their own right ---------------------------------
 
-(defglyph "grave" 96 (move-contours (mark-grave) (centre-x) (* (p :cap) 0.62)))
+;;; U+0060 is the BACKTICK, not a floating accent, and in Lisp it is
+;;; quasiquote -- `(a ,b) and '(a ,b) mean different things, so telling
+;;; it from the apostrophe is a semantic matter, not a nicety.
+;;;
+;;; It used to be MARK-GRAVE parked at 0.62 cap, which put it at
+;;; 0.579-0.875 of cap while the apostrophe runs 0.570-1.000: the
+;;; backtick sat entirely INSIDE the apostrophe's band.  Blurred to the
+;;; acuity limit the two were the same blob in the same place, and
+;;; ours was the least distinct of the four fonts measured.
+;;;
+;;; The first guess was that the 43-degree slant was too steep to read
+;;; at 13px.  Flattening it to 17 degrees changed the measurement by
+;;; nothing at all -- 0.116 to 0.124.  What every other font actually
+;;; does is put the backtick in a different vertical BAND: higher, and
+;;; clear of the apostrophe.  Doing that scores 0.424, against a field
+;;; of 0.313-0.369.
+;;;
+;;; So this is its own shape and no longer shares the accent's.
+;;; MARK-GRAVE stays where it is for a-grave and its family, which want
+;;; an accent sitting close over a letter, not a backtick.
+(defglyph "grave" 96
+  (list (diag (+ (centre-x) (u -120)) (u 794)
+              (+ (centre-x) (u 126)) (u 646) :trim nil)))
 (defglyph "acute" 180 (move-contours (mark-acute) (centre-x) (* (p :cap) 0.62)))
 (defglyph "circumflex" 710 (move-contours (mark-circumflex) (centre-x) (* (p :cap) 0.62)))
 (defglyph "caron" 711 (move-contours (mark-caron) (centre-x) (* (p :cap) 0.62)))

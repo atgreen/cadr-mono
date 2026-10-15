@@ -888,11 +888,38 @@ bars land on the cap line and the baseline instead of straddling them."
   (list (vstem (centre-x) (* (p :cap) 0.57) (p :cap))))
 
 (defglyph "numbersign" 35
-  (let* ((cx (centre-x)) (rx (* (bowl-rx) 0.92)) (lean (u 48)))
-    (list (diag (+ (- cx (* rx 0.38)) lean) (p :cap) (- (- cx (* rx 0.38)) lean) 0 :trim nil)
-          (diag (+ (+ cx (* rx 0.38)) lean) (p :cap) (- (+ cx (* rx 0.38)) lean) 0 :trim nil)
-          (hbar (* (p :cap) 0.66) (- cx rx) (+ cx rx))
-          (hbar (* (p :cap) 0.30) (- cx rx) (+ cx rx)))))
+  ;; Four strokes in one cell, so the only question is where the space
+  ;; goes.  Measured as ink per unit of its OWN bounding box -- which
+  ;; is the number that says "crowded", where ink per cell only says
+  ;; "heavy" -- this sat at 0.581 against a field of 0.316-0.415.  Half
+  ;; again as dense as the darkest reference, and the cause was width:
+  ;; at 0.61 of the advance it was the narrowest # of the seven (they
+  ;; run 0.74-1.01) and narrower than our own o.  The ink was never the
+  ;; problem; it was packed into two thirds of a cell.
+  ;;
+  ;; So the bars now run PAST the round letters rather than inside
+  ;; them, the diagonals sit at a third of the half-width -- which is
+  ;; what makes the three vertical lanes equal -- and the bars sit at
+  ;; 0.32 and 0.68 of cap, which does the same for the three
+  ;; horizontal ones.  The pen comes down to 0.82 to pay for the extra
+  ;; length, holding total ink at 1.30 times o's.
+  ;;
+  ;; Lands at 0.40 fill and 0.85 of the advance, both mid-field.
+  ;; X-against-# improves from below the whole field to inside it, and
+  ;; # stays further from @ and H than any reference.
+  (with-pen-scale (0.82d0)
+    (let* ((cx (centre-x))
+           ;; +12 and not more: at +24 the bars read better still, but
+           ;; the bold italic's shear then pushed them 23 units past
+           ;; the cell on both sides and check.py refused it.  The
+           ;; widest the narrowest cut can carry is what every cut gets.
+           (rx (+ (round-width) (u 12)))
+           (lean (u 46))
+           (dx (* rx 0.333)))
+      (list (diag (+ (- cx dx) lean) (p :cap) (- (- cx dx) lean) 0 :trim nil)
+            (diag (+ (+ cx dx) lean) (p :cap) (- (+ cx dx) lean) 0 :trim nil)
+            (hbar (* (p :cap) 0.68) (- cx rx) (+ cx rx) :scale 0.82d0)
+            (hbar (* (p :cap) 0.32) (- cx rx) (+ cx rx) :scale 0.82d0)))))
 
 (defglyph "dollar" 36
   (let* ((rx (* (bowl-rx) 0.84))
@@ -927,13 +954,31 @@ bars land on the cap line and the baseline instead of straddling them."
      (list (diag (- cx (* rx 0.44)) (* (p :cap) 0.60)
                  (+ cx (* rx 0.95)) (u 35) :trim :end)))))
 
+;;; Parentheses get more curve than anything else in the punctuation,
+;;; because this font is for a language that is mostly parentheses.
+;;;
+;;; At rx 224 over a 124-degree sweep they measured 0.33 of the advance
+;;; wide against a field of 0.37-0.55, and 0.20 deep against 0.25-0.33
+;;; -- the shallowest and narrowest of seven monospaces.  A shallow
+;;; paren is nearly a vertical stroke, which is tolerable in C and
+;;; wrong here: a run of four reads as a picket fence, and counting
+;;; `))))` by eye is something a Lisp programmer does all day.
+;;;
+;;; rx 320 over 144 degrees puts them at 0.47 and 0.27, mid-field, and
+;;; a run reads as scallops you can count.  Going further to 0.57 was
+;;; past every font measured.
+(defparameter +paren-rx+ 320)
+(defparameter +paren-sweep+ 72)         ; degrees either side of horizontal
+
 (defglyph "parenleft" 40
   (list (stroke-open (arc-path (+ (centre-x) (u 150)) (* (p :cap) 0.40)
-                               (u 224) (* (p :cap) 0.73) 118 242))))
+                               (u +paren-rx+) (* (p :cap) 0.73)
+                               (- 180 +paren-sweep+) (+ 180 +paren-sweep+)))))
 
 (defglyph "parenright" 41
   (list (stroke-open (arc-path (- (centre-x) (u 150)) (* (p :cap) 0.40)
-                               (u 224) (* (p :cap) 0.73) -62 62))))
+                               (u +paren-rx+) (* (p :cap) 0.73)
+                               (- +paren-sweep+) +paren-sweep+))))
 
 (defglyph "bracketleft" 91
   (let ((x0 (- (centre-x) (u 90))) (x1 (+ (centre-x) (u 130)))
@@ -1025,22 +1070,69 @@ bars land on the cap line and the baseline instead of straddling them."
           (dot-at cx (p :dot)))))
 
 (defglyph "at" 64
-  ;; An outer ring left OPEN at the lower right, around an inner bowl
-  ;; big enough to keep a counter.  A full-circle outer and a bowl
-  ;; narrower than the stroke made this a filled blob.
-  ;; The at-sign packs a ring round a bowl round a counter, so it takes
-  ;; the crowding allowance too.
-  (with-pen-scale ((crowded 0.80d0))
-   (let* ((cx (centre-x)) (rx (bowl-rx)) (ry (* (p :cap) 0.44))
-          (cy (* (p :cap) 0.46))
-          (irx (* rx 0.46)) (iry (* ry 0.50)))
-    (append (list (stroke-open (arc-path cx cy rx ry -28 268)))
-            (stroke-closed (arc-path cx cy irx iry 0 360))
-            ;; the inner bowl's right wall, carried down and out
-            (list (stroke-open
-                   (append (list (line-seg (+ cx irx) (+ cy iry) (+ cx irx) (- cy iry)))
-                           (arc-path (+ cx (* irx 0.1)) (- cy iry)
-                                     (* irx 0.9) (* iry 0.5) 0 -70))))))))
+  ;; An 'a' inside a ring -- a real one, with a bowl and a right stem,
+  ;; not an oval standing in for it.
+  ;;
+  ;; Three versions got here.  The first was a ring round a concentric
+  ;; ellipse: three contours, the inner shape floating free, and at
+  ;; terminal sizes a dark bullseye.  The second fused the two, which
+  ;; fixed the floating inner, but built the ring as a STADIUM --
+  ;; straight flanks both sides, a half-round arch, corners you can
+  ;; point at.  Every other round shape in this face is an ellipse
+  ;; drawn with a modulating pen, so that left the @ as the one glyph
+  ;; with no modulation anywhere in it.
+  ;;
+  ;; This is the construction most of the field uses, in our own
+  ;; vocabulary:
+  ;;
+  ;;   - the ring's left is ONE curve from the tail to the crown, with
+  ;;     its widest point low, at 0.45 of cap.  No straight flank.
+  ;;   - its right is straight from 0.60 of cap downward, because that
+  ;;     IS the a's stem.  The ring's right wall and the a's stem are
+  ;;     the same stroke; that is what the character is.
+  ;;   - the two meet at the crown, where both tangents are horizontal.
+  ;;     The left shoulder is therefore a long sweep and the right one
+  ;;     a tight turn -- the asymmetry is the humanist part, and it is
+  ;;     what a symmetric stadium cannot have.
+  ;;   - the stem stops short above the bowl's foot.  That gap is the
+  ;;     exit: it is what keeps the channel between ring and bowl open
+  ;;     to the outside, and so what keeps the glyph at two contours
+  ;;     rather than three.
+  ;;   - the tail is a short rising flick on our own cut terminal, not
+  ;;     a squared-off foot.
+  ;;
+  ;; The bowl's centreline is tangent to the stem's, so the two strokes
+  ;; overlap across a lens the full width of the pen and merge solidly.
+  ;; Tangent OUTLINES would pinch to a point and show it.
+  ;;
+  ;; Measured: 1.22 of cap height against a field of 1.15-1.31, 0.86 of
+  ;; the advance against 0.81-0.96, 1.78 times o's ink against
+  ;; 1.36-1.97, and further from 0 8 O Q a e and # than any of the
+  ;; seven references.
+  (with-pen-scale ((crowded 0.88d0))
+    (let* ((cx   (centre-x))
+           (s    (* (p :stem) (crowded 0.88d0)))   ; the effective stroke
+           ;; 16 units wider each side than the round letters: at the
+           ;; standard sidebearing this was the narrowest @ in the field.
+           (rrx  (- (+ (round-width) (u 16)) (/ s 2)))
+           (top  (- (p :cap) (/ s 2)))
+           (eq-l (* (p :cap) 0.45))                ; widest point, left
+           (eq-r (* (p :cap) 0.60))                ; where the stem starts
+           (ty   (* (p :cap) -0.19))               ; how deep the tail sweeps
+           (wall (+ cx rrx))
+           (brx  (u 132))
+           (bry  (u 124))
+           (bcy  (* (p :cap) 0.350))
+           (sbot (- bcy bry (u 22))))              ; the stem's cut, below the bowl
+      (append
+       (list (stroke-open
+              (append
+               (list (line-seg (+ cx (u 168)) (u -92) cx ty))
+               (arc-path cx eq-l rrx (- eq-l ty) 270 180)
+               (arc-path cx eq-l rrx (- top eq-l) 180 90)
+               (arc-path cx eq-r rrx (- top eq-r) 90 0)
+               (list (line-seg wall eq-r wall sbot)))))
+       (stroke-closed (arc-path (- wall brx) bcy brx bry 0 360))))))
 
 (defglyph "slash" 47
   (list (diag (- (centre-x) (u 200)) (u -90) (+ (centre-x) (u 200)) (p :cap))))

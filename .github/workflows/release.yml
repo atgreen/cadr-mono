@@ -131,7 +131,7 @@ jobs:
           TAG: ${{ steps.v.outputs.tag }}
         run: |
           gh release create "$TAG" \
-            --title "Cadr Mono $TAG" \
+            --title "CADR Mono $TAG" \
             --notes-file dist/NOTES.md \
             dist/*.zip dist/*.cdx.json
           echo "Verify with:  gh attestation verify CadrMono-${{ steps.v.outputs.version }}.zip --repo $GITHUB_REPOSITORY"

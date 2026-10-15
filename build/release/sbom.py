@@ -124,7 +124,7 @@ def main():
             "tools": {"components": [{"type": "application", "name": "cadr-mono sbom.py",
                                       "version": a.version}]},
             "component": {
-                "type": "library", "bom-ref": "cadr-mono", "name": "Cadr Mono",
+                "type": "library", "bom-ref": "cadr-mono", "name": "CADR Mono",
                 "version": a.version,
                 "description": "A monospace typeface for terminals and code, generated from Common Lisp.",
                 "licenses": [{"license": {"id": "OFL-1.1"}}],

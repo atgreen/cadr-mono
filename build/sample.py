@@ -53,7 +53,7 @@ GAP = 26          # between panels
 # spans the full line box, -594 to 1884, and U+2500 the full advance.
 
 # A conventional dark-terminal palette.  The font shipped here is
-# Cadr Mono DARK -- the grade with ink removed for this polarity -- which
+# CADR Mono DARK -- the grade with ink removed for this polarity -- which
 # is the whole argument of the project, so the hero image had better
 # be set in it.
 C = {
@@ -341,7 +341,7 @@ def main():
     out = OUT / "sample.png"
     img.save(out)
     print(f"wrote {out}  {img.size[0]}x{img.size[1]}  "
-          f"({PX}px, advance {ADV}, Cadr Mono Dark, {cols} columns)")
+          f"({PX}px, advance {ADV}, CADR Mono Dark, {cols} columns)")
 
 
 if __name__ == "__main__":

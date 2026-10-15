@@ -162,17 +162,17 @@ def contours_of(pen_value):
 
 
 def rename(ufo):
-    """Cadr Mono -> Cadr Mono NF.  Two fonts cannot share a family name
+    """CADR Mono -> CADR Mono NF.  Two fonts cannot share a family name
     and differ by ten thousand glyphs: a user installing both would get
     whichever fontconfig picked.  The grade stays in the family, as it
     does for the base font, so the four shipped families are
-    Cadr Mono NF and Cadr Mono NF Dark, each regular and dark."""
+    CADR Mono NF and CADR Mono NF Dark, each regular and dark."""
     fi = ufo / "fontinfo.plist"
     t = fi.read_text()
-    for old, new in (("<string>Cadr Mono Dark</string>",
-                      "<string>Cadr Mono NF Dark</string>"),
-                     ("<string>Cadr Mono</string>",
-                      "<string>Cadr Mono NF</string>")):
+    for old, new in (("<string>CADR Mono Dark</string>",
+                      "<string>CADR Mono NF Dark</string>"),
+                     ("<string>CADR Mono</string>",
+                      "<string>CADR Mono NF</string>")):
         if old in t:
             t = t.replace(old, new, 1)
             break

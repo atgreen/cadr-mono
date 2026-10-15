@@ -29,8 +29,8 @@ NAME = label_font(11)
 HEAD = label_font(13)
 
 CANDIDATES = [
-    ("Cadr Mono",            str(REF),  True),
-    ("Cadr Mono Dark",       str(DARK), True),
+    ("CADR Mono",            str(REF),  True),
+    ("CADR Mono Dark",       str(DARK), True),
     ("JetBrains Mono",     "/usr/share/fonts/jetbrains-mono-fonts/JetBrainsMono-Regular.otf", False),
     ("Hack",               "/usr/share/fonts/hack-fonts/Hack-Regular.ttf", False),
     ("Adwaita Mono",       "/usr/share/fonts/adwaita-mono-fonts/AdwaitaMono-Regular.ttf", False),

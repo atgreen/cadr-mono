@@ -6,6 +6,44 @@ section is what users read.
 
 ## Unreleased
 
+## 1.1.0 - 2026-10-15
+
+The family is renamed from `Cadr Mono` to `CADR Mono`. The forms are
+`CADR Mono` for the family and `cadr-mono` for the repository, package and
+slug.
+
+| was | now |
+|---|---|
+| `Cadr Mono` | `CADR Mono` |
+| `Cadr Mono Dark` | `CADR Mono Dark` |
+| `Cadr Mono NF` | `CADR Mono NF` |
+| `Cadr Mono NF Dark` | `CADR Mono NF Dark` |
+
+PostScript names change with the family: `CadrMono-Regular` becomes
+`CADRMono-Regular`.
+
+### Upgrading
+
+Delete the old files before installing. Nothing overwrites them — the filenames
+are unchanged for the base family, but the 1.0.x Nerd Font files and any
+remaining `Muskako*` files are left behind otherwise, and two installed copies
+leave the font system to pick one.
+
+```sh
+rm ~/.local/share/fonts/CadrMono*.ttf ~/.local/share/fonts/Muskako*.ttf
+```
+
+Configuration files that name the family in the old case keep working under
+fontconfig, which matches family names case-insensitively. Other font systems
+may not.
+
+### What does not change
+
+- **Filenames.** They remain `CadrMono-Regular.ttf` and so on.
+- **Every outline, metric and glyph.** Same 935 glyphs, same advance 1229, same
+  vertical metrics. Text set in 1.0.1 and reopened in 1.1.0 is identical pixel
+  for pixel.
+
 ## 1.0.1 - 2026-10-15
 
 Five punctuation characters redrawn: `(`, `)`, `` ` ``, `@` and `#`. No metric

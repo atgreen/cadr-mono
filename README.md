@@ -1,9 +1,9 @@
-# Cadr Mono
+# CADR Mono
 
 A monospace typeface for terminals and code, generated from Common Lisp.
 935 glyphs · 8 static fonts · [OFL 1.1](LICENSE)
 
-![Cadr Mono in a terminal: git, a diff, box drawing, braille meters and source](proof/sample.png)
+![CADR Mono in a terminal: git, a diff, box drawing, braille meters and source](proof/sample.png)
 
 Every glyph is a pure function of the parameters in `src/params.lisp`. There are
 no drawn outlines and no font editor in the loop.
@@ -19,12 +19,12 @@ cp fonts/*.ttf ~/Library/Fonts/                         # macOS
 
 On Windows, select the eight files, right-click, *Install for all users*.
 
-Set `Cadr Mono` on a light theme or `Cadr Mono Dark` on a dark one. A running
+Set `CADR Mono` on a light theme or `CADR Mono Dark` on a dark one. A running
 terminal won't see a newly installed font — restart it.
 
 ## Features
 
-- **A dark-background grade.** `Cadr Mono Dark` has ink removed for light-on-dark
+- **A dark-background grade.** `CADR Mono Dark` has ink removed for light-on-dark
   — stem 164 against 180 — with identical advances and vertical metrics, so
   swapping never reflows a column.
 
@@ -67,15 +67,15 @@ No programming ligatures.
 
 |  | Regular | Italic | Bold | Bold Italic |
 |---|---|---|---|---|
-| **Cadr Mono** | ✓ | ✓ | ✓ | ✓ |
-| **Cadr Mono Dark** | ✓ | ✓ | ✓ | ✓ |
+| **CADR Mono** | ✓ | ✓ | ✓ | ✓ |
+| **CADR Mono Dark** | ✓ | ✓ | ✓ | ✓ |
 
 Family carries the grade, style carries slope and weight.
 
 ## Nerd Font
 
 ```sh
-make -f build/Makefile nf        # -> fonts-nf/, "Cadr Mono NF" and "… NF Dark"
+make -f build/Makefile nf        # -> fonts-nf/, "CADR Mono NF" and "… NF Dark"
 ```
 
 11,130 codepoints, 2.2 MB a font. Not in `fonts/` and not in git. Icon sources

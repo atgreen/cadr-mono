@@ -15,7 +15,7 @@
 ;;; CADR_MONO_VERSION so a tagged build stamps itself; a local build
 ;;; falls back to the constant below, which is the version in
 ;;; CHANGELOG.md and must be bumped with it.
-(defparameter +version+ "1.0.1")
+(defparameter +version+ "1.1.0")
 
 (defun env (name)
   (let ((v #+sbcl (sb-ext:posix-getenv name) #-sbcl nil))
@@ -137,7 +137,7 @@ write it."
                        :if-exists :supersede :external-format :utf-8)
       (plist-open s)
       ;; Family carries the CUT (the grade); style carries the slope.
-      ;; So Cadr Mono / Cadr Mono Dark each get a Regular and an Italic, and
+      ;; So CADR Mono / CADR Mono Dark each get a Regular and an Italic, and
       ;; a terminal's bold-and-italic switches land where they should.
       (kv-str s "familyName" (p :family))
       (kv-str s "styleName" (p :style))

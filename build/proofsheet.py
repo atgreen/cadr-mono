@@ -117,7 +117,7 @@ def sheet_letters(px=120, cols=10):
                         (-230 * k, 206), (f.size.descender / 64, 226)):
             d.line([(0, base - y), (img.width, base - y)], fill=grey)
     img.paste(0, (0, 0), cov)
-    tag(img, (6, 2), f"Cadr Mono Regular - outlines at {px}px, unhinted - "
+    tag(img, (6, 2), f"CADR Mono Regular - outlines at {px}px, unhinted - "
                      "guides: line-asc / asc / cap / x / base / desc / line-desc",
         dark=False)
     img.save(OUT / "letters.png")
@@ -138,7 +138,7 @@ def sheet_sizes(dark, sizes=(11, 13, 16, 20, 26, 32, 40)):
     """Light sheet shows the Regular grade; the dark sheet shows the DARK
     CUT, which is the one you would actually set on a dark ground."""
     path = DARK if dark else REF
-    name = "Cadr Mono Dark" if dark else "Cadr Mono Regular"
+    name = "CADR Mono Dark" if dark else "CADR Mono Regular"
     faces = [(s, face(path, s)) for s in sizes]
     h = sum(int(fc.size.height / 64) * len(TEXT_LINES) + 16 for _, fc in faces) + 20
     w = max(advance_of(fc) * max(len(l) for l in TEXT_LINES) for _, fc in faces) + GUT + 20
@@ -251,7 +251,7 @@ def sheet_terminal(sizes=(13, 16, 20, 26, 32, 40)):
     img = finish(cov, dark=True)
     for yy, txt in marks:
         tag(img, (8, yy), txt, True)
-    tag(img, (8, h - 16), "Cadr Mono Dark", True)
+    tag(img, (8, h - 16), "CADR Mono Dark", True)
     img.save(OUT / "terminal.png")
 
 

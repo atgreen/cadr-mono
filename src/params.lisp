@@ -140,7 +140,7 @@
   (italic      nil)   ; whether to use the italic letterforms
 
   ;; --- provenance ----------------------------------------------------
-  (family "Cadr Mono")
+  (family "CADR Mono")
   (style  "Regular")
   (grade     0))      ; units of ink removed per side; 0 is the reference grade
 
@@ -195,7 +195,7 @@ of the current em; everything else comes back as written."
 
 (defun light-grade (&rest overrides)
   "The reference grade, drawn for dark-on-light."
-  (apply #'make-design :family "Cadr Mono" :style "Regular" :grade 0 overrides))
+  (apply #'make-design :family "CADR Mono" :style "Regular" :grade 0 overrides))
 
 (defun embolden (d)
   "Make a design bold.
@@ -227,7 +227,7 @@ flag switches the letters that are genuinely redrawn."
   "The grade for light-on-dark.  GRADE units of ink come off each
 side of every stroke.  Advance widths and every vertical metric are
 untouched, so the two grades are swappable without reflowing a column."
-  (let ((d (make-design :family "Cadr Mono Dark" :style "Regular" :grade grade)))
+  (let ((d (make-design :family "CADR Mono Dark" :style "Regular" :grade grade)))
     (setf (d-stem d)        (- (d-stem d) (* 2 grade))
           (d-thin d)        (- (d-thin d) (* 2 grade))
           (d-dot-radius d)  (- (d-dot-radius d) grade)

@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
 # SPDX-License-Identifier: OFL-1.1
 
-# Cadr Mono build.  Run from the repo root: make -f build/Makefile
+# CADR Mono build.  Run from the repo root: make -f build/Makefile
 VENV := build/venv/bin
 ROOT := $(shell pwd)
 
@@ -87,7 +87,7 @@ reload: install
 	@$(VENV)/python -c "from fontTools.ttLib import TTFont; \
 	  print('installed:', TTFont('fonts/CadrMono-Regular.ttf')['name'].getDebugName(5))"
 
-# The Nerd Font family.  A SEPARATE family (Cadr Mono NF), built from the
+# The Nerd Font family.  A SEPARATE family (CADR Mono NF), built from the
 # same generator output with src/nerdfont/ merged in before fontmake,
 # so the icons are hinted along with everything else.  Not part of
 # "all": it takes minutes, it needs no network but does need the

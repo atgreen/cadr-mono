@@ -21,7 +21,7 @@ a finding.  So the score is ours/spread, and a glyph only gets flagged
 when the field is united and we are not.
 
 This is conformance, not quality.  A high score is a question, never a
-verdict -- Cadr Mono Dark is SUPPOSED to be an outlier, and so is any
+verdict -- CADR Mono Dark is SUPPOSED to be an outlier, and so is any
 letter the project departed from the field on purpose.  Used the other
 way round it would just sand the font down into the average of its
 competitors, which is the one result nobody wants.

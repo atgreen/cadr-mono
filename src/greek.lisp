@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; greek.lisp -- Greek, which in a coding font is mostly a maths
 ;;;; alphabet: lambda, mu, pi, sigma, delta, theta, epsilon.
 

@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; geom.lisp -- contours, and the bezier arithmetic under them.
 ;;;;
 ;;;; A contour is a list of points, each (KIND X Y) where KIND is

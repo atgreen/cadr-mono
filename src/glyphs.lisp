@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; glyphs.lisp -- the letters, as stroked skeletons.
 ;;;;
 ;;;; Each letter is a centreline path run under the elliptical pen.

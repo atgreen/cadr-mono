@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; cadr-mono.asd -- a parametric monospace for terminals
 
 (asdf:defsystem #:cadr-mono
@@ -19,6 +22,7 @@
                              (:file "greek")
                              (:file "symbols")
                              (:file "braille")
+                             (:file "cyrillic")
                              (:file "boxes")
                              (:file "powerline")
                              (:file "ufo")

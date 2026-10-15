@@ -10,6 +10,9 @@ itself as a mask squares the coverage -- a half-covered edge pixel
 lands at 64 instead of 128 -- which made every sheet render thinner and
 harsher than the font really is, and made weight comparisons worthless.
 """
+
+# SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+# SPDX-License-Identifier: OFL-1.1
 #
 # SIZE CHOICE.  A "13px" proof is a 96dpi assumption.  On a 2x or 2.5x
 # display -- Xft.dpi 192 or 240 -- a 12pt terminal font rasterises at 32
@@ -132,7 +135,7 @@ TEXT_LINES = [
 
 
 def sheet_sizes(dark, sizes=(11, 13, 16, 20, 26, 32, 40)):
-    """Light sheet shows the Regular cut; the dark sheet shows the DARK
+    """Light sheet shows the Regular grade; the dark sheet shows the DARK
     CUT, which is the one you would actually set on a dark ground."""
     path = DARK if dark else REF
     name = "Cadr Mono Dark" if dark else "Cadr Mono Regular"
@@ -156,7 +159,7 @@ def sheet_sizes(dark, sizes=(11, 13, 16, 20, 26, 32, 40)):
 
 
 def sheet_grade(sizes=(11, 13, 16, 24, 48)):
-    """The two cuts at EQUAL sizes, both on black, which is the only
+    """The two grades at EQUAL sizes, both on black, which is the only
     comparison that says anything about the grade."""
     text = "once coil 0O1lI mnu"
     h = sum(int(face(REF, s).size.height / 64) + 14 for s in sizes) + 34
@@ -333,16 +336,16 @@ def sheet_italic(sizes=(13, 16, 22, 44)):
 
 
 def sheet_weights(sizes=(13, 16, 22, 40)):
-    """All four cuts of the light family, at the sizes they get set at.
+    """All four styles of the light grade, at the sizes they get set at.
 
     The question a bold has to answer in a terminal is whether it reads
     as bold at 13px without closing its counters."""
     text = "aeomnsg 0O8 ┌─┬─┐ ░▒▓ the quick brown fox 42"
-    cuts = [("Regular", REF), ("Bold", BOLD),
+    styles = [("Regular", REF), ("Bold", BOLD),
             ("Italic", ITAL), ("Bold Italic", BOLDITAL)]
     rows = []
     for px in sizes:
-        for lab, path in cuts:
+        for lab, path in styles:
             f = face(path, px)
             adv = advance_of(f)
             cov = Image.new("L", (adv * len(text) + 16,

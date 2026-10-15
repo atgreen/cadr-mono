@@ -26,6 +26,9 @@ letter the project departed from the field on purpose.  Used the other
 way round it would just sand the font down into the average of its
 competitors, which is the one result nobody wants.
 """
+
+# SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+# SPDX-License-Identifier: OFL-1.1
 import freetype, pathlib, sys
 from PIL import Image, ImageChops, ImageStat, ImageFilter
 

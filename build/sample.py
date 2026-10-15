@@ -21,6 +21,9 @@ coverage mask -- never by pasting a grey bitmap through itself, which
 squares the coverage and renders everything thin.  Same rule as
 proofsheet.py, for the same reason.
 """
+
+# SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+# SPDX-License-Identifier: OFL-1.1
 import freetype, pathlib
 from PIL import Image, ImageChops, ImageDraw, ImageFont
 
@@ -50,7 +53,7 @@ GAP = 26          # between panels
 # spans the full line box, -594 to 1884, and U+2500 the full advance.
 
 # A conventional dark-terminal palette.  The font shipped here is
-# Cadr Mono DARK -- the cut with ink removed for this polarity -- which
+# Cadr Mono DARK -- the grade with ink removed for this polarity -- which
 # is the whole argument of the project, so the hero image had better
 # be set in it.
 C = {
@@ -231,7 +234,7 @@ PANELS = [
                  t("  1229 "), t("│", "dim"), t(" ", "fg"), t("PASS", "grn"),
                  t(" ", "fg"), t("│", "dim"))],
         [col(0, t("│   └── ", "dim"), t("params.lisp")),
-         col(30, t("│", "dim"), t(" cuts         "), t("│", "dim"),
+         col(30, t("│", "dim"), t(" fonts        "), t("│", "dim"),
                  t("     8 "), t("│", "dim"), t(" ", "fg"), t("PASS", "grn"),
                  t(" ", "fg"), t("│", "dim"))],
         [col(0, t("└── ", "dim"), t("proof", "blu")),

@@ -1,4 +1,7 @@
-;;;; build.lisp -- generate UFO sources and PNG proofs for both cuts.
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
+;;;; build.lisp -- generate UFO sources and PNG proofs for both grades.
 (require :asdf)
 ;; Resolve the repository from this script's own location, so a clone
 ;; builds wherever it is put rather than only where it was written.
@@ -22,14 +25,14 @@
     (write-ufo (merge-pathnames (format nil "build/~a.ufo" name) *root*))))
 
 (defun build-all ()
-  (emit (light-cut) "CadrMono-Regular")
-  (emit (italicise (light-cut)) "CadrMono-Italic")
-  (emit (embolden (light-cut)) "CadrMono-Bold")
-  (emit (embolden (italicise (light-cut))) "CadrMono-BoldItalic")
-  (emit (dark-cut) "CadrMonoDark-Regular")
-  (emit (italicise (dark-cut)) "CadrMonoDark-Italic")
-  (emit (embolden (dark-cut)) "CadrMonoDark-Bold")
-  (emit (embolden (italicise (dark-cut))) "CadrMonoDark-BoldItalic")
+  (emit (light-grade) "CadrMono-Regular")
+  (emit (italicise (light-grade)) "CadrMono-Italic")
+  (emit (embolden (light-grade)) "CadrMono-Bold")
+  (emit (embolden (italicise (light-grade))) "CadrMono-BoldItalic")
+  (emit (dark-grade) "CadrMonoDark-Regular")
+  (emit (italicise (dark-grade)) "CadrMonoDark-Italic")
+  (emit (embolden (dark-grade)) "CadrMonoDark-Bold")
+  (emit (embolden (italicise (dark-grade))) "CadrMonoDark-BoldItalic")
   (format t "done~%"))
 
 (handler-case (build-all) (error (e) (format t "~&ERROR: ~a~%" e)))

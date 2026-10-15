@@ -1,13 +1,12 @@
 # Cadr Mono
 
 A monospace typeface for terminals and code, generated from Common Lisp.
-729 glyphs · 8 static cuts · [OFL 1.1](LICENSE)
+935 glyphs · 8 static fonts · [OFL 1.1](LICENSE)
 
 ![Cadr Mono in a terminal: git, a diff, box drawing, braille meters and source](proof/sample.png)
 
 Every glyph is a pure function of the parameters in `src/params.lisp`. There are
-no drawn outlines and no font editor in the loop: change a number, regenerate,
-look at the proofs.
+no drawn outlines and no font editor in the loop.
 
 ## Install
 
@@ -20,133 +19,79 @@ cp fonts/*.ttf ~/Library/Fonts/                         # macOS
 
 On Windows, select the eight files, right-click, *Install for all users*.
 
-Then set `Cadr Mono` on a light theme or `Cadr Mono Dark` on a dark one. A running
+Set `Cadr Mono` on a light theme or `Cadr Mono Dark` on a dark one. A running
 terminal won't see a newly installed font — restart it.
 
-## What makes it different
+## Features
 
-**It ships a dark-background cut.** Light text on a dark field looks heavier
-than the same text dark-on-light, and every coding font is proofed against
-white then used in a terminal. `Cadr Mono Dark` has ink removed for that
-polarity — stem 164 against 180 — with *identical* advances and vertical
-metrics, so swapping never reflows a column.
+- **A dark-background grade.** `Cadr Mono Dark` has ink removed for light-on-dark
+  — stem 164 against 180 — with identical advances and vertical metrics, so
+  swapping never reflows a column.
 
-![The two grades](proof/grade.png)
+- **Box drawing, blocks and braille are computed from the cell.** Rules reach the
+  cell edges and meet across the boundary, junction arms overrun by half the
+  crossing rule's weight, braille dots sit at advance/4.
 
-**Terminal glyphs are computed from the cell, not drawn.** Box drawing, blocks
-and all 256 braille patterns come from the cell's own metrics, which is what
-makes them correct: rules reach the cell edges so they meet across the
-boundary, arms overrun each junction by half the crossing rule's weight so
-corners close square, and braille dots sit at advance/4 so the gap inside a
-cell equals the gap across cells. An audit checks 33 box glyphs against their
-*Unicode names* on every build.
+- **Box drawing and braille don't slope in the italic**, so an italic terminal
+  still draws a straight box.
 
-![Box drawing](proof/boxes.png)
+- **The italic is drawn.** Six letters are reshaped: `a` goes single-storey, `f`
+  gains a descender, and `k`, `v`, `w` and `y` are redrawn.
 
-**Box drawing doesn't slope in the italic.** A sloped rule can't meet its
-neighbour across a cell boundary, so box drawing and braille opt out of the
-shear. An italic terminal still draws a straight box.
+- **Powerline separators are generated**, `U+E0B0`–`U+E0BF`, from the same cell
+  metrics as the box drawing.
 
-**The italic is drawn, not sloped.** Hack and Liberation Mono redraw *nothing*
-for their italics; JetBrains Mono reshapes `f` and `y`; Adwaita Mono reshapes
-`f` alone. Cadr Mono reshapes six letters — `a` goes single-storey, `f` gains a
-descender, and `k`, `v`, `w` and `y` are redrawn so `value` can't read as
-`ualue`.
-
-![The italic](proof/italic.png)
-
-**It's hinted,** with `ttfautohint`. At 13px a whole pixel is 158 units and the
-horizontal stroke is 147, so every horizontal is sub-pixel at that size;
-hinting roughly triples the share of fully-covered pixels at 11–13px. Two
-caveats worth knowing: above 13px the instructions measurably *hurt*, and most
-Linux desktops run `hintslight`, which uses FreeType's own autohinter and
-ignores the font's bytecode entirely. On a HiDPI display none of it matters
-much — at 40px the font puts half its ink down at full coverage either way.
-
-**Proportions were set by measurement,** against JetBrains Mono, Fira Code,
-Hack, Adwaita Mono, Noto Sans Mono and Liberation Mono:
-
-| | Cadr Mono | field |
-|---|---|---|
-| x-height / advance | 0.885 | 0.867–0.917 |
-| thin / stem | 0.82 | 0.70–0.89 |
-| clearance above tallest glyph | +1.6% | Hack −3.1%, Noto −4.7% |
-| `m` ink vs `n` | 1.30× | 1.28×–1.35× |
+- **Hinted** with `ttfautohint`. At 13px a whole pixel is 158 units and the
+  horizontal stroke is 147. Above 13px the instructions hurt, and `hintslight`
+  ignores them entirely.
 
 ## Coverage
 
-729 glyphs, every one at advance 1229 on a 2048 em.
+935 glyphs, every one at advance 1229 on a 2048 em.
 
 | | | | |
 |---|---|---|---|
-| ASCII 95/95 | Latin-1 96/96 | Greek 49 | Punctuation 15 |
-| Math 28 | Box + blocks 160/160 | Braille 256/256 | Powerline 16/16 |
+| ASCII 95/95 | Latin-1 96/96 | Latin Ext 94 | Greek 70 |
+| Cyrillic 94 | Box + blocks 160/160 | Braille 256/256 | Powerline 16/16 |
+| Math 28 | Punctuation 15 | | |
 
-French is complete, including `œ`, the guillemets and the cedilla. There are no
-programming ligatures.
+39 European languages set correctly, tested per language against the characters
+each needs. Latin Extended covers Polish, Czech, Slovak, Hungarian, Romanian,
+Croatian, Slovenian, Serbian, Latvian, Lithuanian, Estonian, Turkish, Maltese and
+Welsh. Greek carries the monotonic accents. Cyrillic covers Russian, Ukrainian,
+Belarusian, Bulgarian, Serbian and Macedonian.
 
-**Powerline separators work; the rest of Nerd Fonts doesn't.** `U+E0B0`–`U+E0BF`
-are computed from the cell like the box drawing, so a shell prompt renders with
-no seam where the background colour changes. They are the only Nerd Font
-codepoints here, because they are the only ones that are *geometry* — the other
-ten thousand are drawn pictograms from nine upstream icon projects, and nothing
-in this font is drawn. If you need devicons, patch a copy with
-[`font-patcher`](https://github.com/ryanoasis/nerd-fonts); the separators above
-will survive it.
+No programming ligatures.
 
-## The eight cuts
+## The eight fonts
 
 |  | Regular | Italic | Bold | Bold Italic |
 |---|---|---|---|---|
 | **Cadr Mono** | ✓ | ✓ | ✓ | ✓ |
 | **Cadr Mono Dark** | ✓ | ✓ | ✓ | ✓ |
 
-Family carries the grade, style carries slope and weight, so a terminal's bold
-and italic switches land where they should.
+Family carries the grade, style carries slope and weight.
 
-## Building
+## Nerd Font
 
 ```sh
-make -f build/Makefile install
+make -f build/Makefile nf        # -> fonts-nf/, "Cadr Mono NF" and "… NF Dark"
 ```
 
-Needs `sbcl` and `python3`. The generator has **no Lisp dependencies** — SBCL
-alone writes the UFO sources. Everything else lives in a venv the Makefile
-creates: `fontmake` to compile, `ttfautohint` to hint, `freetype-py` and
-`pillow` for the proofs. Other targets: `sources`, `ttf`, `hint`, `fonts`,
-`proof`, `reload`, `clean`.
-
-A letter is a centreline path run under an elliptical pen whose width follows
-the local tangent, `w(φ) = hypot(stem·sin φ, thin·cos φ)`, with φ measured
-against the stress axis. Strokes that continue into one another are *one path*,
-so those joins are continuous by construction. Proofs render from the compiled
-font, never from the generator's own contours.
-
-## Contributing
-
-Issues and PRs welcome. There are no drawn outlines, so a change to a letterform
-is a change to code — edited UFO or TTF files are build output and can't be
-merged. A proportion that's wrong across the font belongs in `src/params.lisp`;
-one wrong letter belongs in its builder. Run `make -f build/Makefile proof` and
-include the sheet that shows the difference.
-
-## What it is not
-
-The bold is derived from the parameters rather than redrawn. There's no variable
-font — `ttfautohint` doesn't support them and hinting is load-bearing here. `&`
-isn't a true et-ligature. Nerd Font icons stop at the powerline separators. At
-13px the x-height is 6.9px against JetBrains Mono's 7.2, so you may still set it
-a step larger.
+11,130 codepoints, 2.2 MB a font. Not in `fonts/` and not in git. Icon sources
+are vendored in [`src/nerdfont/`](src/nerdfont), pinned to Nerd Fonts v3.5.1.
+Font Logos and Pomicons are omitted — see the licence note below — so a build
+from here is 145 glyphs short of an official Nerd Font.
 
 ## Licence
 
-[SIL Open Font License 1.1](LICENSE). Use, study, modify and redistribute,
-including commercially and bundled with software; don't sell it on its own, and
-keep derivatives under the same licence.
+[SIL Open Font License 1.1](LICENSE), with **no Reserved Font Name**.
 
-There is **no Reserved Font Name**: this font is meant to be rebuilt with
-different parameters, and reserving the name would make every adjusted build a
-renaming exercise.
+The Nerd Font build is the exception: its icons come from eleven upstream sets
+under MIT, CC BY 4.0, Apache 2.0 and OFL 1.1, and **all of them require
+attribution**. Ship [`src/nerdfont/LICENSES/`](src/nerdfont/LICENSES) with any
+build you distribute. Font Logos is marked `unlicensed` upstream and Pomicons'
+licence and metadata contradict each other, so neither is vendored here.
 
 Designed and written by Anthony Green. Built with
 [fontmake](https://github.com/googlefonts/fontmake),

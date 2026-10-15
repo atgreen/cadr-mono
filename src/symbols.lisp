@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; symbols.lisp -- arrows, comparisons, set and logic operators, and
 ;;;; the typographic marks prose needs.
 

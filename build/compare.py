@@ -12,6 +12,9 @@ its lowercase is the same height.  That is the typographic comparison:
 it separates "this font is drawn better" from "this font is simply set
 larger", which the first sheet cannot tell you.
 """
+
+# SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+# SPDX-License-Identifier: OFL-1.1
 import freetype, pathlib, sys
 sys.path.insert(0, "build")
 from proofsheet import finish, label_font, REF, DARK

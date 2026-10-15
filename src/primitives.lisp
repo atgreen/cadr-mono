@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; primitives.lisp -- the parts letters are assembled from.
 ;;;;
 ;;;; Primitives may overlap freely: the compiler unions them when it
@@ -84,6 +87,21 @@ points, so anything measured from control points overstates it."
                         c))
               contours)))
 
+(defun mirror-contours (contours &optional about)
+  "Reflect about a vertical axis -- the cell centre unless told
+otherwise.  Several Cyrillic letters are Latin ones turned round: I is
+N reversed, Ya is R reversed.  Reflecting the built glyph keeps them
+identical in weight and construction rather than merely similar, and
+they stay that way when a parameter moves.  Winding reverses with the
+shape, or every reflected counter would fill in."
+  (let ((a (or about (centre-x))))
+    (mapcar (lambda (c)
+              (reverse-contour
+               (mapcar (lambda (pnt)
+                         (pt (kind pnt) (- (* 2 a) (px pnt)) (py pnt)))
+                       c)))
+            contours)))
+
 (defun scale-contours (contours factor &key (about-x 0) (about-y 0))
   "Scale about a point.  Used for the handful of glyphs that are a
 smaller copy of another -- the ringed letters and the ordinals."
@@ -102,6 +120,10 @@ smaller copy of another -- the ringed letters and the ordinals."
 (defun ink-bottom (contours)
   (let ((pts (contour-points contours)))
     (when pts (reduce #'min pts :key #'cdr))))
+
+(defun ink-right (contours)
+  (let ((pts (contour-points contours)))
+    (when pts (reduce #'max pts :key #'car))))
 
 (defun ink-mid-x (contours)
   (let ((pts (contour-points contours)))

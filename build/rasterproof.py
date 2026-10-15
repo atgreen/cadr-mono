@@ -9,6 +9,9 @@ smears across two columns as greys.  So "fraction of ink at full
 coverage" is a direct measure of the crispness this font was supposed
 to deliver at terminal sizes.
 """
+
+# SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+# SPDX-License-Identifier: OFL-1.1
 import freetype, pathlib
 from PIL import Image
 

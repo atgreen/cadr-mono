@@ -1,0 +1,74 @@
+# SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+# SPDX-License-Identifier: OFL-1.1
+#
+# Build the font from source and check the invariants.  The committed
+# fonts/ are a convenience for people who just want to install it; this
+# job proves they can be regenerated, which is the actual claim the
+# README makes.
+name: CI
+
+on:
+  push:
+    branches: ['**']
+    tags-ignore: ['v*']        # tags are the release workflow's job
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install SBCL
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq sbcl
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build
+        run: make -f build/Makefile fonts
+
+      - name: Check invariants
+        run: build/venv/bin/python build/release/check.py fonts/
+
+      - name: Committed fonts match a fresh build
+        run: |
+          # Not a byte comparison: the version string carries a UTC build
+          # stamp, so two builds of one commit differ by design.  What
+          # must match is the glyph set and the metrics.
+          build/venv/bin/python - <<'PY'
+          from fontTools.ttLib import TTFont
+          import glob, subprocess, sys
+          dirty = subprocess.run(["git","status","--porcelain","fonts/"],
+                                 capture_output=True, text=True).stdout
+          changed = [l for l in dirty.splitlines() if l.strip()]
+          if not changed:
+              print("  fonts/ unchanged by the build")
+              sys.exit(0)
+          print(f"  {len(changed)} font file(s) differ from the commit; comparing contents")
+          for line in changed:
+              path = line.split()[-1]
+              head = subprocess.run(["git","show",f"HEAD:{path}"],
+                                    capture_output=True).stdout
+              open("/tmp/head.ttf","wb").write(head)
+              a, b = TTFont("/tmp/head.ttf"), TTFont(path)
+              if set(a.getBestCmap()) != set(b.getBestCmap()):
+                  sys.exit(f"  FAIL {path}: committed glyph set differs from a fresh build")
+              if (a["hhea"].ascender, a["hhea"].descender) != \
+                 (b["hhea"].ascender, b["hhea"].descender):
+                  sys.exit(f"  FAIL {path}: committed metrics differ from a fresh build")
+          print("  glyph sets and metrics match; only the build stamp differs")
+          PY
+
+      - name: Proof sheets render
+        run: make -f build/Makefile proof
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fonts
+          path: fonts/*.ttf

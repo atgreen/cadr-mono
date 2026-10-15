@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+# SPDX-License-Identifier: OFL-1.1
+
 # Cadr Mono build.  Run from the repo root: make -f build/Makefile
 VENV := build/venv/bin
 ROOT := $(shell pwd)
@@ -33,14 +36,14 @@ hint: ttf
 	$(VENV)/python build/hint.py
 	$(VENV)/python build/rasterproof.py
 
-# fonts/ is what a user downloads: the hinted cuts, at a path that does
+# fonts/ is what a user downloads: the hinted fonts, at a path that does
 # not look like a scratch directory.  Kept in the repo because there is
 # no release pipeline to publish them from.
 fonts: hint
 	mkdir -p fonts
 	cp build/ttf-hinted/*.ttf fonts/
 
-# The HINTED cuts are what gets installed.  Unhinted, every horizontal
+# The HINTED fonts are what gets installed.  Unhinted, every horizontal
 # in this font is sub-pixel at 13px.
 #
 # install depends on PROOF, not just hint.  They used to be siblings off
@@ -84,7 +87,35 @@ reload: install
 	@$(VENV)/python -c "from fontTools.ttLib import TTFont; \
 	  print('installed:', TTFont('fonts/CadrMono-Regular.ttf')['name'].getDebugName(5))"
 
+# The Nerd Font family.  A SEPARATE family (Cadr Mono NF), built from the
+# same generator output with src/nerdfont/ merged in before fontmake,
+# so the icons are hinted along with everything else.  Not part of
+# "all": it takes minutes, it needs no network but does need the
+# vendored 3.8MB of upstream artwork, and its output is ~15MB that
+# must never be committed -- see .gitignore.
+#
+# The base font stays pure: generated glyphs only, OFL-1.1, no
+# Reserved Font Name.  Only this variant carries the mixed upstream
+# licences in src/nerdfont/LICENSES/.
+nf: sources venv
+	$(VENV)/python build/nerdfont.py
+	mkdir -p fonts-nf
+	for u in build/*.ufo; do \
+	  $(VENV)/fontmake -u $$u -o ttf --output-dir build/ttf-nf \
+	    --overlaps-backend pathops || exit 1; \
+	done
+	$(VENV)/python build/hint.py --in build/ttf-nf --out fonts-nf
+	@# fontmake names output after the UFO, not the family, so these
+	@# land as CadrMono-*.ttf -- the same filenames the base font uses.
+	@# Installing both would have one silently overwrite the other.
+	cd fonts-nf && for f in CadrMono*.ttf; do \
+	  mv "$$f" "`echo $$f | sed 's/^CadrMono/CadrMonoNF/'`"; \
+	done
+	$(VENV)/python build/stripicons.py --dir fonts-nf
+	@echo "fonts-nf/ built.  The UFOs now hold merged icons; 'make sources'"
+	@echo "(or any base target) regenerates them clean."
+
 clean:
 	rm -rf build/ttf build/ttf-hinted build/*.ufo proof/*.png
 
-.PHONY: all venv sources proof ttf hint fonts install reload clean
+.PHONY: all venv sources proof ttf hint fonts nf install reload clean

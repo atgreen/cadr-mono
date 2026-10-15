@@ -16,3 +16,13 @@ proof/small.png
 __pycache__/
 ocicl.csv
 build/ttf/
+
+# Nerd Font variant: ~15MB of build output, never committed.
+# The vendored SOURCES in src/nerdfont/ are committed; the merged
+# fonts are not.  See build/nerdfont.py.
+build/ttf-nf/
+fonts-nf/
+
+# Release staging
+dist/
+nfpkg/

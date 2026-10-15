@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; diagnose.lisp -- numbers, not squinting.
 ;;;;
 ;;;; The PNG proofs show whether a letter reads.  They do not show

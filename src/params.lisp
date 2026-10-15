@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; params.lisp -- the design parameter set.
 ;;;;
 ;;;; This is the surface you adjust.  Every glyph in the face is a pure
@@ -139,7 +142,7 @@
   ;; --- provenance ----------------------------------------------------
   (family "Cadr Mono")
   (style  "Regular")
-  (grade     0))      ; units of ink removed per side; 0 is the reference cut
+  (grade     0))      ; units of ink removed per side; 0 is the reference grade
 
 (defvar *design* (make-design)
   "The design currently being generated.")
@@ -190,12 +193,12 @@ of the current em; everything else comes back as written."
   (let ((v (raw-p slot)))
     (if (member slot +metric-slots+) (u v) v)))
 
-(defun light-cut (&rest overrides)
-  "The reference cut, drawn for dark-on-light."
+(defun light-grade (&rest overrides)
+  "The reference grade, drawn for dark-on-light."
   (apply #'make-design :family "Cadr Mono" :style "Regular" :grade 0 overrides))
 
 (defun embolden (d)
-  "Make a cut bold.
+  "Make a design bold.
 
 Measured across the field, a bold stem runs 1.32 to 1.58 times the
 regular -- JetBrains 1.40, Hack 1.32, Adwaita 1.44, Liberation 1.58 --
@@ -214,16 +217,16 @@ modulation would close them."
   d)
 
 (defun italicise (d &key (slant -10))
-  "Turn a cut into its italic.  The slope is applied to outlines; the
+  "Turn a design into its italic.  The slope is applied to outlines; the
 flag switches the letters that are genuinely redrawn."
   (setf (d-slant d) slant (d-italic d) t
         (d-style d) (if (= (d-weight d) 700) "Bold Italic" "Italic"))
   d)
 
-(defun dark-cut (&key (grade 4) &allow-other-keys)
-  "The graded cut for light-on-dark.  GRADE units of ink come off each
+(defun dark-grade (&key (grade 4) &allow-other-keys)
+  "The grade for light-on-dark.  GRADE units of ink come off each
 side of every stroke.  Advance widths and every vertical metric are
-untouched, so the two cuts are swappable without reflowing a column."
+untouched, so the two grades are swappable without reflowing a column."
   (let ((d (make-design :family "Cadr Mono Dark" :style "Regular" :grade grade)))
     (setf (d-stem d)        (- (d-stem d) (* 2 grade))
           (d-thin d)        (- (d-thin d) (* 2 grade))

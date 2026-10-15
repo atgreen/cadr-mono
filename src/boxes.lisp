@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; boxes.lisp -- U+2500 box drawing and U+2580 block elements.
 ;;;;
 ;;;; These are not letters and do not sit in the letter band.  A rule

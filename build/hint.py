@@ -2,7 +2,7 @@
 
 Hinting is not a finishing step for this font, it is load-bearing.  At
 2048 upm a whole pixel is 158 units at 13px; the thin is 127 and the
-dark cut's is 115, so every horizontal stroke is sub-pixel at the sizes
+dark grade's is 115, so every horizontal stroke is sub-pixel at the sizes
 this font exists for.  Unhinted, they wash out to grey.  Instructions
 snap them to whole pixels, which is what makes the humanist modulation
 affordable at all.
@@ -10,11 +10,22 @@ affordable at all.
 ttfautohint does not support variable fonts and looks unmaintained,
 which is one reason the statics are the real deliverable here.
 """
-import sys, pathlib
+
+# SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+# SPDX-License-Identifier: OFL-1.1
+import argparse, pathlib
 from ttfautohint import ttfautohint
 
-SRC = pathlib.Path("build/ttf")
-OUT = pathlib.Path("build/ttf-hinted")
+# Defaults are the base font's paths; the Nerd Font family passes its own
+# so it gets the identical hinting rather than a second copy of these
+# settings that could drift.
+ap = argparse.ArgumentParser()
+ap.add_argument("--in", dest="src", default="build/ttf")
+ap.add_argument("--out", dest="out", default="build/ttf-hinted")
+args = ap.parse_args()
+
+SRC = pathlib.Path(args.src)
+OUT = pathlib.Path(args.out)
 OUT.mkdir(parents=True, exist_ok=True)
 
 for src in sorted(SRC.glob("*.ttf")):

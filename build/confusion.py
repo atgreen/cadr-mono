@@ -31,6 +31,9 @@ This catches a letterform that fails to be ITSELF -- which is exactly
 the failure mode a parametric font is most prone to, because a glyph
 here is a formula that nobody ever looked at in isolation.
 """
+
+# SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+# SPDX-License-Identifier: OFL-1.1
 import freetype, itertools, pathlib, sys
 from PIL import Image, ImageFilter
 

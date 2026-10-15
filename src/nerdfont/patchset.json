@@ -1,0 +1,3127 @@
+[
+ {
+  "Name": "Seti-UI + NerdFonts",
+  "Filename": "original-source.otf",
+  "Exact": false,
+  "SymStart": 58618,
+  "SymEnd": 58879,
+  "SrcStart": 58874,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Heavy Angle Brackets",
+  "Filename": "extraglyphs.sfd",
+  "Exact": true,
+  "SymStart": 10092,
+  "SymEnd": 10097,
+  "SrcStart": null,
+  "ScaleRules": {
+   "ShiftMode": "xy",
+   "ScaleGroups": [
+    {
+     "range": [
+      10092,
+      10098
+     ]
+    }
+   ]
+  },
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa1!",
+    "params": {
+     "ypadding": 0.3,
+     "careful": true
+    }
+   }
+  }
+ },
+ {
+  "Name": "Box Drawing",
+  "Filename": "extraglyphs.sfd",
+  "Exact": true,
+  "SymStart": 9472,
+  "SymEnd": 9631,
+  "SrcStart": null,
+  "ScaleRules": {
+   "ShiftMode": "xy",
+   "ScaleGroups": [
+    [
+     9472,
+     9473,
+     9474,
+     9475,
+     9476,
+     9477,
+     9478,
+     9479,
+     9480,
+     9481,
+     9482,
+     9483,
+     9484,
+     9485,
+     9486,
+     9487,
+     9488,
+     9489,
+     9490,
+     9491,
+     9492,
+     9493,
+     9494,
+     9495,
+     9496,
+     9497,
+     9498,
+     9499,
+     9500,
+     9501,
+     9502,
+     9503,
+     9504,
+     9505,
+     9506,
+     9507,
+     9508,
+     9509,
+     9510,
+     9511,
+     9512,
+     9513,
+     9514,
+     9515,
+     9516,
+     9517,
+     9518,
+     9519,
+     9520,
+     9521,
+     9522,
+     9523,
+     9524,
+     9525,
+     9526,
+     9527,
+     9528,
+     9529,
+     9530,
+     9531,
+     9532,
+     9533,
+     9534,
+     9535,
+     9536,
+     9537,
+     9538,
+     9539,
+     9540,
+     9541,
+     9542,
+     9543,
+     9544,
+     9545,
+     9546,
+     9547,
+     9548,
+     9549,
+     9550,
+     9551,
+     9552,
+     9553,
+     9554,
+     9555,
+     9556,
+     9557,
+     9558,
+     9559,
+     9560,
+     9561,
+     9562,
+     9563,
+     9564,
+     9565,
+     9566,
+     9567,
+     9568,
+     9569,
+     9570,
+     9571,
+     9572,
+     9573,
+     9574,
+     9575,
+     9576,
+     9577,
+     9578,
+     9579,
+     9580,
+     9581,
+     9582,
+     9583,
+     9584,
+     9588,
+     9589,
+     9590,
+     9591,
+     9592,
+     9593,
+     9594,
+     9595,
+     9596,
+     9597,
+     9598,
+     9599
+    ],
+    {
+     "range": [
+      9585,
+      9588
+     ]
+    },
+    {
+     "range": [
+      9600,
+      9632
+     ]
+    }
+   ]
+  },
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "dont_copy": false
+    }
+   }
+  }
+ },
+ {
+  "Name": "Progress Indicators",
+  "Filename": "extraglyphs.sfd",
+  "Exact": true,
+  "SymStart": 60928,
+  "SymEnd": 60939,
+  "SrcStart": null,
+  "ScaleRules": {
+   "ShiftMode": "xy",
+   "ScaleGroups": [
+    {
+     "range": [
+      60927,
+      60934
+     ]
+    },
+    {
+     "range": [
+      60934,
+      60940
+     ]
+    }
+   ]
+  },
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa1!",
+    "params": {
+     "overlap": -0.03,
+     "careful": true
+    }
+   },
+   "60928": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "careful": true
+    }
+   },
+   "60929": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.1,
+     "careful": true
+    }
+   },
+   "60930": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "careful": true
+    }
+   },
+   "60931": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "careful": true
+    }
+   },
+   "60932": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.1,
+     "careful": true
+    }
+   },
+   "60933": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "careful": true
+    }
+   }
+  }
+ },
+ {
+  "Name": "Devicons",
+  "Filename": "devicons/devicons.otf",
+  "Exact": false,
+  "SymStart": 58880,
+  "SymEnd": 59480,
+  "SrcStart": 59136,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Powerline Symbols",
+  "Filename": "powerline-symbols/PowerlineSymbols.otf",
+  "Exact": true,
+  "SymStart": 57504,
+  "SymEnd": 57506,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa1",
+    "params": {}
+   },
+   "57520": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57521": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57522": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57523": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57558": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57559": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57524": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57525": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57526": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57527": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57528": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57529": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57530": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57531": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57532": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57533": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57534": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57535": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57536": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57537": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57538": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57539": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57540": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57541": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57542": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57543": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57544": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57546": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57548": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.85
+    }
+   },
+   "57549": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "xy-ratio": 0.865
+    }
+   },
+   "57550": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57551": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57552": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57553": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57554": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   },
+   "57556": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   }
+  }
+ },
+ {
+  "Name": "Powerline Symbols",
+  "Filename": "powerline-symbols/PowerlineSymbols.otf",
+  "Exact": true,
+  "SymStart": 57520,
+  "SymEnd": 57523,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa1",
+    "params": {}
+   },
+   "57520": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57521": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57522": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57523": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57558": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57559": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57524": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57525": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57526": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57527": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57528": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57529": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57530": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57531": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57532": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57533": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57534": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57535": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57536": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57537": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57538": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57539": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57540": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57541": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57542": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57543": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57544": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57546": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57548": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.85
+    }
+   },
+   "57549": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "xy-ratio": 0.865
+    }
+   },
+   "57550": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57551": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57552": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57553": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57554": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   },
+   "57556": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   }
+  }
+ },
+ {
+  "Name": "Powerline Extra",
+  "Filename": "powerline-extra/PowerlineExtraSymbols.otf",
+  "Exact": true,
+  "SymStart": 57507,
+  "SymEnd": 57507,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa1",
+    "params": {}
+   },
+   "57520": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57521": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57522": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57523": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57558": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57559": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57524": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57525": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57526": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57527": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57528": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57529": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57530": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57531": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57532": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57533": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57534": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57535": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57536": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57537": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57538": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57539": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57540": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57541": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57542": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57543": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57544": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57546": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57548": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.85
+    }
+   },
+   "57549": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "xy-ratio": 0.865
+    }
+   },
+   "57550": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57551": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57552": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57553": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57554": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   },
+   "57556": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   }
+  }
+ },
+ {
+  "Name": "Powerline Extra",
+  "Filename": "powerline-extra/PowerlineExtraSymbols.otf",
+  "Exact": true,
+  "SymStart": 57524,
+  "SymEnd": 57544,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa1",
+    "params": {}
+   },
+   "57520": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57521": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57522": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57523": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57558": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57559": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57524": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57525": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57526": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57527": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57528": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57529": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57530": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57531": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57532": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57533": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57534": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57535": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57536": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57537": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57538": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57539": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57540": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57541": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57542": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57543": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57544": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57546": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57548": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.85
+    }
+   },
+   "57549": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "xy-ratio": 0.865
+    }
+   },
+   "57550": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57551": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57552": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57553": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57554": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   },
+   "57556": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   }
+  }
+ },
+ {
+  "Name": "Powerline Extra",
+  "Filename": "powerline-extra/PowerlineExtraSymbols.otf",
+  "Exact": true,
+  "SymStart": 57546,
+  "SymEnd": 57546,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa1",
+    "params": {}
+   },
+   "57520": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57521": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57522": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57523": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57558": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57559": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57524": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57525": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57526": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57527": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57528": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57529": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57530": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57531": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57532": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57533": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57534": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57535": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57536": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57537": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57538": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57539": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57540": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57541": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57542": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57543": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57544": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57546": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57548": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.85
+    }
+   },
+   "57549": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "xy-ratio": 0.865
+    }
+   },
+   "57550": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57551": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57552": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57553": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57554": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   },
+   "57556": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   }
+  }
+ },
+ {
+  "Name": "Powerline Extra",
+  "Filename": "powerline-extra/PowerlineExtraSymbols.otf",
+  "Exact": true,
+  "SymStart": 57548,
+  "SymEnd": 57559,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa1",
+    "params": {}
+   },
+   "57520": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57521": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57522": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.7
+    }
+   },
+   "57523": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.7
+    }
+   },
+   "57558": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57559": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05,
+     "xy-ratio": 0.7
+    }
+   },
+   "57524": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57525": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57526": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.06,
+     "xy-ratio": 0.59
+    }
+   },
+   "57527": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "xy-ratio": 0.5
+    }
+   },
+   "57528": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57529": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57530": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57531": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57532": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57533": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57534": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57535": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {}
+   },
+   "57536": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57537": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57538": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57539": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {}
+   },
+   "57540": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57541": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.86
+    }
+   },
+   "57542": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57543": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": -0.03,
+     "xy-ratio": 0.78
+    }
+   },
+   "57544": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57546": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.05
+    }
+   },
+   "57548": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.85
+    }
+   },
+   "57549": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy2",
+    "params": {
+     "xy-ratio": 0.865
+    }
+   },
+   "57550": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57551": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57552": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57553": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^pa",
+    "params": {}
+   },
+   "57554": {
+    "align": "l",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   },
+   "57556": {
+    "align": "r",
+    "valign": "c",
+    "stretch": "^xy",
+    "params": {
+     "overlap": 0.02,
+     "xy-ratio": 0.7
+    }
+   }
+  }
+ },
+ {
+  "Name": "Powerline Extra",
+  "Filename": "powerline-extra/PowerlineExtraSymbols.otf",
+  "Exact": true,
+  "SymStart": 9776,
+  "SymEnd": 9776,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa1!",
+    "params": {
+     "overlap": -0.1,
+     "careful": true
+    }
+   }
+  }
+ },
+ {
+  "Name": "Pomicons",
+  "Filename": "pomicons/Pomicons.otf",
+  "Exact": true,
+  "SymStart": 57344,
+  "SymEnd": 57354,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Font Awesome",
+  "Filename": "font-awesome/FontAwesome.otf",
+  "Exact": true,
+  "SymStart": 60672,
+  "SymEnd": 62207,
+  "SrcStart": null,
+  "ScaleRules": {
+   "ShiftMode": "",
+   "ScaleGroups": [
+    [
+     61445,
+     61446,
+     61577
+    ],
+    [
+     61478,
+     61479,
+     61480,
+     61160,
+     61391
+    ],
+    {
+     "range": [
+      61483,
+      61485
+     ]
+    },
+    {
+     "range": [
+      61489,
+      61494
+     ]
+    },
+    {
+     "range": [
+      61508,
+      61511
+     ]
+    },
+    {
+     "range": [
+      61512,
+      61523
+     ]
+    },
+    {
+     "range": [
+      61536,
+      61540
+     ]
+    },
+    [
+     61523,
+     61524,
+     61559,
+     61560
+    ],
+    {
+     "range": [
+      61565,
+      61567
+     ]
+    },
+    {
+     "range": [
+      61604,
+      61608
+     ]
+    },
+    [
+     61655,
+     61656,
+     61657,
+     61658,
+     61660,
+     61661,
+     61662
+    ],
+    {
+     "range": [
+      61696,
+      61704
+     ]
+    },
+    {
+     "range": [
+      61744,
+      61746
+     ]
+    },
+    {
+     "range": [
+      61761,
+      61763
+     ]
+    },
+    {
+     "range": [
+      61779,
+      61787
+     ]
+    },
+    {
+     "range": [
+      61813,
+      61817
+     ]
+    },
+    {
+     "range": [
+      61826,
+      61828
+     ]
+    },
+    {
+     "range": [
+      61985,
+      61998
+     ]
+    },
+    {
+     "range": [
+      62037,
+      62044
+     ]
+    }
+   ]
+  },
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   },
+   "61660": {
+    "align": "c",
+    "valign": "",
+    "stretch": "pa",
+    "params": {}
+   },
+   "61661": {
+    "align": "c",
+    "valign": "",
+    "stretch": "pa",
+    "params": {}
+   },
+   "61662": {
+    "align": "c",
+    "valign": "",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Font Awesome Ext",
+  "Filename": "font-awesome-extension.ttf",
+  "Exact": false,
+  "SymStart": 57344,
+  "SymEnd": 57513,
+  "SrcStart": 57856,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Power Symbols",
+  "Filename": "Unicode_IEC_symbol_font.otf",
+  "Exact": true,
+  "SymStart": 9211,
+  "SymEnd": 9214,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Power Symbols",
+  "Filename": "Unicode_IEC_symbol_font.otf",
+  "Exact": true,
+  "SymStart": 11096,
+  "SymEnd": 11096,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Material legacy",
+  "Filename": "materialdesign/materialdesignicons-webfont.ttf",
+  "Exact": false,
+  "SymStart": 61441,
+  "SymEnd": 63559,
+  "SrcStart": 62720,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Material",
+  "Filename": "materialdesign/MaterialDesignIconsDesktop.ttf",
+  "Exact": true,
+  "SymStart": 983041,
+  "SymEnd": 989936,
+  "SrcStart": null,
+  "ScaleRules": {
+   "ShiftMode": "",
+   "ScaleGroups": [
+    [
+     983258,
+     983259,
+     983260,
+     986977,
+     986978,
+     986979,
+     986980,
+     986981,
+     986982,
+     986983,
+     986984
+    ],
+    {
+     "range": [
+      983356,
+      983364
+     ]
+    },
+    {
+     "range": [
+      983901,
+      983905
+     ]
+    },
+    [
+     983943,
+     983944,
+     983945,
+     983946,
+     983947,
+     983948,
+     983949,
+     986993,
+     986994,
+     986996,
+     986997,
+     986998,
+     986999
+    ],
+    {
+     "range": [
+      984324,
+      984327
+     ]
+    },
+    [
+     984850,
+     984851,
+     984852,
+     984853,
+     984854,
+     985711
+    ],
+    {
+     "range": [
+      984856,
+      984863
+     ]
+    },
+    {
+     "range": [
+      985175,
+      985181
+     ]
+    },
+    [
+     985565,
+     985566,
+     985567,
+     985616,
+     985619,
+     61460,
+     985621,
+     988380,
+     988500
+    ],
+    {
+     "range": [
+      985838,
+      985864
+     ]
+    },
+    {
+     "range": [
+      985913,
+      985923
+     ]
+    },
+    {
+     "range": [
+      986037,
+      986047
+     ]
+    },
+    {
+     "range": [
+      987272,
+      987282
+     ]
+    },
+    {
+     "range": [
+      987819,
+      987828
+     ]
+    },
+    {
+     "range": [
+      988066,
+      988074
+     ]
+    },
+    {
+     "range": [
+      989616,
+      989624
+     ]
+    },
+    {
+     "range": [
+      989884,
+      989889
+     ]
+    },
+    [
+     983568,
+     985117,
+     988268,
+     988269,
+     988270,
+     988271,
+     988272,
+     988273,
+     988274,
+     988275,
+     988276,
+     988957,
+     989754
+    ]
+   ]
+  },
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Weather Icons",
+  "Filename": "weather-icons/weathericons-regular-webfont.ttf",
+  "Exact": false,
+  "SymStart": 61440,
+  "SymEnd": 61675,
+  "SrcStart": 58112,
+  "ScaleRules": {
+   "ShiftMode": "",
+   "ScaleGroups": [
+    [
+     61500,
+     61506,
+     61509
+    ],
+    [
+     61507,
+     61508,
+     61512,
+     61515,
+     61516,
+     61517,
+     61527,
+     61528,
+     61575,
+     61576
+    ],
+    {
+     "range": [
+      61523,
+      61526
+     ]
+    },
+    [
+     61529,
+     61530,
+     61531,
+     61532,
+     61533,
+     61534,
+     61535,
+     61536,
+     61537,
+     61617
+    ],
+    {
+     "range": [
+      61577,
+      61589
+     ]
+    },
+    {
+     "range": [
+      61589,
+      61617
+     ]
+    },
+    {
+     "range": [
+      61623,
+      61636
+     ]
+    },
+    [
+     61550,
+     61552
+    ],
+    [
+     61521,
+     61522,
+     61641,
+     61642,
+     61554
+    ],
+    [
+     61513,
+     61526,
+     61553,
+     61555,
+     61556,
+     61557,
+     61558,
+     61559,
+     61560,
+     61561,
+     61562,
+     61563,
+     61564,
+     61578
+    ],
+    [
+     61440,
+     61441,
+     61442,
+     61443,
+     61444,
+     61445,
+     61446,
+     61447,
+     61448,
+     61449,
+     61450,
+     61451,
+     61452,
+     61453,
+     61454,
+     61455,
+     61456,
+     61457,
+     61458,
+     61459,
+     61460,
+     61461,
+     61462,
+     61463,
+     61464,
+     61465,
+     61466,
+     61467,
+     61468,
+     61469,
+     61470,
+     61471,
+     61472,
+     61473,
+     61474,
+     61475,
+     61476,
+     61477,
+     61478,
+     61479,
+     61480,
+     61481,
+     61482,
+     61483,
+     61484,
+     61485,
+     61486,
+     61487,
+     61488,
+     61489,
+     61490,
+     61491,
+     61492,
+     61493,
+     61494,
+     61495,
+     61496,
+     61497,
+     61498,
+     61499,
+     61500,
+     61501,
+     61502,
+     61503,
+     61504,
+     61505,
+     61540,
+     61541,
+     61542,
+     61543,
+     61544,
+     61545,
+     61546,
+     61547,
+     61548,
+     61549,
+     61565,
+     61566,
+     61567,
+     61568,
+     61569,
+     61570,
+     61571,
+     61573,
+     61574,
+     61618,
+     61619,
+     61620,
+     61621,
+     61622
+    ]
+   ]
+  },
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Font Logos",
+  "Filename": "font-logos.ttf",
+  "Exact": true,
+  "SymStart": 62208,
+  "SymEnd": 62341,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Octicons",
+  "Filename": "octicons/octicons.otf",
+  "Exact": false,
+  "SymStart": 61440,
+  "SymEnd": 61701,
+  "SrcStart": 62464,
+  "ScaleRules": {
+   "ShiftMode": "",
+   "ScaleGroups": [
+    [
+     61501,
+     61502,
+     61503,
+     61504,
+     61465,
+     61488,
+     61514,
+     61521,
+     61553,
+     61580
+    ],
+    [
+     61671,
+     61508,
+     61530,
+     61531,
+     61610,
+     61522,
+     61523,
+     62102,
+     62192,
+     61560,
+     61602,
+     61603,
+     61604,
+     61642,
+     61569,
+     61586
+    ],
+    [
+     61596,
+     61599,
+     61662
+    ],
+    {
+     "range": [
+      62146,
+      62150
+     ]
+    },
+    [
+     61563,
+     61601,
+     61654,
+     62214
+    ]
+   ]
+  },
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Octicons",
+  "Filename": "octicons/octicons.otf",
+  "Exact": true,
+  "SymStart": 9829,
+  "SymEnd": 9829,
+  "SrcStart": null,
+  "ScaleRules": {
+   "ShiftMode": "",
+   "ScaleGroups": [
+    [
+     61501,
+     61502,
+     61503,
+     61504,
+     61465,
+     61488,
+     61514,
+     61521,
+     61553,
+     61580
+    ],
+    [
+     61671,
+     61508,
+     61530,
+     61531,
+     61610,
+     61522,
+     61523,
+     62102,
+     62192,
+     61560,
+     61602,
+     61603,
+     61604,
+     61642,
+     61569,
+     61586
+    ],
+    [
+     61596,
+     61599,
+     61662
+    ],
+    {
+     "range": [
+      62146,
+      62150
+     ]
+    },
+    [
+     61563,
+     61601,
+     61654,
+     62214
+    ]
+   ]
+  },
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Octicons",
+  "Filename": "octicons/octicons.otf",
+  "Exact": true,
+  "SymStart": 9889,
+  "SymEnd": 9889,
+  "SrcStart": null,
+  "ScaleRules": {
+   "ShiftMode": "",
+   "ScaleGroups": [
+    [
+     61501,
+     61502,
+     61503,
+     61504,
+     61465,
+     61488,
+     61514,
+     61521,
+     61553,
+     61580
+    ],
+    [
+     61671,
+     61508,
+     61530,
+     61531,
+     61610,
+     61522,
+     61523,
+     62102,
+     62192,
+     61560,
+     61602,
+     61603,
+     61604,
+     61642,
+     61569,
+     61586
+    ],
+    [
+     61596,
+     61599,
+     61662
+    ],
+    {
+     "range": [
+      62146,
+      62150
+     ]
+    },
+    [
+     61563,
+     61601,
+     61654,
+     62214
+    ]
+   ]
+  },
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Octicons",
+  "Filename": "octicons/octicons.otf",
+  "Exact": false,
+  "SymStart": 62076,
+  "SymEnd": 62214,
+  "SrcStart": 62633,
+  "ScaleRules": {
+   "ShiftMode": "",
+   "ScaleGroups": [
+    [
+     61501,
+     61502,
+     61503,
+     61504,
+     61465,
+     61488,
+     61514,
+     61521,
+     61553,
+     61580
+    ],
+    [
+     61671,
+     61508,
+     61530,
+     61531,
+     61610,
+     61522,
+     61523,
+     62102,
+     62192,
+     61560,
+     61602,
+     61603,
+     61604,
+     61642,
+     61569,
+     61586
+    ],
+    [
+     61596,
+     61599,
+     61662
+    ],
+    {
+     "range": [
+      62146,
+      62150
+     ]
+    },
+    [
+     61563,
+     61601,
+     61654,
+     62214
+    ]
+   ]
+  },
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Codicons",
+  "Filename": "codicons/codicon.ttf",
+  "Exact": true,
+  "SymStart": 60000,
+  "SymEnd": 60548,
+  "SrcStart": null,
+  "ScaleRules": {
+   "ShiftMode": "xy",
+   "ScaleGroups": [
+    [
+     60001,
+     60179
+    ],
+    {
+     "range": [
+      60084,
+      60088
+     ]
+    },
+    [
+     60029,
+     60057,
+     60058,
+     60059,
+     60060,
+     60061,
+     60062,
+     60063,
+     60064,
+     60065,
+     60363
+    ],
+    [
+     60066,
+     60314,
+     60424,
+     60425
+    ],
+    {
+     "range": [
+      60116,
+      60119
+     ]
+    },
+    [
+     60227,
+     60427,
+     60428
+    ],
+    {
+     "range": [
+      60270,
+      60274
+     ]
+    },
+    [
+     60297,
+     60298,
+     60299,
+     60423
+    ],
+    {
+     "range": [
+      60373,
+      60376
+     ]
+    }
+   ]
+  },
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {}
+   }
+  }
+ },
+ {
+  "Name": "Braille",
+  "Exact": true,
+  "SymStart": 10240,
+  "SymEnd": 10495,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "",
+    "valign": "",
+    "stretch": "",
+    "params": {
+     "careful": false
+    }
+   }
+  }
+ },
+ {
+  "Name": "Custom",
+  "Filename": null,
+  "Exact": true,
+  "SymStart": 0,
+  "SymEnd": 0,
+  "SrcStart": null,
+  "ScaleRules": null,
+  "Attributes": {
+   "default": {
+    "align": "c",
+    "valign": "c",
+    "stretch": "pa",
+    "params": {
+     "careful": null
+    }
+   }
+  }
+ }
+]

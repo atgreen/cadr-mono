@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; powerline.lisp -- U+E0B0..U+E0BF, the powerline separators.
 ;;;;
 ;;;; These are the only Nerd Font glyphs this face generates, and they

@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; pen.lisp -- skeleton-and-pen stroking.
 ;;;;
 ;;;; A letter is a set of centrelines.  Each is stroked with an

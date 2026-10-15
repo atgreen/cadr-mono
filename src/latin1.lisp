@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; latin1.lisp -- the rest of Latin-1: ligatures, slashed and
 ;;;; crossed letters, and the symbols that live in the same block.
 

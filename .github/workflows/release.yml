@@ -1,0 +1,142 @@
+# SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+# SPDX-License-Identifier: OFL-1.1
+#
+# Tag v1.2.3 -> build both families, publish a release with an SBOM and
+# signed provenance.
+#
+# Nothing here is built on a laptop and uploaded.  The attestations are
+# only worth something if the bytes were produced by a workflow anyone
+# can read, from a commit anyone can check out, which is what
+# `gh attestation verify` proves.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to build, e.g. 1.0.0 (dry run, publishes nothing)'
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # create the release
+      id-token: write        # mint the OIDC token the attestation signs with
+      attestations: write    # write the signed statements to GitHub's store
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: v
+        run: |
+          if [ -n "${{ inputs.version }}" ]; then
+            v='${{ inputs.version }}'; publish=false
+          else
+            v="${GITHUB_REF_NAME#v}"; publish=true
+          fi
+          case "$v" in
+            [0-9]*.[0-9]*.[0-9]*) ;;
+            *) echo "::error::version '$v' is not semver"; exit 1 ;;
+          esac
+          echo "version=$v"   >> "$GITHUB_OUTPUT"
+          echo "publish=$publish" >> "$GITHUB_OUTPUT"
+          echo "tag=v$v"      >> "$GITHUB_OUTPUT"
+
+      - name: Version matches the source
+        run: |
+          # The tag is the authority, but src/ufo.lisp carries a fallback
+          # for local builds and CHANGELOG.md has to have the section.
+          # Disagreement between the three means someone tagged without
+          # finishing the release, so stop before publishing anything.
+          src=$(sed -n 's/^(defparameter +version+ "\(.*\)")/\1/p' src/ufo.lisp)
+          if [ "$src" != "${{ steps.v.outputs.version }}" ]; then
+            echo "::error::src/ufo.lisp says $src, tag says ${{ steps.v.outputs.version }}"
+            exit 1
+          fi
+          python3 build/release/notes.py "${{ steps.v.outputs.version }}" > /dev/null
+
+      - name: Install SBCL
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq sbcl
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build both families
+        env:
+          CADR_MONO_VERSION: ${{ steps.v.outputs.version }}
+        run: |
+          make -f build/Makefile fonts
+          make -f build/Makefile nf
+
+      - name: Check invariants
+        run: build/venv/bin/python build/release/check.py fonts/
+
+      - name: Package
+        id: pkg
+        env:
+          V: ${{ steps.v.outputs.version }}
+        run: |
+          mkdir -p dist
+          cp LICENSE CHANGELOG.md fonts/
+          zip -qj "dist/CadrMono-$V.zip" fonts/*.ttf fonts/LICENSE fonts/CHANGELOG.md
+          # The Nerd Font build carries eleven upstream licences, and
+          # they are an obligation, not documentation: they ship inside
+          # the archive rather than beside it.
+          mkdir -p nfpkg && cp fonts-nf/*.ttf nfpkg/ && cp LICENSE nfpkg/
+          cp -r src/nerdfont/LICENSES nfpkg/ICON-LICENSES
+          (cd nfpkg && zip -qr "../dist/CadrMonoNF-$V.zip" .)
+          rm -f fonts/LICENSE fonts/CHANGELOG.md
+          ls -la dist/
+
+      - name: SBOM
+        env:
+          V: ${{ steps.v.outputs.version }}
+        run: |
+          build/venv/bin/python build/release/sbom.py \
+            --version "$V" --fonts fonts --nerd-fonts fonts-nf \
+            --out "dist/cadr-mono-$V.cdx.json"
+
+      - name: Release notes
+        env:
+          V: ${{ steps.v.outputs.version }}
+        run: python3 build/release/notes.py "$V" > dist/NOTES.md
+
+      # Attest the SIGNED bytes -- the archives users actually download,
+      # not an intermediate. SLSA v1.0 Build L2.
+      - name: Attest build provenance
+        if: steps.v.outputs.publish == 'true'
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'dist/*.zip'
+
+      - name: Attest the SBOM
+        if: steps.v.outputs.publish == 'true'
+        uses: actions/attest-sbom@v2
+        with:
+          subject-path: 'dist/*.zip'
+          sbom-path: dist/cadr-mono-${{ steps.v.outputs.version }}.cdx.json
+
+      - name: Publish
+        if: steps.v.outputs.publish == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.v.outputs.tag }}
+        run: |
+          gh release create "$TAG" \
+            --title "Cadr Mono $TAG" \
+            --notes-file dist/NOTES.md \
+            dist/*.zip dist/*.cdx.json
+          echo "Verify with:  gh attestation verify CadrMono-${{ steps.v.outputs.version }}.zip --repo $GITHUB_REPOSITORY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ steps.v.outputs.version }}
+          path: dist/

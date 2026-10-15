@@ -1,3 +1,6 @@
+;;;; SPDX-FileCopyrightText: 2026 Anthony Green <green@moxielogic.com>
+;;;; SPDX-License-Identifier: OFL-1.1
+
 ;;;; braille.lisp -- all 256 patterns of U+2800, generated.
 ;;;;
 ;;;; These are what btop, gotop and every sparkline tool draw graphs

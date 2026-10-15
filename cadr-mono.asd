@@ -20,5 +20,6 @@
                              (:file "symbols")
                              (:file "braille")
                              (:file "boxes")
+                             (:file "powerline")
                              (:file "ufo")
                              (:file "diagnose")))))

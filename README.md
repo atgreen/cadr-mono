@@ -1,7 +1,7 @@
 # Cadr Mono
 
 A monospace typeface for terminals and code, generated from Common Lisp.
-714 glyphs · 8 static cuts · [OFL 1.1](LICENSE)
+729 glyphs · 8 static cuts · [OFL 1.1](LICENSE)
 
 ![Cadr Mono in a terminal: git, a diff, box drawing, braille meters and source](proof/sample.png)
 
@@ -75,16 +75,24 @@ Hack, Adwaita Mono, Noto Sans Mono and Liberation Mono:
 
 ## Coverage
 
-714 glyphs, every one at advance 1229 on a 2048 em.
+729 glyphs, every one at advance 1229 on a 2048 em.
 
 | | | | |
 |---|---|---|---|
 | ASCII 95/95 | Latin-1 96/96 | Greek 49 | Punctuation 15 |
-| Math 28 | Box + blocks 160/160 | Braille 256/256 | |
+| Math 28 | Box + blocks 160/160 | Braille 256/256 | Powerline 16/16 |
 
 French is complete, including `œ`, the guillemets and the cedilla. There are no
 programming ligatures.
 
+**Powerline separators work; the rest of Nerd Fonts doesn't.** `U+E0B0`–`U+E0BF`
+are computed from the cell like the box drawing, so a shell prompt renders with
+no seam where the background colour changes. They are the only Nerd Font
+codepoints here, because they are the only ones that are *geometry* — the other
+ten thousand are drawn pictograms from nine upstream icon projects, and nothing
+in this font is drawn. If you need devicons, patch a copy with
+[`font-patcher`](https://github.com/ryanoasis/nerd-fonts); the separators above
+will survive it.
 
 ## The eight cuts
 
@@ -126,8 +134,9 @@ include the sheet that shows the difference.
 
 The bold is derived from the parameters rather than redrawn. There's no variable
 font — `ttfautohint` doesn't support them and hinting is load-bearing here. `&`
-isn't a true et-ligature. At 13px the x-height is 6.9px against JetBrains Mono's
-7.2, so you may still set it a step larger.
+isn't a true et-ligature. Nerd Font icons stop at the powerline separators. At
+13px the x-height is 6.9px against JetBrains Mono's 7.2, so you may still set it
+a step larger.
 
 ## Licence
 

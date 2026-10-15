@@ -64,6 +64,11 @@ C = {
     "mag":  (198, 120, 221),
     "cyn":  (86, 182, 194),
     "wht":  (230, 233, 239),
+    # grounds for the powerline prompt: a separator is only
+    # meaningful against the colour change it hides.
+    "g1":   (40, 52, 87),
+    "g2":   (54, 45, 66),
+    "g3":   (40, 42, 62),
 }
 
 FACES = {}
@@ -123,7 +128,7 @@ def label_font(size=15):
 LBL = label_font()
 
 
-def draw_spans(cov, spans, x, baseline):
+def draw_spans(cov, grounds, spans, x, baseline):
     """Accumulate SPANS into per-colour COVERAGE maps.
 
     Coverage is accumulated and the colour applied once at the end,
@@ -144,9 +149,17 @@ def draw_spans(cov, spans, x, baseline):
     nothing else here for addition to over-darken.
     """
     pen = x
-    for text, ck, style in spans:
+    for span in spans:
+        text, ck, style = span[0], span[1], span[2]
+        bg = span[3] if len(span) > 3 else None
         f = face(style)
         layer = cov[ck]
+        if bg is not None:
+            # full CELL height, not the glyph box: a prompt
+            # segment is a painted row of cells, and a gap at the
+            # top or bottom would read as a seam.
+            top = baseline - BASE
+            grounds.append((pen, top, pen + ADV * len(text), top + LINE, C[bg]))
         for ch in text:
             f.load_char(ch, freetype.FT_LOAD_RENDER)
             g = f.glyph
@@ -160,8 +173,8 @@ def draw_spans(cov, spans, x, baseline):
     return pen
 
 
-def t(text, ck="fg", style="Regular"):
-    return (text, ck, style)
+def t(text, ck="fg", style="Regular", bg=None):
+    return (text, ck, style, bg)
 
 
 # --- the content -------------------------------------------------------
@@ -211,7 +224,7 @@ PANELS = [
          col(30, t("┌──────────────┬───────┬──────┐", "dim"))],
         [col(0, t("├── ", "dim"), t("src", "blu")),
          col(30, t("│", "dim"), t(" glyph set    "), t("│", "dim"),
-                 t("   714 "), t("│", "dim"), t(" ", "fg"), t("PASS", "grn"),
+                 t("   729 "), t("│", "dim"), t(" ", "fg"), t("PASS", "grn"),
                  t(" ", "fg"), t("│", "dim"))],
         [col(0, t("│   ├── ", "dim"), t("glyphs.lisp")),
          col(30, t("│", "dim"), t(" advance      "), t("│", "dim"),
@@ -246,6 +259,26 @@ PANELS = [
          ],
     ]),
 
+    ("Powerline separators, computed from the cell like the box drawing", [
+        [col(0, t("\ue0b6", "g1"), t("~/git/cadr-mono ", "blu", "Regular", "g1"),
+                t("\ue0b0", "g1", "Regular", "g2"),
+                t(" main ", "grn", "Regular", "g2"),
+                t("\ue0b0", "g2", "Regular", "g3"),
+                t(" 0.4s ", "mag", "Regular", "g3"),
+                t("\ue0b0", "g3"))],
+        [col(0, t("\ue0b6", "g1"), t("~/git/cadr-mono ", "blu", "Regular", "g1"),
+                t("\ue0b4", "g1", "Regular", "g2"),
+                t(" main ", "grn", "Regular", "g2"),
+                t("\ue0b4", "g2", "Regular", "g3"),
+                t(" 0.4s ", "mag", "Regular", "g3"),
+                t("\ue0b4", "g3"))],
+        [col(0, t("\ue0b0\ue0b1\ue0b2\ue0b3", "dim"), t(" "),
+                t("\ue0b4\ue0b5\ue0b6\ue0b7", "dim"), t(" "),
+                t("\ue0b8\ue0b9\ue0ba\ue0bb", "dim"), t(" "),
+                t("\ue0bc\ue0bd\ue0be\ue0bf", "dim"),
+                t("   all 16, straight in the italic", "dim"))],
+    ]),
+
     ("The shapes that have to stay apart", [
         [col(0, t("0O", "wht")), col(4, t("zero and cap O", "dim")),
          col(22, t("1lI", "wht")), col(27, t("one, ell, cap I", "dim")),
@@ -273,6 +306,7 @@ def main():
 
     img = Image.new("RGB", (W, H), C["bg"])
     cov = {k: Image.new("L", (W, H), 0) for k in C if k != "bg"}
+    grounds = []
     d = ImageDraw.Draw(img)
     y = PAD
     for title, body in PANELS:
@@ -290,9 +324,13 @@ def main():
             # than risk a hairline.
             base = top + i * LINE + BASE
             for c, spans in line:
-                draw_spans(cov, spans, PAD + c * ADV, base)
+                draw_spans(cov, grounds, spans, PAD + c * ADV, base)
             y = top + (i + 1) * LINE
         y += GAP
+
+    # backgrounds first, then ink over them
+    for x0, y0, x1, y1, colour in grounds:
+        d.rectangle([x0, y0, x1 - 1, y1 - 1], fill=colour)
 
     for key, layer in cov.items():
         img.paste(Image.new("RGB", (W, H), C[key]), (0, 0), layer)
